@@ -8,17 +8,30 @@ export const constantRouterMap = [
 		children:[
 			// 首页
 			{
-				path:"home",
-				name:"home",
-				props:true,
+				path: "home",
+				name: "home",
 				component: () => import('@/views/page/home/home'),
 			},
 			// 数据统计
 			{
-				path:"census",
-				name:"census",
+				path: "census",
+				name: "census",
 				props:true,
-				component: () => import('@/views/page/home/home'),
+				component: () => import('@/views/page/census/index'),
+			},
+			// 微信访客
+			{
+				path: "visitor",
+				name: "visitor",
+				props:true,
+				component: () => import('@/views/page/census/index'),
+			},
+			// 日志
+			{
+				path: "logging",
+				name: "logging",
+				props:true,
+				component: () => import('@/views/page/logging/index'),
 			},
 		]
 	}

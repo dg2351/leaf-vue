@@ -1,15 +1,21 @@
 <template>
     <div class="p10">
         <div class="boxa">
-            首页
+            数据统计
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    name: "home",
-    created() {
+    name: "index",
+    components: {
+    },
+    data(){
+        return{
+        }
+    },
+    methods:{
     }
 }
 </script>

@@ -21,7 +21,6 @@ import Head from '@/layouts/component/Head.vue';
 import Menu from "@/layouts/component/Menu.vue";
 
 export default {
-    name: "base",
     components: {
         Head,Menu
     },
