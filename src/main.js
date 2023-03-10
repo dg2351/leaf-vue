@@ -12,9 +12,11 @@ import '@/assets/css/theme.less'
 import '@/assets/css/base.css'
 
 import moment from 'moment'
-
 moment.locale('zh-cn')
 Vue.prototype.moment = moment;
+
+import util from '@/utils/public';
+Vue.prototype.$util = util;
 
 var options = {
     namespace: 'pro__', // key prefix
@@ -36,7 +38,6 @@ Router.prototype.push = function push(location) {
 window.eventBus = new Vue();
 Vue.use(AntDesign);
 
-console.log(router)
 // 子应用单独运行
 new Vue({
     router,

@@ -23,11 +23,8 @@
 
 <script>
 import {mapState} from "vuex";
-import FuncPublic from "@/mixin/FuncPublic";
-import {buildTree,getTreeNode} from "@/utils/public";
 
 export default {
-	mixins:[FuncPublic],
 	computed: {
 		...mapState({
 			themeStyle: state => state.themeStyle,
@@ -69,7 +66,7 @@ export default {
 					{id:'5',pid:'3',key:'logging',label:'日志',value:'',icon:'mail'},
 				];
 				let treeData = [];
-				buildTree(treeData, sourceData, '0')
+				this.$util.buildTree(treeData, sourceData, '0')
 				self_.leftMenu = treeData
 			}
 			method.selectKey = ()=>{
@@ -77,7 +74,7 @@ export default {
 				let menuData = self_.leftMenu;
 				let current = [];
 				let openKeys = [];
-				getTreeNode(current, openKeys, menuData, path, 'key')
+				this.$util.getTreeNode(current, openKeys, menuData, path, 'key')
 				self_.selectKey = current;
 				self_.openKeys = openKeys;
 			}
@@ -95,7 +92,7 @@ export default {
 				}
 			}
 			method.click = (item)=>{
-				self_.linkGet(item.key, item.value?item.value:{});
+				self_.$util.link(this).get(item.key, item.value?item.value:{});
 			}
 			return method
 		},

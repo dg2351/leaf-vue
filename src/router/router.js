@@ -24,14 +24,14 @@ export const constantRouterMap = [
 				path: "visitor",
 				name: "visitor",
 				props:true,
-				component: () => import('@/views/page/census/index'),
+				component: () => import('@/views/page/wechat/visitor/index'),
 			},
 			// 日志
 			{
 				path: "logging",
 				name: "logging",
 				props:true,
-				component: () => import('@/views/page/logging/index'),
+				component: () => import('@/views/page/wechat/logging/index'),
 			},
 		]
 	}

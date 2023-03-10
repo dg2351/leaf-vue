@@ -1,11 +1,33 @@
+export const util = {}
+
+util.link = (self_)=>{
+    let method = {};
+    method.sub = (name, query, params)=>{
+        self_.$router.push({ name: name, query: query, params:params });
+    }
+    method.post = (name, params)=>{
+        self_.$router.push({ name: name, params: params });
+    }
+    method.get = (name, query)=>{
+        self_.$router.push({ name: name, query: query });
+    }
+    method.back = ()=>{
+        self_.$router.go(-1);
+    }
+    return method;
+}
+
 /**
  * 返回顶部
  */
-export function toTop() {
+util.toTop = ()=>{
     window.scroll({ top: 0, left: 0, behavior: "smooth" });
 }
 
-export function versions(){
+/**
+ * 当前浏览器版本
+ */
+util.versions = ()=>{
     let u = navigator.userAgent, app = navigator.appVersion;
     return {
         trident: u.indexOf('Trident') > -1, //IE内核
@@ -29,7 +51,7 @@ export function versions(){
  * @param fileName
  * @returns {File}
  */
-export function base64ToBlob(base64Data, fileName) {
+util.base64ToBlob = (base64Data, fileName)=>{
     let arr = base64Data.split(","),
         fileType = arr[0].match(/:(.*?);/)[1],
         bstr = atob(arr[1]),
@@ -48,7 +70,7 @@ export function base64ToBlob(base64Data, fileName) {
  * @param day
  * @returns {string}
  */
-export function getTargetDay(day) {
+util.getTargetDay = (day)=>{
     function doHandleMonth(month) {
         // 月份补0
         return month.toString().length == 1 ? ("0" + month) : month
@@ -70,11 +92,11 @@ export function getTargetDay(day) {
  * @param arr
  * @param parentId
  */
-export function buildTree(arr, list, parentId) {
+util.buildTree = (arr, list, parentId)=>{
     list.filter(p=>p.pid == parentId).forEach(item => {
         let child = JSON.parse(JSON.stringify(item));
         child.children = [];
-        buildTree(child.children, list, item.id)
+        util.buildTree(child.children, list, item.id)
         arr.push(child)
     })
 }
@@ -88,14 +110,14 @@ export function buildTree(arr, list, parentId) {
  * @param type      匹配值的key
  * @returns {boolean}
  */
-export function getTreeNode(current, select, node, value, type='key') {
+util.getTreeNode = (current, select, node, value, type='key')=>{
     for(let i=0;i<node.length;i++){
         let item = node[i];
         if(item[type] == value){
             current.push(item[type])
             return true;
         } else if(item.children && item.children.length > 0){
-            let temp = getTreeNode(current, select, item.children, value, type);
+            let temp = util.getTreeNode(current, select, item.children, value, type);
             if(temp){
                 select.push(item[type])
                 return true;
@@ -109,11 +131,11 @@ export function getTreeNode(current, select, node, value, type='key') {
  * @param arr
  * @param data
  */
-export function getTreeVal(arr, data, val='id') {
+util.getTreeVal = (arr, data, val='id')=>{
     data.forEach(m=>{
         arr.push(m[val]);
         if(m.children && m.children.length > 0){
-            getTreeVal(arr, m.children)
+            util.getTreeVal(arr, m.children)
         }
     })
 }
@@ -121,8 +143,36 @@ export function getTreeVal(arr, data, val='id') {
 /**
  * 正则截取字符串
  */
-export function strCutOut(str, s, e) {
+util.strCutOut = (str, s, e)=>{
     // return str.match(/${s}(\S*)${e}/); // 贪婪
     // return str.match(/${s}(\S*?)${e}/); // 非贪婪
     return str.match(new RegExp(`/${s}(\\S*?)${e}/`));
 }
+
+/**
+ * 页面回调通用方法
+ */
+util.component = (self_)=>{
+    let method = {};
+    /**
+     * 回调
+     * @param data
+     */
+    method.back = (data)=>{
+        if(data.link){
+            self_.currentTabComponent = data.link;
+            self_.params = data.params;
+        }
+    }
+    /**
+     * 回调触发
+     * @param params
+     * @param isLoad  是否重新加载页面
+     */
+    method.event = (link, params={}, isLoad=false)=>{
+        self_.$emit("formBack", {link:link, params:params, isLoad:isLoad})
+    }
+    return method;
+}
+
+export  default util;
