@@ -26,9 +26,10 @@
 		</template>
 		<a-form-item label="" style="width: 100%">
 			<div class="center">
-				<a-button type="primary" class="zsbtnA mL10" @click="getParams()">{{button.query}}</a-button>
-				<a-button type="" class="zsbtnA mL10" @click="resetParams()">{{button.reset}}</a-button>
-				<a-button type="" v-if="show" class="zsbtnA mL10" @click="sxShow = !sxShow">{{sxShow?'收起':'展开'}}</a-button>
+				<a-button type="primary" class="mL10" @click="getParams()">{{button.query}}</a-button>
+				<a-button type="" class="mL10" @click="resetParams()">{{button.reset}}</a-button>
+				<a-button type="" v-if="show" class="mL10" @click="sxShow = !sxShow">{{sxShow?'收起':'展开'}}</a-button>
+				<slot></slot>
 			</div>
 		</a-form-item>
 	</a-form>

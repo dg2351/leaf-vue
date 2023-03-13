@@ -19,6 +19,7 @@ export const constantRouterMap = [
 				props:true,
 				component: () => import('@/views/page/census/index'),
 			},
+
 			// 微信访客
 			{
 				path: "visitor",
@@ -32,6 +33,14 @@ export const constantRouterMap = [
 				name: "logging",
 				props:true,
 				component: () => import('@/views/page/wechat/logging/index'),
+			},
+
+			// 数据源
+			{
+				path: "datasource",
+				name: "datasource",
+				props:true,
+				component: () => import('@/views/page/form/datasource/index'),
 			},
 		]
 	}

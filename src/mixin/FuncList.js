@@ -8,6 +8,7 @@ const FuncList = {
 			widthColumns: {action:180},
 			alignColumns: {action:'center'},
 			fixedColumns: {},
+			hiddenColumn: [],
 			slotColumn: [],
 			ellipsisColumn: [],
 			//不同状态的不同点
@@ -67,7 +68,10 @@ const FuncList = {
 				if(this.statusMap[tabKey].alignColumns)
 					Object.assign(alignColumns, this.statusMap[tabKey].alignColumns)
 
-				let hiddenColumn = this.statusMap[tabKey].hiddenColumn
+				let hiddenColumn = JSON.parse(JSON.stringify(this.hiddenColumn))
+				if(this.statusMap[tabKey].hiddenColumn){
+					this.statusMap[tabKey].hiddenColumn.forEach(item=>{hiddenColumn.push(item)})
+				}
 
 				let slotColumn = JSON.parse(JSON.stringify(this.slotColumn))
 				if(this.statusMap[tabKey].slotColumn){

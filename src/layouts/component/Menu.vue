@@ -64,6 +64,8 @@ export default {
 					{id:'3',pid:'0',key:'wechat',label:'微信模块',value:'',icon:'appstore'},
 					{id:'4',pid:'3',key:'visitor',label:'访客',value:'',icon:'mail'},
 					{id:'5',pid:'3',key:'logging',label:'日志',value:'',icon:'mail'},
+					{id:'6',pid:'0',key:'datasource',label:'数据源',value:'',icon:'appstore'},
+					{id:'7',pid:'6',key:'datasource',label:'数据源定义',value:'',icon:'appstore'},
 				];
 				let treeData = [];
 				this.$util.buildTree(treeData, sourceData, '0')
