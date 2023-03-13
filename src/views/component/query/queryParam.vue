@@ -25,7 +25,7 @@
 			</a-form-item>
 		</template>
 		<a-form-item label="" style="width: 100%">
-			<div class="center">
+			<div style="text-align: right">
 				<a-button type="primary" class="mL10" @click="getParams()">{{button.query}}</a-button>
 				<a-button type="" class="mL10" @click="resetParams()">{{button.reset}}</a-button>
 				<a-button type="" v-if="show" class="mL10" @click="sxShow = !sxShow">{{sxShow?'收起':'展开'}}</a-button>
@@ -56,24 +56,24 @@ export default {
 				/*//查询条件配置
 				queryConfig:[
 					{label:"文本框",value:null,key:"keyword",type:"input",placeholder:"请输入您要查找的内容",show:true},
-					{label:"选择框",value:'',key:"select",type:"select",show:true, initFunc:function (item) {
+					{label:"选择框",value:'',key:"select",type:"select",show:true, initFunction:function (item) {
 							let data = [{label:"全部", value: ''}];
 							['1','2','3'].forEach(item=>{data.push({label:'选项'+item, value:item})})
 							item.data = data;
 						}},
-					{label:"多选框",value:null,key:"checkbox",type:"checkbox",show:true, data:[], initFunc:function (item) {
+					{label:"多选框",value:null,key:"checkbox",type:"checkbox",show:true, data:[], initFunction:function (item) {
 							let data = ['1','2','3'].map(item=>{return {label:'选项'+item, value:item}})
 							item.data = data;
 						}},
-					{label:"单选框",value:null,key:"radio",type:"radio",show:true, data:[], initFunc:function (item) {
+					{label:"单选框",value:null,key:"radio",type:"radio",show:true, data:[], initFunction:function (item) {
 							let data = ['1','2','3'].map(item=>{return {label:'选项'+item, value:item}})
 							item.data = data;
 						}},
-					{label:"级联选择",value:null,key:"cascader",type:"cascader",show:true, data:[], initFunc:function (item) {
+					{label:"级联选择",value:null,key:"cascader",type:"cascader",show:true, data:[], initFunction:function (item) {
 							// 返回数据格式 [{label,value,children:[]}]
 							item.data = self_.addrData;
 						}, changeOnSelect:true, format:true},
-					{label:"标签",value:'',key:"label",type:"label",show:true, data:[], initFunc:function (item) {
+					{label:"标签",value:'',key:"label",type:"label",show:true, data:[], initFunction:function (item) {
 							let data = [{label:"全部", value: ''}];
 							['1','2','3'].forEach(item=>{data.push({label:'选项'+item, value:item})})
 							item.data = data;
@@ -123,10 +123,10 @@ export default {
 		initQueryParamConfig(callback){
 			let params = {}
 			this.queryConfig.forEach(item=>{
-				if(item.initFunc) item.initFunc(item);
+				if(item.initFunction) item.initFunction(item);
 				if(item.type == 'other'){
 					item.children.forEach(children=>{
-						if(children.initFunc) children.initFunc(children);
+						if(children.initFunction) children.initFunction(children);
 						params[children.key] = children.value;
 					})
 				} else{

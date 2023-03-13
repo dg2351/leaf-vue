@@ -14,8 +14,8 @@
 <script>
 import view_model from "@/views/component/form/main/view_model";
 import edit_model from "@/views/component/form/main/edit_model";
-import FormBoListFunc from "@/api/form/core/formBoListFunc";
-import FormPcApi from "@/views/modules/form/core/js-comps/api/FormApi";
+// import FormBoListFunc from "@/api/form/core/formBoListFunc";
+// import FormPcApi from "@/views/modules/form/core/js-comps/api/FormApi";
 import {mapState} from "vuex";
 
 function getFormData(obj, key){
@@ -71,8 +71,8 @@ export default {
 				if(!item.popupScroll)
 					item.popupScroll = function () {}
 			}
-			if(item.initFunc){
-				item.initFunc(item)
+			if(item.initFunction){
+				item.initFunction(item)
 			}
 		});
 		// 加载load方法

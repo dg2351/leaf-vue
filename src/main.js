@@ -10,6 +10,7 @@ import 'ant-design-vue/dist/antd.css';
 
 import '@/assets/css/theme.less'
 import '@/assets/css/base.css'
+import '@/assets/css/style.less'
 
 import moment from 'moment'
 moment.locale('zh-cn')

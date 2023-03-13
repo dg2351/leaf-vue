@@ -13,7 +13,7 @@
 //npm i quill-image-super-solution-module
 import { quillEditor, Quill } from 'vue-quill-editor'
 import { ImageExtend } from 'quill-image-super-solution-module'
-import FormApi from "@/views/modules/form/core/js-comps/api/FormApi";
+// import FormApi from "@/views/modules/form/core/js-comps/api/FormApi";
 Quill.register('modules/ImageExtend', ImageExtend)
 // import 'quill/dist/quill.core.css'
 // import 'quill/dist/quill.snow.css'

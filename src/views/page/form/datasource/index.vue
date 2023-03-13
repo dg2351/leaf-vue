@@ -9,10 +9,11 @@
 
 <script>
 import list from "./list"
+import edit from "./edit"
 
 export default {
     name: "index",
-    components:{list},
+    components:{list, edit},
     data() {
         return {
             currentTabComponent: "list",

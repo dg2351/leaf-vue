@@ -17,6 +17,11 @@
                     <span slot="xh" slot-scope="text, record, index">
                         <i class="xh">{{index+1}}</i>
                     </span>
+                    <template slot="action" slot-scope="text, record, index">
+                        <a class="link_a_line" @click="event().edit(record)">编辑</a>
+                        <a class="link_a_line" @click="event().del(record)">删除</a>
+                        <a class="link_a_line" @click="event().test(record)">测试连接</a>
+                    </template>
                 </a-table>
             </a-tab-pane>
         </a-tabs>
@@ -51,7 +56,7 @@ export default {
             sourceData:[],
             // 查询条件
             queryConfig:[
-                {label:"数据源名称",value:null,key:"qymc",type:"input",placeholder:"请输入您要查找的内容",show:true,
+                {label:"数据源名称",value:null,key:"name",type:"input",placeholder:"请输入您要查找的内容",show:true,
                     style:"width: 400px;"},
             ],
         }
@@ -99,8 +104,41 @@ export default {
             let self_ = this;
             let method = {};
             method.edit = (record)=>{
-                let params = {type:activeTab, id:record?record.ID_:null}
+                let params = {type:activeTab, id:record?record.id:null}
                 self_.$util.component(self_).event('edit', params);
+            }
+            method.del = (record)=>{
+                let confirm={content:'彻底删除后，数据不可恢复！请谨慎操作'};
+                self_.$confirm({
+                	title: '操作提示',
+                	content: confirm.content,
+                	okText: '确认',
+                	cancelText: '取消',
+                	zIndex:1000,
+                	onOk() {
+                        let api = "/form/datasource/def/delete";
+                        let params = {type:activeTab, id:record.id}
+                        rxAjax.postForm(api, params).then(({success,data})=>{
+                            if(success){
+                                self_.$message.success('成功删除记录');
+                                self_.loadData(1);
+                            }else{
+                                self_.$message.error('删除失败');
+                            }
+                        })
+                	},
+                	onCancel() {}
+                })
+            }
+            method.test = (record)=>{
+                let api = "/form/datasource/def/test";
+                rxAjax.postJson(api, record).then(({success,data})=>{
+                    if(success){
+                        self_.$message.success('连接成功');
+                    }else{
+                        self_.$message.error('连接失败');
+                    }
+                })
             }
             return method;
         }
