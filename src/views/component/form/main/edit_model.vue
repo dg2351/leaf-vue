@@ -152,6 +152,8 @@
 						<subFileImg v-else-if="item.type==='fileImg'" :formConfig="formConfig" :item="item"/>
 						<!-- 富文本 -->
 						<subRichText v-else-if="item.type==='richtext'" :formConfig="formConfig" :item="item"/>
+						<!--文本框-->
+						<subCodemirror v-else-if="item.type==='codemirror'" :formConfig="formConfig" :item="item"/>
 						<!-- 百度地图 -->
 						<subBaiduMap v-else-if="item.type==='baiduMap'" :formConfig="formConfig" :item="item"/>
 						<!-- 对话弹框 -->
@@ -168,6 +170,7 @@ import subFileImg from "@/views/component/form/sub/subFileImg";
 import subBaiduMap from "@/views/component/form/sub/subBaiduMap";
 import subDialogbox from "@/views/component/form/sub/subDialogbox";
 import subRichText from "@/views/component/form/sub/subRichText";
+import subCodemirror from "@/views/component/form/sub/subCodemirror";
 import moment from "moment";
 export default {
 	name: "edit_model",
@@ -197,7 +200,7 @@ export default {
 		},
 	},
 	components:{
-		subFile,subFileImg,subRichText,subBaiduMap,subDialogbox
+		subFile,subFileImg,subRichText,subBaiduMap,subDialogbox,subCodemirror
 	},
 	data() {
 		return {

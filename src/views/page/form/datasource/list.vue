@@ -7,7 +7,7 @@
         </div>
         <a-tabs v-model="activeTab" class="nav_big1" @change="callback">
             <a-tab-pane v-for="item in tabTypes" :key="item.key" :tab="item.tab" style="text-align: center">
-                <a-table class="table_a mB20" style="min-height: 500px"
+                <a-table class="table_a mB20"
                          :loading="loading"
                          :rowKey="record=>record.ID_"
                          :columns="statusMap[item.key].columns"
@@ -108,26 +108,17 @@ export default {
                 self_.$util.component(self_).event('edit', params);
             }
             method.del = (record)=>{
-                let confirm={content:'彻底删除后，数据不可恢复！请谨慎操作'};
-                self_.$confirm({
-                	title: '操作提示',
-                	content: confirm.content,
-                	okText: '确认',
-                	cancelText: '取消',
-                	zIndex:1000,
-                	onOk() {
-                        let api = "/form/datasource/def/delete";
-                        let params = {type:activeTab, id:record.id}
-                        rxAjax.postForm(api, params).then(({success,data})=>{
-                            if(success){
-                                self_.$message.success('成功删除记录');
-                                self_.loadData(1);
-                            }else{
-                                self_.$message.error('删除失败');
-                            }
-                        })
-                	},
-                	onCancel() {}
+                self_.$util.modal(self_).confirm(null, '彻底删除后，数据不可恢复！请谨慎操作', function () {
+                    let api = "/form/datasource/def/delete";
+                    let params = {type:activeTab, id:record.id}
+                    rxAjax.postForm(api, params).then(({success,data})=>{
+                        if(success){
+                            self_.$message.success('成功删除记录');
+                            self_.loadData(1);
+                        }else{
+                            self_.$message.error('删除失败');
+                        }
+                    })
                 })
             }
             method.test = (record)=>{

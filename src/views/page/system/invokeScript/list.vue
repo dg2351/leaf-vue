@@ -1,9 +1,10 @@
 <template>
     <div class="textLeft">
         <div class="pL10 pR10">
-            <queryParam ref="queryParam" :queryConfig="queryConfig" @queryBack="queryBack"/>
+            <queryParam ref="queryParam" :queryConfig="queryConfig" @queryBack="queryBack">
+                <a-button class="mL10" @click="event().edit()">新增</a-button>
+            </queryParam>
         </div>
-        <a-button @click="event().edit()">新增</a-button>
         <a-tabs v-model="activeTab" class="nav_big1" @change="callback">
             <a-tab-pane v-for="item in tabTypes" :key="item.key" :tab="item.tab" style="text-align: center">
                 <a-table class="table_a mB20"
@@ -16,6 +17,10 @@
                     <span slot="xh" slot-scope="text, record, index">
                         <i class="xh">{{index+1}}</i>
                     </span>
+                    <template slot="action" slot-scope="text, record, index">
+                        <a class="link_a_line" @click="event().edit(record)">编辑</a>
+                        <a class="link_a_line" @click="event().del(record)">删除</a>
+                    </template>
                 </a-table>
             </a-tab-pane>
         </a-tabs>
@@ -25,6 +30,7 @@
 <script>
 import FuncList from "@/mixin/FuncList";
 import queryParam from "@/views/component/query/queryParam";
+import rxAjax from '@/assets/js/ajax.js';
 
 let activeTab = null;
 export default {
@@ -37,20 +43,20 @@ export default {
             activeTab: "",
             tabTypes: [],
             queryParam: {},		// 查询条件
-            showColumns: ['xh','QYMC','LXR','LXFS','TJSJ','HFSJ','HFZTSTR','PZ','action'],
-            showColumnsTitle:['序号','企业名称','联系人','联系方式','提交时间','回复时间','回复状态','评价状态','操作'],
-            widthColumns:{xh:'60px',action:'250px'},
+            showColumns: ['xh','name','alias','action'],
+            showColumnsTitle:['序号','数据源名称','别名','操作'],
+            widthColumns:{xh:'60px'},
             alignColumns: {xh:'center'},
             slotColumn: ['xh','action'],
             //不同状态的不同点
             statusMap: {
-                'i1': {title:'正在关注'},
+                'i1': {title:'有效数据'},
             },
             sourceData:[],
             // 查询条件
             queryConfig:[
-                {label:"用户名称",value:null,key:"qymc",type:"input",placeholder:"请输入您要查找的内容",show:true,
-                    style:"width: 400px;"},
+                {label:"脚本名称",value:null,key:"name",type:"input",placeholder:"请输入您要查找的内容",show:true,style:"width: 400px;"},
+                {label:"脚本别名",value:null,key:"alias",type:"input",placeholder:"请输入您要查找的内容",show:true,style:"width: 400px;"},
             ],
         }
     },
@@ -83,8 +89,11 @@ export default {
          * 加载数据
          */
         loadData(pageIndex){
-            let api = "fwpt_sqfw_qysqs";
+            let api = "/system/invokeScript/list";
             let params = Object.assign(this.queryParam, {});
+            rxAjax.postJson(api, params).then(({success,data})=>{
+                this.sourceData = data;
+            })
         },
         /**
          * 修改
@@ -94,8 +103,22 @@ export default {
             let self_ = this;
             let method = {};
             method.edit = (record)=>{
-                let params = {type:activeTab, id:record?record.ID_:null}
+                let params = {type:activeTab, id:record?record.id:null}
                 self_.$util.component(self_).event('edit', params);
+            }
+            method.del = (record)=>{
+                self_.$util.modal(self_).confirm(null, '彻底删除后，数据不可恢复！请谨慎操作', function () {
+                    let api = "/system/invokeScript/delete";
+                    let params = {type:activeTab, id:record.id}
+                    rxAjax.postForm(api, params).then(({success,data})=>{
+                        if(success){
+                            self_.$message.success('成功删除记录');
+                            self_.loadData(1);
+                        }else{
+                            self_.$message.error('删除失败');
+                        }
+                    })
+                })
             }
             return method;
         }

@@ -42,6 +42,14 @@ export const constantRouterMap = [
 				props:true,
 				component: () => import('@/views/page/form/datasource/index'),
 			},
+
+			// 系统脚本
+			{
+				path: "invokeScript",
+				name: "invokeScript",
+				props:true,
+				component: () => import('@/views/page/system/invokeScript/index'),
+			},
 		]
 	}
 ]

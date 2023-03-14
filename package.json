@@ -12,6 +12,7 @@
     "@riophae/vue-treeselect": "^0.4.0",
     "ant-design-vue": "^1.7.5",
     "axios": "^0.21.1",
+    "codemirror": "^5.46.0",
     "core-js": "^3.6.5",
     "cron-parser": "^4.8.1",
     "debounce": "^1.2.1",

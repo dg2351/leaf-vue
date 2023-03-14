@@ -1,3 +1,5 @@
+import rxAjax from "@/assets/js/ajax";
+
 export const util = {}
 
 util.link = (self_)=>{
@@ -13,6 +15,26 @@ util.link = (self_)=>{
     }
     method.back = ()=>{
         self_.$router.go(-1);
+    }
+    return method;
+}
+
+util.modal = (self_)=>{
+    let method = {};
+    method.confirm = (name, content, callback)=>{
+        self_.$confirm({
+            title: name??'操作提示',
+            content: content,
+            okText: '确认',
+            cancelText: '取消',
+            zIndex:1000,
+            onOk() {
+                if(callback){
+                    callback();
+                }
+            },
+            onCancel() {}
+        })
     }
     return method;
 }

@@ -66,6 +66,8 @@ export default {
 					{id:'5',pid:'3',key:'logging',label:'日志',value:'',icon:'mail'},
 					{id:'6',pid:'0',key:'',label:'数据源',value:'',icon:'appstore'},
 					{id:'7',pid:'6',key:'datasource',label:'数据源定义',value:'',icon:'appstore'},
+					{id:'8',pid:'0',key:'sys',label:'系统配置',value:'',icon:'appstore'},
+					{id:'9',pid:'8',key:'invokeScript',label:'脚本管理',value:'',icon:'appstore'},
 				];
 				let treeData = [];
 				this.$util.buildTree(treeData, sourceData, '0')

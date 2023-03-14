@@ -1,0 +1,15 @@
+/*列表头部搜索框排列*/
+.ant-row.ant-form-item{
+    display: flex;
+    align-items: center;
+}
+.ant-row.ant-form-item .ant-form-item-control-wrapper{
+    flex: 1;
+}
+
+
+/*列 label文字换行*/
+.labelText .ant-form-item-label{
+    padding-right: 4px;
+    white-space: normal!important;
+}
