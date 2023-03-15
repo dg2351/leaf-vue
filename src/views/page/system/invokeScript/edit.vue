@@ -46,7 +46,7 @@ export default {
                 form: {},
                 data: [
                     {
-                        label: "脚本名称",
+                        label: "名称",
                         type: "input",
                         model: "name",
                         rule: [
@@ -74,7 +74,7 @@ export default {
                     },
                     {
                         span:24, labelCol:4,
-                        label: "脚本",
+                        label: "Groovy脚本",
                         type: "codemirror",
                         model: "content",
                         language: "java"
@@ -144,7 +144,7 @@ export default {
             }
             let api = "/system/invokeScript/test";
             let params = Object.assign({
-                params:null,
+                params:[{paramName:'key',paramType:'string',value:'测试结果返回值'}],
                 script:script,
             });
             rxAjax.postJson(api, params).then(res=>{
