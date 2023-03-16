@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import {constantRouterMap} from "@/router/router";
-
 Vue.use(VueRouter);
 const path = process.env.VUE_APP_API_CTX_PATH;
 export default new VueRouter({

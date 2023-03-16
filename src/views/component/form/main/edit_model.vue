@@ -152,7 +152,7 @@
 						<subFileImg v-else-if="item.type==='fileImg'" :formConfig="formConfig" :item="item"/>
 						<!-- 富文本 -->
 						<subRichText v-else-if="item.type==='richtext'" :formConfig="formConfig" :item="item"/>
-						<!--文本框-->
+						<!-- 代码编辑器 -->
 						<subCodemirror v-else-if="item.type==='codemirror'" :formConfig="formConfig" :item="item"/>
 						<!-- 百度地图 -->
 						<subBaiduMap v-else-if="item.type==='baiduMap'" :formConfig="formConfig" :item="item"/>

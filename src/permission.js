@@ -1,31 +1,55 @@
 import Vue from 'vue'
 import router from './router'
 import store from './store'
-import {ACCESS_TOKEN, menuKey} from '@/store/mutation-types';
+import {ACCESS_TOKEN, CODE, LOGIN_URL} from '@/store/mutation-types';
 
+// 白名单
+const whiteList = ['login'];
 router.beforeEach(async (to, from, next) => {
-	console.log('permission:=', to, from)
-	if (!localWhile(store(), to.name) && !(checkLogin())) {
-		console.log(false)
-		next({path: '/fwpt/home'})
-	} else {
-		console.log(true)
-		next();
+	if (Vue.ls.get(ACCESS_TOKEN) || true) {
+		if (to.name === 'login') {
+			next()
+		}else {
+			if (from.path !== '/') {
+				next()
+			}
+			if (store.state.appSetting.routers.length > 0) {
+				next()
+			} else {
+				if (to.params && to.params.appKey) {
+					//设置应用标识
+					store.state.appSetting.appKey = to.params.appKey;
+				} else {
+					var ary = to.path.split("/");
+					store.state.appSetting.appKey = ary[1];
+				}
+				store.dispatch('appSetting/buildRoutes').then((routers) => {
+					// 把已获取到的路由菜单加入到路由表中
+					for (var i = 0; i < routers.length; i++) {
+						router.addRoute(routers[i]);
+					}
+					if (routers.length > 0) {
+						if (to.path === '/') {
+							router.push('/home/index')
+						}else {
+							console.log('permission:=', to, from)
+							next({...to, replace: true})
+						}
+					} else {
+						this.$message.error("您还未分配权限，请联系管理员！");
+						Vue.ls.remove(ACCESS_TOKEN)
+						setTimeout(()=>{
+							window.open(LOGIN_URL, '_self');
+						},1000)
+					}
+				});
+			}
+		}
+	}else {
+		if (whiteList.includes(to.name)) {
+			next()
+		} else {
+			window.open(LOGIN_URL, '_self');
+		}
 	}
 })
-
-function checkLogin() {
-	return !!(Vue.ls.get(ACCESS_TOKEN) && Vue.ls.get("appUser") != null);
-}
-
-function localWhile(store, name) {
-	// let routers = store.getters.getRoutes;
-	// if(!routers)
-	// 	return true;
-	// 本地路由黑名单
-	// let whileIndex = routers.filter(p=>String(p.white) === '0' && p[type] === name).map(m=>{return 1});
-	// if(whileIndex.length > 0){
-	// 	return false;
-	// }
-	return true;
-}
