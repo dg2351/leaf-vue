@@ -11,15 +11,27 @@
 									   :label-col="{span:item.labelCol?item.labelCol:labelCol}">
 						<!--输入框-->
 						<template v-if="item.type==='input'">
-							<a-input v-model="formConfig.form[item.model]"
-									 v-if="!(item.readonly || formConfig.readonly)"
-									 :addon-before="item.addonBefore"
-									 :style="item.style"
-									 :allowClear="item.allowClear"
-									 :disabled="item.disabled || formConfig.disabled"
-									 :suffix="item.suffix"
-									 :maxLength="item.maxLength?item.maxLength:100"/>
-							<p v-else class="content_wrap">{{getValue(item)}}</p>
+							<template v-if="!(item.readonly || formConfig.readonly)">
+								<a-input-password v-if="item.inputType=='password'"
+												  v-model="formConfig.form[item.model]"
+												  :addon-before="item.addonBefore"
+												  :style="item.style"
+												  :allowClear="item.allowClear"
+												  :disabled="item.disabled || formConfig.disabled"
+												  :suffix="item.suffix"
+												  :maxLength="item.maxLength?item.maxLength:100"/>
+								<a-input v-else
+										 @input="formConfig.form[item.model] = sensitiveFormat(formConfig.form[item.model])"
+										 v-model="formConfig.form[item.model]"
+										 :addon-before="item.addonBefore"
+										 :style="item.style"
+										 :allowClear="item.allowClear"
+										 :disabled="item.disabled || formConfig.disabled"
+										 :suffix="item.suffix"
+										 :placeholder="item.placeholder"
+										 :maxLength="item.maxLength?item.maxLength:100"/>
+							</template>
+							<p v-else class="content_wrap">{{getValue(item)}}{{item.suffix ? item.suffix: ''}}</p>
 						</template>
 						<!--输入框-->
 						<template v-if="item.type==='between'">
@@ -28,6 +40,8 @@
 									 :addon-before="item.config[0].addonBefore"
 									 :disabled="item.config[0].disabled || formConfig.disabled"
 									 :suffix="item.config[0].suffix"
+									 :maxLength="item.maxLength?item.maxLength:100"
+									 :placeholder="item.config[0].placeholder"
 									 @change="value=>item.config[0].changeFunction(value, item)"/>
 							<a-input style="width: 30px; border-left: 0; pointer-events: none; backgroundColor: #fff"
 									 placeholder="~"disabled/>
@@ -36,6 +50,8 @@
 									 :addon-before="item.config[1].addonBefore"
 									 :disabled="item.config[1].disabled || formConfig.disabled"
 									 :suffix="item.config[1].suffix"
+									 :maxLength="item.maxLength?item.maxLength:100"
+									 :placeholder="item.config[1].placeholder"
 									 @change="value=>item.config[1].changeFunction(value, item)"/>
 						</template>
 						<!--文本框-->
@@ -45,6 +61,8 @@
 										:style="item.style"
 										:readOnly="item.readonly || formConfig.readonly"
 										:disabled="item.disabled || formConfig.disabled"
+										:maxLength="item.maxLength?item.maxLength:100"
+										:placeholder="item.placeholder"
 										:auto-size="{
 											minRows: item.minRows?item.minRows:3,
 											maxRows: item.maxRows?item.maxRows:5
@@ -78,6 +96,7 @@
 										  @popupScroll="value=>item.popupScroll(value, item)"
 										  :readOnly="item.readonly || formConfig.readonly"
 										  :disabled="item.disabled || formConfig.disabled"
+										  :placeholder="item.placeholder"
 										  :getPopupContainer="triggerNode => {return triggerNode.parentNode || document.body;}">
 									<template v-if="item.fetching" #notFoundContent>
 										<a-spin size="small"/>
@@ -97,6 +116,7 @@
 									  @change="value=>item.changeFunction(value, item.data)"
 									  :readOnly="item.readonly || formConfig.readonly"
 									  :disabled="item.disabled || formConfig.disabled"
+									  :placeholder="item.placeholder"
 									  :getPopupContainer="triggerNode => {return triggerNode.parentNode || document.body;}">
 								<!--<a-select-option v-for="(ls,index) in item.select" :value="ls.value">{{ ls.label }}</a-select-option>-->
 							</a-select>

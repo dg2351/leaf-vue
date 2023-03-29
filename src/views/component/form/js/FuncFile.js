@@ -16,9 +16,7 @@ const FuncFile = {
 			let value = [];
 			if(max > 1){
 				let obj = JSON.parse(this.formConfig.form[key]);
-				const index = obj.indexOf(file);
-				const newFileList = obj.slice();
-				newFileList.splice(index, 1);
+				let newFileList = obj.filter(p=>p.uid != file.uid).map(m=>{return m});
 				value = newFileList;
 			}
 			if(value.length == 0){
