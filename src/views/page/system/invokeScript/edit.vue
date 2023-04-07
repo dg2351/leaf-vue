@@ -57,15 +57,14 @@ const EditableCell = {
     template: `
       <div class="editable-cell">
           <div v-if="editable" class="editable-cell-input-wrapper">
-              <a-input v-if="type=='input'" style="width: calc(100% - 0px)" v-model="record[itemKey]"
+              <a-input ref="ipt" v-if="type=='input'" style="width: calc(100% - 0px)" v-model="record[itemKey]"
                        @pressEnter="check" @blur="check"/>
-              <a-select v-if="type=='select'" v-model="record[itemKey]" :options="paramType" option-filter-prop="children"
+              <a-select ref="slt" v-if="type=='select'" v-model="record[itemKey]" :options="paramType" option-filter-prop="children"
                        @pressEnter="check" @blur="check"/>
               <a-icon type="check" v-if="false" class="editable-cell-icon-check" @click="check"/>
           </div>
           <div v-else class="editable-cell-text-wrapper" @click="edit">
-              {{ record[itemKey] }}
-              <a-icon v-if="type=='input'" type="edit" class="editable-cell-icon" @click="edit" />
+              <a-icon v-if="type=='input'" type="edit" class="editable-cell-icon" @click="edit" /> {{ record[itemKey] }}
           </div>
       </div>
     `,
@@ -94,6 +93,15 @@ const EditableCell = {
         },
         edit() {
             this.editable = true;
+            if(this.type == 'input'){
+                this.$nextTick(() => {
+                    this.$refs.ipt.focus();
+                })
+            } else if(this.type == 'select'){
+                this.$nextTick(() => {
+                    this.$refs.slt.focus();
+                })
+            }
         },
     },
 };
