@@ -1,6 +1,7 @@
 // 列表生成
 const FuncList = {
 	data() {
+		let self = this;
 		return {
 			loading: true,
 			showColumns: ['action'],
@@ -11,11 +12,13 @@ const FuncList = {
 			hiddenColumn: [],
 			slotColumn: [],
 			ellipsisColumn: [],
+			sorterColumn: [],
 			//不同状态的不同点
 			statusMap: {},
 			/**
 			 * 分页
 			 */
+			paginationTotal: null,
 			pagination: {
 				total: 0, // 总数，必须先有
 				defaultCurrent: 1, // 默认当前页数
@@ -23,7 +26,10 @@ const FuncList = {
 				showSizeChanger: true,
 				showQuickJumper: true,
 				pageSizeOptions: ["5", "10", "20", "50", "100"],
-				showTotal: (total) => `共 ${total} 条`, // 显示总数
+				showTotal: (total) => {
+					let val = self.paginationTotal ? self.paginationTotal : total;
+					return `共 ${val} 条`; // 显示总数
+				},
 				onShowSizeChange: (current, pageSize) => {
 					this.pagination.defaultCurrent = current;
 					this.pagination.defaultPageSize = pageSize;
@@ -83,6 +89,11 @@ const FuncList = {
 					this.statusMap[tabKey].ellipsisColumn.forEach(item=>{ellipsisColumn.push(item)})
 				}
 
+				let sorterColumn = JSON.parse(JSON.stringify(this.sorterColumn))
+				if(this.statusMap[tabKey].sorterColumn){
+					this.statusMap[tabKey].sorterColumn.forEach(item=>{sorterColumn.push(item)})
+				}
+
 				this.showColumns.forEach((showColumnKey,index) => {
 					//筛选显示的列
 					//不存在或者存在但不在其中
@@ -111,6 +122,10 @@ const FuncList = {
 						// ellipsisColumn
 						if(ellipsisColumn && ellipsisColumn.includes(showColumnKey)){
 							Object.assign(target, {ellipsis: true});
+						}
+						// sorterColumn
+						if(sorterColumn && sorterColumn.includes(showColumnKey)){
+							Object.assign(target, {sorter: (a, b) => a[showColumnKey] - b[showColumnKey]});
 						}
 						//确定列的名字
 						resultColumns.push(target)

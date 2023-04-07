@@ -1,7 +1,7 @@
 <template>
     <div>
 		<a-input :style="item.style" readOnly
-				 v-model="formConfig.form[item.model]"
+				 v-model="sourceData[item.model]"
 				 @click="baiduMapEvent().baiduMapOnModal(item.model)"/>
 
 		<a-modal :visible="baiduMapConfig.visible" width="630px"
@@ -26,7 +26,7 @@
 // import BaiMap from "@/views/component/baidu/baimap"
 export default {
 	name: "subBaiduMap",
-	props:['formConfig', 'item'],
+	props:['sourceData','formConfig', 'item'],
 	components:{
 		// BaiMap,
 	},
@@ -47,13 +47,13 @@ export default {
 			let self_ = this;
 			let func = {};
 			func.baiduMapOnModal = function () {
-				let value = self_.formConfig.form[key];
+				let value = self_.sourceData[key];
 				if(value){
-					let lng = getFormData(self_.formConfig.form, key+'_lng');
-					let lat = getFormData(self_.formConfig.form,key+'_lat');
-					let py = getFormData(self_.formConfig.form, key+'_py');
-					let cy = getFormData(self_.formConfig.form, key+'_cy');
-					let dt = getFormData(self_.formConfig.form, key+'_dt');
+					let lng = getFormData(self_.sourceData, key+'_lng');
+					let lat = getFormData(self_.sourceData,key+'_lat');
+					let py = getFormData(self_.sourceData, key+'_py');
+					let cy = getFormData(self_.sourceData, key+'_cy');
+					let dt = getFormData(self_.sourceData, key+'_dt');
 					let str = py+cy+dt;// 省市区
 					if(str)
 						value = value.replace(str, '');
@@ -90,7 +90,7 @@ export default {
 				let addComp = self_.mapObject.addComp;
 				let address = self_.mapObject.address;
 
-				Object.assign(self_.formConfig.form, {
+				Object.assign(self_.sourceData, {
 					[key+'_lng']:lng,
 					[key+'_lat']:lat,
 					[key+'_py']:addComp.province,//省

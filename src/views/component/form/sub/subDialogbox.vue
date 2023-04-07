@@ -1,5 +1,5 @@
 <template>
-	<a-input v-model="formConfig.form[item.model].text"
+	<a-input v-model="sourceData[item.model].text"
 			 :readOnly="true"
 			 :style="item.style"
 			 @click="Dialog(item)"/>
@@ -9,7 +9,7 @@
 // import DialogBox from "@/assets/js/DialogBox";
 export default {
 	name: "subDialogbox",
-	props:['formConfig', 'item'],
+	props:['sourceData','formConfig', 'item'],
 	methods:{
 		// 弹框选择方法
 		Dialog(item){
@@ -24,10 +24,10 @@ export default {
 			}, function (data) {
 				console.log("回调>>>", data.rows)
 				if (data.rows.length === 0) {
-					that.formConfig.form[item.model] = "";
+					that.sourceData[item.model] = "";
 					return false;
 				}
-				that.formConfig.form[item.model] = {
+				that.sourceData[item.model] = {
 					text:data.rows[0][item.result.text],
 					id:data.rows[0][item.result.id],
 				};

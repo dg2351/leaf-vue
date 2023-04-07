@@ -1,5 +1,3 @@
-import rxAjax from "@/assets/js/ajax";
-
 export const util = {}
 
 util.link = (self_)=>{
@@ -110,17 +108,48 @@ util.getTargetDay = (day)=>{
 
 /**
  * 构造树
- * @param list
- * @param arr
- * @param parentId
+ * @param source
  */
-util.buildTree = (arr, list, parentId)=>{
-    list.filter(p=>p.pid == parentId).forEach(item => {
-        let child = JSON.parse(JSON.stringify(item));
-        child.children = [];
-        util.buildTree(child.children, list, item.id)
-        arr.push(child)
+util.buildTree = (source, fkey = 'id', pkey = 'pid')=>{
+    let list = [];
+    let pkList = [];
+    source.forEach(map=>{
+        let pid = map[pkey];
+        let list = source.filter(p=>p[fkey] == pid);
+        if(list.length == 0 && !pkList.includes(pid))
+            pkList.push(pid);
     })
+    pkList.forEach(pid=>{
+        treeFunction(list, source, pid, fkey, pkey);
+    })
+    return list;
+    function treeFunction(arr, list, parentId, fkey = 'id', pkey = 'pid'){
+        list.filter(p=>p[pkey] == parentId).forEach(item => {
+            let child = JSON.parse(JSON.stringify(item));
+            let children = [];
+            treeFunction(children, list, item[fkey], fkey, pkey)
+            if(children.length > 0)
+                child.children = children;
+            arr.push(child)
+        })
+    }
+}
+
+/**
+ * 设置编号
+ * @param list
+ * @param i
+ */
+util.setTreeNo = (list, i=0)=>{
+    setNo(list);
+    function setNo(arr) {
+        arr.forEach(m=>{
+            m.xh = ++i;
+            if(m.children && m.children.length > 0)
+                setNo(m.children)
+        })
+    }
+    return i;
 }
 
 /**

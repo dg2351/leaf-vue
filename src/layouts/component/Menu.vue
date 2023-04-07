@@ -69,8 +69,7 @@ export default {
 					{id:'8',pid:'0',key:'sys',label:'系统配置',value:'',icon:'appstore'},
 					{id:'9',pid:'8',key:'invokeScript',label:'脚本管理',value:'',icon:'appstore'},
 				];
-				let treeData = [];
-				this.$util.buildTree(treeData, sourceData, '0')
+				let treeData = this.$util.buildTree(sourceData)
 				self_.leftMenu = treeData
 			}
 			method.selectKey = ()=>{

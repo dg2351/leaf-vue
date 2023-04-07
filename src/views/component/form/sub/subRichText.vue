@@ -1,8 +1,8 @@
 <template>
     <div>
-		<RichText class="" :text="formConfig.form[item.model]"
+		<RichText class="" :text="sourceData[item.model]"
 				  v-if="!(item.readonly || formConfig.readonly)" @editorChange="value=>editorChange(item.model,value)"></RichText>
-		<p v-else class="content_wrap">{{formConfig.form[item.model]}}</p>
+		<p v-else class="content_wrap">{{sourceData[item.model]}}</p>
 		<!--<slot name="extraFormItem"></slot>-->
 	</div>
 </template>
@@ -11,7 +11,7 @@
 import RichText from "./rich-text.vue"
 export default {
 	name: "subRichText",
-	props:['formConfig', 'item'],
+	props:['sourceData','formConfig', 'item'],
 	components:{
 		RichText,
 	},
@@ -19,8 +19,8 @@ export default {
 		// 富文本事件
 		editorChange(key, e){
 			// let html = '<div class="ql-editor">'+html+'</div>';
-			this.formConfig.form[key] = e.html;
-			this.formConfig.form[key+'_text'] = e.text;
+			this.sourceData[key] = e.html;
+			this.sourceData[key+'_text'] = e.text;
 		},
 	}
 }

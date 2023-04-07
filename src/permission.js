@@ -30,7 +30,7 @@ router.beforeEach(async (to, from, next) => {
 					}
 					if (routers.length > 0) {
 						if (to.path === '/') {
-							router.push('/home/index')
+							router.push('/home')
 						}else {
 							console.log('permission:=', to, from)
 							next({...to, replace: true})

@@ -1,11 +1,11 @@
 <template>
-	<a-form-model v-else :ref="alias" :class="className" class="zsSelectBox"
+	<a-form-model v-else :ref="alias" :class="className"
 					  :rules="rules"
-					  :model="formConfig.form"
+					  :model="sourceData"
 					  :label-col="{ span: labelCol }"
 					  :wrapper-col="{ span: wrapperCol }">
 			<a-row>
-				<a-col v-for="item in formConfig.data"
+				<a-col v-for="item in formConfig.data" v-if="!item.hidden"
 					   :span="item.span?item.span:wrapperCol">
 					<a-form-model-item :label="item.label" :prop="item.model"
 									   :label-col="{span:item.labelCol?item.labelCol:labelCol}">
@@ -13,7 +13,7 @@
 						<template v-if="item.type==='input'">
 							<template v-if="!(item.readonly || formConfig.readonly)">
 								<a-input-password v-if="item.inputType=='password'"
-												  v-model="formConfig.form[item.model]"
+												  v-model="sourceData[item.model]"
 												  :addon-before="item.addonBefore"
 												  :style="item.style"
 												  :allowClear="item.allowClear"
@@ -21,8 +21,8 @@
 												  :suffix="item.suffix"
 												  :maxLength="item.maxLength?item.maxLength:100"/>
 								<a-input v-else
-										 @input="formConfig.form[item.model] = sensitiveFormat(formConfig.form[item.model])"
-										 v-model="formConfig.form[item.model]"
+										 @input="sourceData[item.model] = sourceData[item.model]"
+										 v-model="sourceData[item.model]"
 										 :addon-before="item.addonBefore"
 										 :style="item.style"
 										 :allowClear="item.allowClear"
@@ -36,7 +36,7 @@
 						<!--输入框-->
 						<template v-if="item.type==='between'">
 							<a-input style="width:calc(50% - 15px); text-align: center" :style="item.config[0].style"
-									 v-model="formConfig.form[item.config[0].model]"
+									 v-model="sourceData[item.config[0].model]"
 									 :addon-before="item.config[0].addonBefore"
 									 :disabled="item.config[0].disabled || formConfig.disabled"
 									 :suffix="item.config[0].suffix"
@@ -46,7 +46,7 @@
 							<a-input style="width: 30px; border-left: 0; pointer-events: none; backgroundColor: #fff"
 									 placeholder="~"disabled/>
 							<a-input style="width:calc(50% - 15px); text-align: center" :style="item.config[1].style"
-									 v-model="formConfig.form[item.config[1].model]"
+									 v-model="sourceData[item.config[1].model]"
 									 :addon-before="item.config[1].addonBefore"
 									 :disabled="item.config[1].disabled || formConfig.disabled"
 									 :suffix="item.config[1].suffix"
@@ -56,7 +56,7 @@
 						</template>
 						<!--文本框-->
 						<template v-else-if="item.type==='textarea'">
-							<a-textarea v-model="formConfig.form[item.model]"
+							<a-textarea v-model="sourceData[item.model]"
 										v-if="!(item.readonly || formConfig.readonly)"
 										:style="item.style"
 										:readOnly="item.readonly || formConfig.readonly"
@@ -71,7 +71,7 @@
 						</template>
 						<!--选择-->
 						<template v-else-if="item.type==='radio'">
-							<a-radio-group v-model="formConfig.form[item.model]"
+							<a-radio-group v-model="sourceData[item.model]"
 										   v-if="!(item.readonly || formConfig.readonly)"
 										   :options="item.data"
 										   :readOnly="item.readonly || formConfig.readonly"
@@ -83,7 +83,7 @@
 						<!--选择-->
 						<template v-else-if="item.type==='select'">
 							<template v-if="!(item.readonly || formConfig.readonly)">
-								<a-select v-model="formConfig.form[item.model]"
+								<a-select v-model="sourceData[item.model]"
 										  :style="item.style"
 										  :show-search="item.showSearch"
 										  :allowClear="item.allowClear"
@@ -107,7 +107,7 @@
 						</template>
 						<!--多选择-->
 						<template v-else-if="item.type==='selectTags'">
-							<a-select mode="multiple" v-model="formConfig.form[item.model]"
+							<a-select mode="multiple" v-model="sourceData[item.model]"
 									  v-if="!(item.readonly || formConfig.readonly)"
 									  :style="item.style"
 									  :show-search="item.showSearch"
@@ -124,14 +124,14 @@
 						</template>
 						<!--滑块-->
 						<template v-else-if="item.type==='switch'">
-							<a-switch :default-checked="formConfig.form[item.model]"
-									  @change="value=>{formConfig.form[item.model]=value}"/>
+							<a-switch :default-checked="sourceData[item.model]"
+									  @change="value=>{sourceData[item.model]=value}"/>
 						</template>
 						<!--日期-->
 						<template v-if="item.type==='date'">
 							<a-date-picker style="width: 100%;"
 										   v-if="!(item.readonly || formConfig.readonly)"
-										   v-model="formConfig.form[item.model]"
+										   v-model="sourceData[item.model]"
 										   :placeholder="item.placeholder"
 										   :inputReadOnly="item.readonly || formConfig.readonly"
 										   :disabled="item.disabled || formConfig.disabled"
@@ -144,7 +144,7 @@
 										   format="YYYY-MM-DD HH:mm:ss"
 										   :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }"
 										   v-if="!(item.readonly || formConfig.readonly)"
-										   v-model="formConfig.form[item.model]"
+										   v-model="sourceData[item.model]"
 										   :placeholder="item.placeholder"
 										   :inputReadOnly="item.readonly || formConfig.readonly"
 										   :disabled="item.disabled || formConfig.disabled"
@@ -154,7 +154,7 @@
 						<!--级联-->
 						<template v-else-if="item.type==='cascader'">
 							<a-cascader :style="item.style"
-										v-model="formConfig.form[item.model]"
+										v-model="sourceData[item.model]"
 										v-if="!(item.readonly || formConfig.readonly)"
 										:placeholder="item.placeholder"
 										:readOnly="item.readonly || formConfig.readonly"
@@ -167,17 +167,17 @@
 							<p v-else class="content_wrap">{{getValue(item)}}</p>
 						</template>
 						<!--文件上传-->
-						<subFile v-else-if="item.type==='file'" :formConfig="formConfig" :item="item"/>
+						<subFile v-else-if="item.type==='file'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 						<!--图片上传-->
-						<subFileImg v-else-if="item.type==='fileImg'" :formConfig="formConfig" :item="item"/>
+						<subFileImg v-else-if="item.type==='fileImg'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 						<!-- 富文本 -->
-						<subRichText v-else-if="item.type==='richtext'" :formConfig="formConfig" :item="item"/>
+						<subRichText v-else-if="item.type==='richtext'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 						<!-- 代码编辑器 -->
-						<subCodemirror v-else-if="item.type==='codemirror'" :formConfig="formConfig" :item="item"/>
+						<subCodemirror v-else-if="item.type==='codemirror'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 						<!-- 百度地图 -->
-						<subBaiduMap v-else-if="item.type==='baiduMap'" :formConfig="formConfig" :item="item"/>
+						<subBaiduMap v-else-if="item.type==='baiduMap'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 						<!-- 对话弹框 -->
-						<subDialogbox v-else-if="item.type==='dialogbox'" :formConfig="formConfig" :item="item"/>
+						<subDialogbox v-else-if="item.type==='dialogbox'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 					</a-form-model-item>
 				</a-col>
 			</a-row>
@@ -204,6 +204,13 @@ export default {
 		alias:{
 			type: String,
 			default: 'form'
+		},
+		// 表单参数
+		sourceData: {
+			type: Object,
+			default:function() {
+				return {}
+			}
 		},
 		// 表单配置
 		formConfig: {
@@ -236,7 +243,7 @@ export default {
 	},
 	methods:{
 		getValue: function (item) {
-			let value = this.formConfig.form[item.model];
+			let value = this.sourceData[item.model];
 			if(["radio","select"].includes(item.type)){
 				let select = item.data.filter(p=>p.value==value);
 				value = select.length > 0 ? select[0].label : value;
@@ -263,7 +270,7 @@ export default {
 						else validate = false;
 					})
 				}
-				let formData = JSON.parse(JSON.stringify(that.formConfig.form));// 表单数据
+				let formData = JSON.parse(JSON.stringify(that.sourceData));// 表单数据
 				// 多选格式化
 				that.formConfig.data.filter(p=>['selectTags'].includes(p.type)).forEach(item=>{
 					let value = formData[item.model];

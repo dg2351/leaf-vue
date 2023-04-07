@@ -3,11 +3,13 @@
 	<a-spin :spinning="formConfig.loading">
 		<view_model v-if="formConfig.disabled"
 					:alias="alias" :className="className"
-					:form-config="formConfig"></view_model>
+					:sourceData="sourceData"
+					:formConfig="formConfig"></view_model>
 		<edit_model v-if="!formConfig.disabled"
 					ref="edit_model"
 					:alias="alias" :className="className"
-					:form-config="formConfig"></edit_model>
+					:sourceData="sourceData"
+					:formConfig="formConfig"></edit_model>
 	</a-spin>
 </template>
 
@@ -34,6 +36,13 @@ export default {
 			type: String,
 			default: 'form'
 		},
+		// 表单参数
+		sourceData: {
+			type: Object,
+			default:function() {
+				return {}
+			}
+		},
 		// 表单配置
 		formConfig: {
 			type: Object,
@@ -42,7 +51,6 @@ export default {
 					visible: false,
 					loading: true,
 					disabled: false,
-					form: {},
 					data: []
 				}
 			}

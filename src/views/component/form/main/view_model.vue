@@ -1,5 +1,5 @@
 <template>
-	<a-descriptions v-if="formConfig.form" :class="className" bordered :column="2">
+	<a-descriptions v-if="sourceData" :class="className" bordered :column="2">
 		<template v-for="item in formConfig.data">
 			<a-descriptions-item v-if="['input','textarea'].includes(item.type)" :label="getLabel(item)" :span="getSpan(item)">
 				<p :class="item.class" :style="item.style" class="content_wrap" v-html="getValue(item)"></p>
@@ -41,6 +41,13 @@ export default {
 			type: String,
 			default: 'form'
 		},
+		// 表单参数
+		sourceData: {
+			type: Object,
+			default:function() {
+				return {}
+			}
+		},
 		// 表单配置
 		formConfig: {
 			type: Object,
@@ -49,7 +56,6 @@ export default {
 					visible: false,
 					loading: true,
 					disabled: true,
-					form: {},
 					data: []
 				}
 			}
@@ -64,7 +70,7 @@ export default {
 	},
 	methods:{
 		getValue: function (item) {
-			let value = this.formConfig.form[item.model];
+			let value = this.sourceData[item.model];
 			if(["radio","select"].includes(item.type)){
 				let select = item.data.filter(p=>p.value==value);
 				value = select.length > 0 ? select[0].label : value;
@@ -109,8 +115,31 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .content_wrap{
 	white-space: pre-wrap;
+}
+
+.des_a {
+	.ant-descriptions-view {
+		border: none;
+	}
+
+	.ant-descriptions-view table tr td {
+		padding: 10px !important;
+		border-color: #e2e2e2;
+		min-width: 200px;
+	}
+
+	.ant-descriptions-row {
+		border-color: #e2e2e2;
+	}
+
+	.ant-descriptions-item-label {
+		padding: 10px;
+		background: #f2f2f2;
+		border-color: #e2e2e2;
+		width: 200px;
+	}
 }
 </style>

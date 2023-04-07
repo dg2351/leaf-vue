@@ -1,8 +1,8 @@
 <template>
     <div>
-		<a-input v-model="formConfig.form[item.model]" hidden/>
+		<a-input v-model="sourceData[item.model]" hidden/>
 		<template v-if="!(item.readonly || formConfig.readonly)">
-			<template v-for="imgFile in formConfig.form[item.model]?JSON.parse(formConfig.form[item.model]):[]">
+			<template v-for="imgFile in sourceData[item.model]?JSON.parse(sourceData[item.model]):[]">
 				<div class="imgList">
 					<img :src="imgFile.url" class="imgCard"
 						 :width="item.imgWidth?item.imgWidth:'79px'"
@@ -18,7 +18,7 @@
 					  :remove="value=>removeFile(value, item.model, item.file)"
 					  :before-upload="value => uploadFile(value, item.model, item.file)">
 				<a size="small" type="primary"
-				   v-if="!formConfig.disabled && (formConfig.form[item.model]?JSON.parse(formConfig.form[item.model]):[]).length < item.file.max">
+				   v-if="!formConfig.disabled && (sourceData[item.model]?JSON.parse(sourceData[item.model]):[]).length < item.file.max">
 					<img src="../img/add.png">
 				</a>
 			</a-upload>
@@ -35,10 +35,10 @@ import FuncFile from "../js/FuncFile";
 export default {
 	name: "subFile",
 	mixins:[FuncFile],
-	props:['formConfig', 'item'],
+	props:['sourceData','formConfig', 'item'],
 	methods:{
 		getValue: function (item) {
-			let value = this.formConfig.form[item.model];
+			let value = this.sourceData[item.model];
 			if(["file","fileImg"].includes(item.type)){
 				value = value ? JSON.parse(value) : []
 			}

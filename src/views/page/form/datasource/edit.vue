@@ -4,11 +4,11 @@
             <h1>数据源定义</h1>
         </div>
         <div class="p10 bor_a">
-            <form_model ref="formModel" :form-config="formConfig"/>
+            <form_model ref="formModel" :sourceData="sourceData" :form-config="formConfig"/>
         </div>
         <div class="btn_box textCenter mB20">
-            <a-button type="primary" class="zsbtnA mR15" @click="onSubmit(true)">提交</a-button>
-            <a-button class="zsbtnA mR15"  @click="back('list')">返回</a-button>
+            <a-button type="primary" class="mR15" @click="onSubmit(true)">提交</a-button>
+            <a-button class="mR15"  @click="back('list')">返回</a-button>
         </div>
     </a-spin>
 </template>
@@ -31,11 +31,11 @@ export default {
     data() {
         return {
             loading:false,
+            sourceData:{},
             formConfig: {
                 visible: false,
                 loading: true,
-                disabled: false,
-                form: {},
+                disabled: true,
                 data: [
                     {
                         label: "数据源名称",
@@ -151,10 +151,11 @@ export default {
                             sourceData[key.toLowerCase()] = data[key]
                         });
                     }
-                    Object.assign(that.formConfig, {form: data, loading: false})
+                    that.sourceData = data;
+                    that.formConfig.loading = false
                 })
             } else{
-                Object.assign(that.formConfig, {loading: false})
+                that.formConfig.loading = false
             }
         },
         // 提交
