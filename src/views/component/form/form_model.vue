@@ -27,10 +27,7 @@ export default {
 	name: "from_model",
 	props: {
 		// 样式名称
-		className: {
-			type: String,
-			default: null
-		},
+		className: String,
 		// 表单名称
 		alias:{
 			type: String,

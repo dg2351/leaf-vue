@@ -116,30 +116,4 @@ export default {
 </script>
 
 <style scoped lang="less">
-.content_wrap{
-	white-space: pre-wrap;
-}
-
-.des_a {
-	.ant-descriptions-view {
-		border: none;
-	}
-
-	.ant-descriptions-view table tr td {
-		padding: 10px !important;
-		border-color: #e2e2e2;
-		min-width: 200px;
-	}
-
-	.ant-descriptions-row {
-		border-color: #e2e2e2;
-	}
-
-	.ant-descriptions-item-label {
-		padding: 10px;
-		background: #f2f2f2;
-		border-color: #e2e2e2;
-		width: 200px;
-	}
-}
 </style>

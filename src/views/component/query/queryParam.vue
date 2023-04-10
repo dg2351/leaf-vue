@@ -172,7 +172,6 @@ export default {
 					queryParam[key] = this.queryParam[key]
 				}
 			})
-			console.log('queryParam:=', queryParam)
 			this.formBack(queryParam);
 		},
 		resetParams(){

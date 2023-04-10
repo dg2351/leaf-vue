@@ -6,7 +6,7 @@
         <div class="p10 bor_a">
             <form_model ref="formModel" :sourceData="sourceData" :form-config="formConfig"/>
         </div>
-        <div class="btn_box textCenter mB20">
+        <div class="textCenter mB20">
             <a-button type="primary" class="mR15" @click="onSubmit(true)">提交</a-button>
             <a-button class="mR15"  @click="back('list')">返回</a-button>
         </div>
@@ -35,24 +35,24 @@ export default {
             formConfig: {
                 visible: false,
                 loading: true,
-                disabled: true,
+                disabled: false,
                 data: [
                     {
                         label: "数据源名称",
                         type: "input",
                         model: "name",
+                        maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
-                            {type: "string", max: 20, message: '长度不能大于20字符', trigger: 'change'},
                         ],
                     },
                     {
                         label: "别名",
                         type: "input",
                         model: "alias",
+                        maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
-                            {type: "string", max: 20, message: '长度不能大于20字符', trigger: 'change'},
                         ],
                     },
                     {
@@ -74,45 +74,45 @@ export default {
                         label: "库名",
                         type: "input",
                         model: "schema",
+                        maxLength: 12,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
-                            {type: "string", max: 12, message: '长度不能大于12字符', trigger: 'change'},
                         ],
                     },
                     {
                         label: "地址",
                         type: "input",
                         model: "host",
+                        maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
-                            {type: "string", max: 20, message: '长度不能大于20字符', trigger: 'change'},
                         ],
                     },
                     {
                         label: "端口",
                         type: "input",
                         model: "port",
+                        maxLength: 6,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
-                            {type: "string", max: 6, message: '长度不能大于6字符', trigger: 'change'},
                         ],
                     },
                     {
                         label: "用户",
                         type: "input",
                         model: "username",
+                        maxLength: 12,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
-                            {type: "string", max: 12, message: '长度不能大于12字符', trigger: 'change'},
                         ],
                     },
                     {
                         label: "密码",
                         type: "input",
                         model: "password",
+                        maxLength: 12,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
-                            {type: "string", max: 12, message: '长度不能大于12字符', trigger: 'change'},
                         ],
                     },
                     {

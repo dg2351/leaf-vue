@@ -37,7 +37,7 @@
             <!---->
             <form_model v-if="!formConfig.loading" ref="formModel" :sourceData="sourceData" :formConfig="formConfig"/>
         </div>
-        <div class="btn_box textCenter mB20">
+        <div class="textCenter mB20">
             <a-button type="primary" class="mR15" @click="onSubmit(true)">提交</a-button>
             <a-button class="mR15"  @click="back('list')">返回</a-button>
         </div>
@@ -129,18 +129,18 @@ export default {
                         label: "名称",
                         type: "input",
                         model: "name",
+                        maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
-                            {type: "string", max: 20, message: '长度不能大于20字符', trigger: 'change'},
                         ],
                     },
                     {
                         label: "别名",
                         type: "input",
                         model: "alias",
+                        maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
-                            {type: "string", max: 20, message: '长度不能大于20字符', trigger: 'change'},
                         ],
                     },
                     {
@@ -148,9 +148,7 @@ export default {
                         label: "说明",
                         type: "textarea",
                         model: "descp",
-                        rule: [
-                            {type: "string", max: 200, message: '长度不能大于200字符', trigger: 'change'},
-                        ],
+                        maxLength: 200,
                     },
                     {
                         span:24, labelCol:4,
@@ -250,7 +248,6 @@ export default {
                 script: script,
             });
             rxAjax.postJson(api, params).then(res=>{
-                console.log("invokeScript:=", res)
                 Object.assign(this.modalConfig, {
                     visible: true, content: JSON.stringify(res)
                 })
