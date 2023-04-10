@@ -9,7 +9,7 @@
             <a-tab-pane v-for="item in tabTypes" :key="item.key" :tab="item.tab" style="text-align: center">
                 <a-table class="table_a mB20"
                          :loading="loading"
-                         :rowKey="record=>record.ID_"
+                         :rowKey="record=>record.id"
                          :columns="statusMap[item.key].columns"
                          :data-source="statusMap[item.key].data"
                          :pagination="pagination"
@@ -56,8 +56,7 @@ export default {
             sourceData:[],
             // 查询条件
             queryConfig:[
-                {label:"数据源名称",value:null,key:"name",type:"input",placeholder:"请输入您要查找的内容",show:true,
-                    style:"width: 400px;"},
+                {label:"数据源名称",value:null,key:"name",type:"input",placeholder:"请输入您要查找的内容",show:true},
             ],
         }
     },

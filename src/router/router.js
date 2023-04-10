@@ -1,10 +1,12 @@
 export const constantRouterMap = [
-	{
-		path: '/:appKey',
-		name: 'index',
-		props: true,
-		component: () => import( '@/layouts/base')
-	},
+	// BUG:刷新场合页面无法加载
+	// {
+	// 	path: '/:appKey',
+	// 	name: 'index',
+	// 	props: true,
+	// 	component: () => import( '@/layouts/base')
+	// },
+
 	// {
 	// 	path:"/",
 	// 	name:"index",

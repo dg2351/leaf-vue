@@ -73,6 +73,7 @@ function buildMenu(rows) {
  */
 function buildTree(list, arr, parentId) {
 	list.forEach(item => {
+		console.log(item)
 		if (item.pid === parentId) {
 			let child = {
 				id: item.id,
@@ -83,6 +84,7 @@ function buildTree(list, arr, parentId) {
 				settingType: item.settingType,
 				component: item.component,
 				params: item.params,
+				showType: item.showType, //菜单是否展示
 				children: [],
 			}
 			buildTree(list, child.children, item.id)

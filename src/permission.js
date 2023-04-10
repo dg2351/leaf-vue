@@ -5,11 +5,12 @@ import {ACCESS_TOKEN, CODE, LOGIN_URL} from '@/store/mutation-types';
 
 // 白名单
 const whiteList = ['login'];
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
 	if (Vue.ls.get(ACCESS_TOKEN) || true) {
 		if (to.name === 'login') {
 			next()
 		}else {
+			console.log('permission:=', to, from)
 			if (from.path !== '/') {
 				next()
 			}
@@ -32,7 +33,6 @@ router.beforeEach(async (to, from, next) => {
 						if (to.path === '/') {
 							router.push('/home')
 						}else {
-							console.log('permission:=', to, from)
 							next({...to, replace: true})
 						}
 					} else {

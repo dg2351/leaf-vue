@@ -3,13 +3,14 @@
 			:default-selected-keys="selectKey"
 			:open-keys="openKeys"
 			@openChange="e=>menuEvent().change(e)">
-		<template v-for="menu in leftMenu">
+		<template v-for="menu in menus" v-if="menu.showType == 1">
 			<!--存在下级菜单-->
 			<a-sub-menu v-if="menu.children && menu.children.length > 0" :key="menu.key">
 				<span slot="title">
 					<a-icon :type="menu.icon" @click="menuEvent().click(menu)"/><span>{{menu.label}}</span>
 				</span>
-				<a-menu-item v-for="child in menu.children" :key="child.key" @click="menuEvent().click(child)">
+				<a-menu-item v-for="child in menu.children" v-if="child.showType == 1"
+							 :key="child.key" @click="menuEvent().click(child)">
 					<a-icon :type="child.icon"/><span>{{child.label}}</span>
 				</a-menu-item>
 			</a-sub-menu>
@@ -28,6 +29,7 @@ export default {
 	computed: {
 		...mapState({
 			themeStyle: state => state.themeStyle,
+			menus: state => state.appSetting.menus,
 		}),
 		routerParams() {
 			return this.$route.params;
@@ -38,7 +40,6 @@ export default {
 	},
 	data() {
 		return {
-			leftMenu: [],
 			selectKey: [],
 			openKeys: [],
 			rootSubmenuKeys: [],
@@ -47,7 +48,6 @@ export default {
 	watch: {
 		routerParams: {
 			handler(){
-				this.loadData().initData();
 				this.loadData().selectKey();
 			},
 			immediate: true, deep: true
@@ -57,24 +57,9 @@ export default {
 		loadData(){
 			let self_ = this;
 			let method={};
-			method.initData = ()=>{
-				let sourceData = [
-					{id:'1',pid:'0',key:'home',label:'首页',value:'home',icon:'desktop'},
-					{id:'2',pid:'0',key:'census',label:'数据统计',value:'census',icon:'pie-chart'},
-					{id:'3',pid:'0',key:'wechat',label:'微信模块',value:'',icon:'appstore'},
-					{id:'4',pid:'3',key:'visitor',label:'访客',value:'',icon:'mail'},
-					{id:'5',pid:'3',key:'logging',label:'日志',value:'',icon:'mail'},
-					{id:'6',pid:'0',key:'',label:'数据源',value:'',icon:'appstore'},
-					{id:'7',pid:'6',key:'datasource',label:'数据源定义',value:'',icon:'appstore'},
-					{id:'8',pid:'0',key:'sys',label:'系统配置',value:'',icon:'appstore'},
-					{id:'9',pid:'8',key:'invokeScript',label:'脚本管理',value:'',icon:'appstore'},
-				];
-				let treeData = this.$util.buildTree(sourceData)
-				self_.leftMenu = treeData
-			}
 			method.selectKey = ()=>{
 				let path = window.location.pathname.split('/')[2];
-				let menuData = self_.leftMenu;
+				let menuData = self_.menus;
 				let current = [];
 				let openKeys = [];
 				this.$util.getTreeNode(current, openKeys, menuData, path, 'key')
@@ -95,7 +80,7 @@ export default {
 				}
 			}
 			method.click = (item)=>{
-				self_.$util.link(this).get(item.key, item.value?item.value:{});
+				self_.$util.link(this).get(item.key, item.params?JSON.parse(item.params):{});
 			}
 			return method
 		},

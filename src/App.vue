@@ -1,10 +1,10 @@
 <template>
 	<div style="height: 100%">
-		<div id="app">
-			<a-config-provider :locale="locale">
+		<a-config-provider :locale="locale">
+			<div id="app">
 				<router-view id="view"/>
-			</a-config-provider>
-		</div>
+			</div>
+		</a-config-provider>
 	</div>
 </template>
 
