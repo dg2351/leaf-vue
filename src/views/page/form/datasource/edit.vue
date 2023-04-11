@@ -66,7 +66,7 @@ export default {
                             {label: 'MySQL', value: 'MySQL'},
                             {label: 'Oracle', value: 'Oracle'},
                             {label: 'PostgreSQL', value: 'PostgreSQL'},
-                            {label: 'SQL_Server', value: 'SQL_Server'},
+                            {label: 'SQLServer', value: 'SQLServer'},
                             {label: 'Sqlite', value: 'Sqlite'},
                         ],
                     },

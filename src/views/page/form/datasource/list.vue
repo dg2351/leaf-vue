@@ -122,7 +122,7 @@ export default {
             }
             method.test = (record)=>{
                 let api = "/form/datasource/def/test";
-                rxAjax.postJson(api, record).then(({success,data})=>{
+                rxAjax.postForm(api, {id:record.id}).then(({success,data})=>{
                     if(success){
                         self_.$message.success('连接成功');
                     }else{

@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import rxAjax from '@/assets/js/ajax.js';
+
 export default {
     name: "tableModal",
     data() {
@@ -40,8 +42,15 @@ export default {
         visible:{
             async handler(){
                 if(this.visible){
-                    console.log(this.params.dsAlias);
                     // 获取库表
+                    let api = "/form/db/findTableList";
+                    let params = {dsAlias:this.params.dsAlias}
+                    rxAjax.postForm(api, params).then(({success,data})=>{
+                        console.log(data)
+                        if(success){
+                        }else{
+                        }
+                    })
                 }else{
                     this.params = {};
                 }
