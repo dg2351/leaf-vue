@@ -226,4 +226,17 @@ util.component = (self_)=>{
     return method;
 }
 
+/**
+ * 同步请求调用
+ * @param methodApi
+ * [{
+ *		api:FormFunctions.invokeCustomQueryPromise('qyInfo', {}),
+ *		back:function (data) {self_.qyInfo = data?.[0];}
+ *	}]
+ */
+util.promiseAll = (methodApi)=>{
+    Promise.all(methodApi.map(item=>{return item.api})).then((res) => {
+        res.forEach((item, i) => {methodApi[i].back(item.success ? item.data : []);})
+    });
+}
 export  default util;

@@ -26,6 +26,8 @@
                                                     ]" :slot="item.name" slot-scope="text, record">
                                             <editable-cell :record="record" :type="item.type" :itemKey="item.name"/>
                                         </template>
+                                        <a-button slot="action" slot-scope="text, record, index"
+                                                  @click="paramsEvent().remove(index)">移除</a-button>
                                     </a-table>
                                 </div>
                             </a-form-model-item>
@@ -164,10 +166,11 @@ export default {
                 {label:'参数定义',model:'config'},
             ],
             columns:[
-                {dataIndex: 'paramName',key: 'paramName',title:'参数名',width: '25%',scopedSlots: { customRender: 'paramName' }},
-                {dataIndex: 'paramType',key: 'paramType',title:'类型',width: '25%',scopedSlots: { customRender: 'paramType' }},
+                {dataIndex: 'paramName',key: 'paramName',title:'参数名',width: '20%',scopedSlots: { customRender: 'paramName' }},
+                {dataIndex: 'paramType',key: 'paramType',title:'类型',width: '20%',scopedSlots: { customRender: 'paramType' }},
                 {dataIndex: 'remark',key: 'remark',title:'描述',width: '25%',scopedSlots: { customRender: 'remark' }},
-                {dataIndex: 'value',key: 'value',title:'值',width: '25%',scopedSlots: { customRender: 'value' }},
+                {dataIndex: 'value',key: 'value',title:'值',width: '20%',scopedSlots: { customRender: 'value' }},
+                {dataIndex: 'action',key: 'action',title:'操作列',width: '15%',scopedSlots: { customRender: 'action' }},
             ],
             dataSource:[],
             //
@@ -261,6 +264,12 @@ export default {
                 self_.dataSource.push({
                     paramName:"",paramType:'string',remark:"",value:""
                 })
+            }
+            method.remove = (index)=>{
+                let obj = self_.dataSource;
+                const newFileList = obj.slice();
+                newFileList.splice(index, 1);
+                self_.dataSource = newFileList;
             }
             return method;
         }

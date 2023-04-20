@@ -12,7 +12,16 @@
 						<!--输入框-->
 						<template v-if="item.type==='input'">
 							<template v-if="!(item.readonly || formConfig.readonly)">
-								<a-input-password v-if="item.inputType=='password'"
+								<a-input-number v-if="item.inputType=='number'"
+												v-model="sourceData[item.model]"
+												:min="item.min" :max="item.max"
+												:style="item.style"
+												:disabled="item.disabled || formConfig.disabled"
+												:suffix="item.suffix"
+												:formatter="value => `${value}${item.suffix}`"
+												:parser="value => value.replace(item.suffix, '')"
+												@change="value=>item.changeFunction(value, item)"/>
+								<a-input-password v-else-if="item.inputType=='password'"
 												  v-model="sourceData[item.model]"
 												  :addon-before="item.addonBefore"
 												  :style="item.style"
@@ -75,7 +84,8 @@
 										   v-if="!(item.readonly || formConfig.readonly)"
 										   :options="item.data"
 										   :readOnly="item.readonly || formConfig.readonly"
-										   :disabled="formConfig.disabled">
+										   :disabled="formConfig.disabled"
+										   @change="e=>item.changeFunction(e.target.value, item)">
 								<!--<a-radio v-for="(ls,index) in item.radio" :value="ls.value">{{ ls.label }}</a-radio>-->
 							</a-radio-group>
 							<p v-else class="content_wrap">{{getValue(item)}}</p>
@@ -266,8 +276,7 @@ export default {
 				let validate = true;
 				if(validateData){
 					that.$refs[refs].validate(valid=>{
-						if(valid) validate = true;
-						else validate = false;
+						validate = !!valid;
 					})
 				}
 				let formData = JSON.parse(JSON.stringify(that.sourceData));// 表单数据
