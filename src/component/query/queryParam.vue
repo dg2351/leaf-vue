@@ -36,14 +36,14 @@
 </template>
 
 <script>
-import subInput from "@/views/component/query/sub/subInput";
-import subSelect from "@/views/component/query/sub/subSelect";
-import subRadio from "@/views/component/query/sub/subRadio";
-import subCheckbox from "@/views/component/query/sub/subCheckbox";
-import subCascader from "@/views/component/query/sub/subCascader";
-import subLabel from "@/views/component/query/sub/subLabel";
-import subDatetime from "@/views/component/query/sub/subDatetime";
-import subNumber from "@/views/component/query/sub/subNumber";
+import subInput from "@/component/query/sub/subInput";
+import subSelect from "@/component/query/sub/subSelect";
+import subRadio from "@/component/query/sub/subRadio";
+import subCheckbox from "@/component/query/sub/subCheckbox";
+import subCascader from "@/component/query/sub/subCascader";
+import subLabel from "@/component/query/sub/subLabel";
+import subDatetime from "@/component/query/sub/subDatetime";
+import subNumber from "@/component/query/sub/subNumber";
 import moment from "moment";
 
 export default {

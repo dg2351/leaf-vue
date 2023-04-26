@@ -23,7 +23,7 @@
 </template>
 
 <script>
-// import BaiMap from "@/views/component/baidu/baimap"
+// import BaiMap from "@/component/baidu/baimap"
 export default {
 	name: "subBaiduMap",
 	props:['sourceData','formConfig', 'item'],

@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import form_model from "@/views/component/form/form_model";
+import form_model from "@/component/form/form_model";
 import rxAjax from "@/assets/js/ajax";
 
 export default {

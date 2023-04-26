@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import view_model from "@/views/component/form/main/view_model";
-import edit_model from "@/views/component/form/main/edit_model";
+import view_model from "@/component/form/main/view_model";
+import edit_model from "@/component/form/main/edit_model";
 // import FormBoListFunc from "@/api/form/core/formBoListFunc";
 // import FormPcApi from "@/views/modules/form/core/js-comps/api/FormApi";
 import {mapState} from "vuex";

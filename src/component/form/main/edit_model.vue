@@ -195,12 +195,12 @@
 </template>
 
 <script>
-import subFile from "@/views/component/form/sub/subFile";
-import subFileImg from "@/views/component/form/sub/subFileImg";
-import subBaiduMap from "@/views/component/form/sub/subBaiduMap";
-import subDialogbox from "@/views/component/form/sub/subDialogbox";
-import subRichText from "@/views/component/form/sub/subRichText";
-import subCodemirror from "@/views/component/form/sub/subCodemirror";
+import subFile from "@/component/form/sub/subFile";
+import subFileImg from "@/component/form/sub/subFileImg";
+import subBaiduMap from "@/component/form/sub/subBaiduMap";
+import subDialogbox from "@/component/form/sub/subDialogbox";
+import subRichText from "@/component/form/sub/subRichText";
+import subCodemirror from "@/component/form/sub/subCodemirror";
 import moment from "moment";
 export default {
 	name: "edit_model",

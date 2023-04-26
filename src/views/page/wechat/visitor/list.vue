@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import FuncList from "@/mixin/FuncList";
-import queryParam from "@/views/component/query/queryParam";
+import FuncList from "@/plugins/mixin/FuncList";
+import queryParam from "@/component/query/queryParam";
 
 let activeTab = null;
 export default {

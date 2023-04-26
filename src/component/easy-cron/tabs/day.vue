@@ -49,12 +49,12 @@
 
 <script>
 import mixin from './mixin'
-import SecondUi from "@/views/component/easy-cron/tabs/second";
-import MinuteUi from "@/views/component/easy-cron/tabs/minute";
-import HourUi from "@/views/component/easy-cron/tabs/hour";
-import WeekUi from "@/views/component/easy-cron/tabs/week";
-import MonthUi from "@/views/component/easy-cron/tabs/month";
-import YearUi from "@/views/component/easy-cron/tabs/year";
+import SecondUi from "@/component/easy-cron/tabs/second";
+import MinuteUi from "@/component/easy-cron/tabs/minute";
+import HourUi from "@/component/easy-cron/tabs/hour";
+import WeekUi from "@/component/easy-cron/tabs/week";
+import MonthUi from "@/component/easy-cron/tabs/month";
+import YearUi from "@/component/easy-cron/tabs/year";
 
 export default {
   name: 'DayUi',

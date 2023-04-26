@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import InputCron from '@/views/component/easy-cron/input-cron'
+import InputCron from '@/component/easy-cron/input-cron'
 export default {
     name: "logging",
     components: {

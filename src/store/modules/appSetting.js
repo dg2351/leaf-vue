@@ -1,4 +1,4 @@
-import {getRouters} from '@/utils/routerUtil'
+import {getRouters} from '@/plugins/utils/routerUtil'
 import {CODE} from '@/plugins/mutation-types'
 
 const appSetting = {

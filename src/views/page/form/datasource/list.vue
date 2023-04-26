@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import FuncList from "@/mixin/FuncList";
-import queryParam from "@/views/component/query/queryParam";
+import FuncList from "@/plugins/mixin/FuncList";
+import queryParam from "@/component/query/queryParam";
 import rxAjax from '@/assets/js/ajax.js';
 
 let activeTab = null;

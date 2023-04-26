@@ -16,13 +16,13 @@ import moment from 'moment'
 moment.locale('zh-cn')
 Vue.prototype.moment = moment;
 
-import '@/utils/public';
+import '@/plugins/utils/public';
 
 import Storage from 'vue-ls';
 Vue.use(Storage, {
-    namespace: 'pro__', // key prefix
-    name: 'ls', // name variable Vue.[ls] or this.[$ls],
-    storage: 'local', // storage name session, local, memory
+	namespace: 'pro__', // key prefix
+	name: 'ls', // name variable Vue.[ls] or this.[$ls],
+	storage: 'local', // storage name session, local, memory
 });
 
 import Router from 'vue-router'
