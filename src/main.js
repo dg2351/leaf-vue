@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
 import AntDesign from 'ant-design-vue'
-import Storage from 'vue-ls';
 import store from './store/'
 import router from './router'
 import './permission'
@@ -17,20 +16,16 @@ import moment from 'moment'
 moment.locale('zh-cn')
 Vue.prototype.moment = moment;
 
-import util from '@/utils/public';
-Vue.prototype.$util = util;
+import '@/utils/public';
 
-var options = {
+import Storage from 'vue-ls';
+Vue.use(Storage, {
     namespace: 'pro__', // key prefix
     name: 'ls', // name variable Vue.[ls] or this.[$ls],
     storage: 'local', // storage name session, local, memory
-};
-Vue.use(Storage, options);
-//引用
-Vue.config.productionTip = false
+});
 
 import Router from 'vue-router'
-
 const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {
     return originalPush.call(this, location).catch(err => err)

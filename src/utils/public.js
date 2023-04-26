@@ -1,3 +1,6 @@
+import Vue from 'vue'
+import {notification} from "ant-design-vue";
+
 export const util = {}
 
 util.link = (self_)=>{
@@ -13,6 +16,9 @@ util.link = (self_)=>{
     }
     method.back = ()=>{
         self_.$router.go(-1);
+    }
+    method.open = (url)=>{
+        window.open(url);
     }
     return method;
 }
@@ -239,4 +245,129 @@ util.promiseAll = (methodApi)=>{
         res.forEach((item, i) => {methodApi[i].back(item.success ? item.data : []);})
     });
 }
+
+/**
+ * andt 消息提示
+ * @returns {{}}
+ */
+util.message = ()=>{
+    let method = {};
+    method.success = function(mess,desc){
+        notification.success({message: mess,description:desc,duration:3})
+    }
+    method.warning = function(mess,desc){
+        notification.warning({message: mess,description:desc,duration:3})
+    }
+    method.error = function(mess,desc){
+        notification.error({message: mess,description:desc,duration:3})
+    }
+    return method;
+}
+
+/**
+ * 页面置顶
+ */
+util.scrollToTop = ()=>{
+    window.scroll({ top: 0, left: 0, behavior: "smooth" });
+}
+
+/**
+ * 数据密文
+ */
+util.around = ()=>{
+    let method = {};
+    const phoneReg = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{4}(\d{4})$/; // 手机号正则校验
+    const idNoReg = /(\d{6})(\d*)(\w{3})/; // 简易身份证号码正则
+    const addrReg = /(.{9})(.*)/; // 地址正则
+
+    /**
+     * 脱敏公用
+     * @param str 脱敏字符串
+     * @param begin 起始保留长度，从0开始
+     * @param end 结束保留长度，到str.length结束
+     * @returns {string}
+     */
+    method.desensitizedCommon = (str, begin, end)=>{
+        if (!str && (begin + end) >= str.length) {
+            return "";
+        }
+
+        let leftStr = str.substring(0, begin);
+        let rightStr = str.substring(str.length - end, str.length);
+
+        let strCon = ''
+        for (let i = 0; i < str.length - end - begin; i++) {
+            strCon += '*';
+        }
+        return leftStr + strCon + rightStr;
+    }
+
+    /**
+     * 名字脱敏 保留首位
+     * @param fullName
+     * @returns {string}
+     */
+    method.desensitizedName = (fullName)=>{
+        if (!fullName) {
+            return "";
+        }
+        return this.desensitizedCommon(fullName, 0, fullName.length > 2 ? 2 : 1)
+    }
+
+    /**
+     * 手机号脱敏
+     * @param str
+     * @returns {string|*|string}
+     */
+    method.desensitizedPhone = (str)=>{
+        if (!str) {
+            return "";
+        }
+        return str.replace(phoneReg, '$1****$2');
+    }
+
+    /**
+     * 身份证号脱敏
+     * @param str
+     * @returns {string|*|string}
+     */
+    method.desensitizedIdNo = (str)=>{
+        if (!str) {
+            return "";
+        }
+        if (idNoReg.test(str)) {
+            let text1 = RegExp.$1;
+            let text3 = RegExp.$3;
+            let text2 = RegExp.$2.replace(/./g, "*");
+            return text1 + text2 + text3;
+        }
+        return str;
+    }
+
+    /**
+     * 地址脱敏
+     * @param str
+     * @returns {string|*|string}
+     */
+    method.desensitizedAddr = (str)=>{
+        if (!str) {
+            return "";
+        }
+        if (addrReg.test(str)) {
+            let text1 = RegExp.$1;
+            let text2 = RegExp.$2.replace(/./g, "*");
+            return text1 + text2;
+        }
+        return str;
+    }
+    return method;
+}
+
 export  default util;
+
+let api = {
+    install(Vue){
+        Vue.prototype.$util = util;
+    }
+}
+Vue.use(api);

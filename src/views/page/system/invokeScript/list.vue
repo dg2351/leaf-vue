@@ -7,9 +7,8 @@
         </div>
         <a-tabs v-model="activeTab" class="nav_big1" @change="callback">
             <a-tab-pane v-for="item in tabTypes" :key="item.key" :tab="item.tab" style="text-align: center">
-                <a-table class="table_a mB20"
+                <a-table class="table_a mB20" rowKey="id"
                          :loading="loading"
-                         :rowKey="record=>record.ID_"
                          :columns="statusMap[item.key].columns"
                          :data-source="statusMap[item.key].data"
                          :pagination="pagination"

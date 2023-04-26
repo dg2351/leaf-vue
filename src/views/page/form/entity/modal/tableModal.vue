@@ -2,6 +2,7 @@
     <a-modal title="库表选择" dialogClass="modal_a" width="600px"
              :visible="visible" @cancel="closeModal" :footer="null">
 
+
         <div class="textCenter">
             <a-button type="primary" class="mR15" @click="submitModal">确定</a-button>
             <a-button class="mR15" @click="closeModal">返回</a-button>
@@ -19,6 +20,7 @@ export default {
             loading: false,
             visible: false,
             params: {},
+            sourceData:[],
         }
     },
     methods:{
@@ -34,23 +36,22 @@ export default {
             this.visible = false;
             this.$emit("callBack", {});
         },
-        loadData(pageIndex){
-
+        loadData(pageIndex=1){
+            // 获取库表
+            let api = "/form/db/findTableList";
+            let params = {dsAlias:this.params.dsAlias}
+            rxAjax.postForm(api, params).then(({success,data})=>{
+                if(success){
+                }
+                this.sourceData = data;
+            })
         }
     },
     watch: {
         visible:{
             async handler(){
                 if(this.visible){
-                    // 获取库表
-                    let api = "/form/db/findTableList";
-                    let params = {dsAlias:this.params.dsAlias}
-                    rxAjax.postForm(api, params).then(({success,data})=>{
-                        console.log(data)
-                        if(success){
-                        }else{
-                        }
-                    })
+                    this.loadData();
                 }else{
                     this.params = {};
                 }

@@ -1,4 +1,4 @@
-import {ACCESS_TOKEN} from "@/store/mutation-types";
+import {ACCESS_TOKEN} from "@/plugins/mutation-types";
 import rxAjax from "@/assets/js/ajax";
 import Vue from 'vue'
 

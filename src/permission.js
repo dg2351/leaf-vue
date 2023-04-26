@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import router from './router'
 import store from './store'
-import {ACCESS_TOKEN, CODE, LOGIN_URL} from '@/store/mutation-types';
+import {ACCESS_TOKEN, LOGIN_URL} from '@/plugins/mutation-types';
 
 // 白名单
 const whiteList = ['login'];

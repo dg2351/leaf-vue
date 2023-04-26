@@ -1,5 +1,5 @@
 import {getRouters} from '@/utils/routerUtil'
-import {CODE} from '@/store/mutation-types'
+import {CODE} from '@/plugins/mutation-types'
 
 const appSetting = {
 	namespaced: true,

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import {notification} from "ant-design-vue";
-import {BASE_URL, ACCESS_TOKEN, LOGIN_URL, ignoreTokenPath} from '@/store/mutation-types';
+import {BASE_URL, ACCESS_TOKEN, LOGIN_URL, ignoreTokenPath} from '@/plugins/mutation-types';
 
 let baseURL = BASE_URL;
 
