@@ -12,28 +12,25 @@
 						<!--输入框-->
 						<template v-if="item.type==='input'">
 							<template v-if="!(item.readonly || formConfig.readonly)">
-								<a-input-number v-if="item.inputType=='number'"
+								<a-input-number :style="item.style" v-if="item.inputType=='number'"
 												v-model="sourceData[item.model]"
 												:min="item.min" :max="item.max"
-												:style="item.style"
 												:disabled="item.disabled || formConfig.disabled"
 												:suffix="item.suffix"
 												:formatter="value => `${value}${item.suffix}`"
 												:parser="value => value.replace(item.suffix, '')"
 												@change="value=>item.changeFunction(value, item)"/>
-								<a-input-password v-else-if="item.inputType=='password'"
+								<a-input-password :style="item.style" v-else-if="item.inputType=='password'"
 												  v-model="sourceData[item.model]"
 												  :addon-before="item.addonBefore"
-												  :style="item.style"
 												  :allowClear="item.allowClear"
 												  :disabled="item.disabled || formConfig.disabled"
 												  :suffix="item.suffix"
 												  :maxLength="item.maxLength?item.maxLength:100"/>
-								<a-input v-else
-										 @input="sourceData[item.model] = sourceData[item.model]"
+								<a-input :style="item.style" v-else
+										 @input="sourceData[item.model] = sensitiveFormat(sourceData[item.model])"
 										 v-model="sourceData[item.model]"
 										 :addon-before="item.addonBefore"
-										 :style="item.style"
 										 :allowClear="item.allowClear"
 										 :disabled="item.disabled || formConfig.disabled"
 										 :suffix="item.suffix"
@@ -45,6 +42,7 @@
 						<!--输入框-->
 						<template v-if="item.type==='between'">
 							<a-input style="width:calc(50% - 15px); text-align: center" :style="item.config[0].style"
+									 @input="sourceData[item.config[0].model] = sensitiveFormat(sourceData[item.config[0].model])"
 									 v-model="sourceData[item.config[0].model]"
 									 :addon-before="item.config[0].addonBefore"
 									 :disabled="item.config[0].disabled || formConfig.disabled"
@@ -55,6 +53,7 @@
 							<a-input style="width: 30px; border-left: 0; pointer-events: none; backgroundColor: #fff"
 									 placeholder="~"disabled/>
 							<a-input style="width:calc(50% - 15px); text-align: center" :style="item.config[1].style"
+									 @input="sourceData[item.config[1].model] = sensitiveFormat(sourceData[item.config[1].model])"
 									 v-model="sourceData[item.config[1].model]"
 									 :addon-before="item.config[1].addonBefore"
 									 :disabled="item.config[1].disabled || formConfig.disabled"
@@ -65,9 +64,9 @@
 						</template>
 						<!--文本框-->
 						<template v-else-if="item.type==='textarea'">
-							<a-textarea v-model="sourceData[item.model]"
-										v-if="!(item.readonly || formConfig.readonly)"
-										:style="item.style"
+							<a-textarea :style="item.style" v-if="!(item.readonly || formConfig.readonly)"
+										@input="sourceData[item.model] = sensitiveFormat(sourceData[item.model])"
+										v-model="sourceData[item.model]"
 										:readOnly="item.readonly || formConfig.readonly"
 										:disabled="item.disabled || formConfig.disabled"
 										:maxLength="item.maxLength?item.maxLength:100"
@@ -202,6 +201,8 @@ import subDialogbox from "@/component/form/sub/subDialogbox";
 import subRichText from "@/component/form/sub/subRichText";
 import subCodemirror from "@/component/form/sub/subCodemirror";
 import moment from "moment";
+import Vue from "vue";
+
 export default {
 	name: "edit_model",
 	props: {
@@ -252,6 +253,14 @@ export default {
 		});
 	},
 	methods:{
+		//过滤敏感字符，不能输入
+		sensitiveFormat(val){
+			if(typeof val === "string" || val instanceof String){
+				return Vue.filter('sensitive')(val)
+			} else{
+				return val;
+			}
+		},
 		getValue: function (item) {
 			let value = this.sourceData[item.model];
 			if(["radio","select"].includes(item.type)){

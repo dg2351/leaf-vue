@@ -8,24 +8,9 @@ import Vue from 'vue'
  */
 export const getRouters = (appKey) => {
 	return new Promise((resolve, reject) => {
-		getLeftMenus(appKey,function (res,allMenus) {
-			let routers = [];
-
-			let parentRouter = {
-				name: "fwpt",
-				path: "/",
-				props: true,
-				component: () => import( '@/layouts/base')
-			};
-			let ary = [];
-			buildRouters(allMenus, ary);
-			parentRouter.children = ary;
-
-			routers.push(parentRouter);
-			res.routers=routers;
-			resolve(res);
+		getLeftMenus(appKey,function (obj) {
+			resolve(obj);
 		});
-
 	})
 }
 
@@ -35,17 +20,14 @@ function  getLeftMenus(appKey,callback) {
 	var url = "/system/menu/list";
 	rxAjax.postJson(url, {appKey:appKey}).then(({success, data}) => {
 		if (success) {
-			let menuMap={};
-			for(var i=0;i<data.length;i++){
-				menuMap[data[i].id]=data[i];
-			}
-			let allMenus = buildMenu(data)
+			let allMenus = buildMenu(data) ?? [];
+
 			let obj={
 				user: {},
-				menus: allMenus ?? [],
-				menuMap: menuMap
+				menus: allMenus,
+				routers: routers(allMenus),
 			};
-			callback(obj, allMenus);
+			callback(obj);
 		}
 	});
 }
@@ -93,6 +75,26 @@ function buildTree(list, arr, parentId) {
 			arr.push(child)
 		}
 	})
+}
+
+/**
+ * 构建路由
+ * @param parent
+ * @param routers
+ */
+function routers(allMenus) {
+	let routers = [];
+	let parentRouter = {
+		name: "fwpt",
+		path: "/",
+		props: true,
+		component: () => import( '@/layouts/base')
+	};
+	let ary = [];
+	buildRouters(allMenus, ary);
+	parentRouter.children = ary;
+	routers.push(parentRouter);
+	return routers
 }
 
 /**

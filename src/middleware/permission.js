@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import router from './router'
-import store from './store'
+import router from '@/router'
+import store from '@/store'
 import {ACCESS_TOKEN, LOGIN_URL} from '@/plugins/mutation-types';
 
 // 白名单
@@ -24,7 +24,7 @@ router.beforeEach((to, from, next) => {
 					var ary = to.path.split("/");
 					store.state.appSetting.appKey = ary[1];
 				}
-				store.dispatch('appSetting/buildRoutes').then((routers) => {
+				store.dispatch('buildRoutes').then((routers) => {
 					// 把已获取到的路由菜单加入到路由表中
 					for (var i = 0; i < routers.length; i++) {
 						router.addRoute(routers[i]);

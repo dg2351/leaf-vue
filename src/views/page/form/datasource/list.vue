@@ -44,8 +44,8 @@ export default {
             activeTab: "",
             tabTypes: [],
             queryParam: {},		// 查询条件
-            showColumns: ['xh','dbType','name','alias','host','port','action'],
-            showColumnsTitle:['序号','数据库类型','数据源名称','别名','地址','端口','操作'],
+            showColumns: ['xh','dbType','name','alias','action'],
+            showColumnsTitle:['序号','数据库类型','数据源名称','别名','操作'],
             widthColumns:{xh:'60px'},
             alignColumns: {xh:'center'},
             slotColumn: ['xh','action'],
@@ -122,11 +122,9 @@ export default {
             }
             method.test = (record)=>{
                 let api = "/form/datasource/def/test";
-                rxAjax.postForm(api, {id:record.id}).then(({success,data})=>{
+                rxAjax.postForm(api, {dsAlias:record.alias}).then(({success,data})=>{
                     if(success){
-                        self_.$message.success('连接成功');
-                    }else{
-                        self_.$message.error('连接失败');
+                        self_.$util.message().success('操作提示','连接成功');
                     }
                 })
             }

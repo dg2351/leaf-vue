@@ -28,6 +28,8 @@
 
 <script>
 import moment from 'moment'
+import Vue from "vue";
+
 export default {
 	name: "view_model",
 	props: {
@@ -69,6 +71,14 @@ export default {
 		};
 	},
 	methods:{
+		//过滤敏感字符，不能输入
+		sensitiveFormat(val){
+			if(typeof val === "string" || val instanceof String){
+				return Vue.filter('sensitive')(val)
+			} else{
+				return val;
+			}
+		},
 		getValue: function (item) {
 			let value = this.sourceData[item.model];
 			if(["radio","select"].includes(item.type)){
@@ -86,7 +96,7 @@ export default {
 			}else if(value && item.suffix && typeof(value)!='object'){
 				value = value +''+(item.suffix?item.suffix:'')
 			}
-			return value;
+			return this.sensitiveFormat(value);
 		},
 		getLabel(item){
 			return item.label;

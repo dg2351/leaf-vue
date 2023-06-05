@@ -2,7 +2,7 @@
     <a-spin :spinning="loading">
         <!--弹框-->
         <dbModal ref="dbModal" @callBack="v=>{sourceData.dsAlias = v.alias;sourceData.dsName = v.name;}"/>
-        <tableModal ref="tableModal" @callBack="v=>{sourceData.tableName = v}"/>
+        <tableModal ref="tableModal" @callBack="getByName"/>
         <!---->
         <div class="inner_head mB10">
             <h1>业务实体</h1>
@@ -31,6 +31,39 @@
                         </template>
                     </a-col>
                 </a-row>
+				<!--已选择表-->
+				<template v-if="sourceData.tableName">
+					<div class="p10 bor_a">
+						<a-button-group>
+							<a-button type="primary" icon="plus" @click="">添加</a-button>
+							<a-button type="danger" icon="delete" @click="">删除</a-button>
+							<a-button type="" icon="up" @click="">向上</a-button>
+							<a-button type="" icon="down" @click="">向下</a-button>
+							<a-button type="primary" @click="">保存并生成表单</a-button>
+						</a-button-group>
+					</div>
+					<a-tabs class="nav_big1">
+						<a-tab-pane tab="实体字段">
+							<div class="p10 bor_a">
+								<a-radio-group name="pkId" v-model="pkId" style="width: 100%">
+									<a-table class="table_a mB20"
+											 rowKey="xh"
+											 :columns="columns"
+											 :data-source="columnList"
+											 :pagination="false"
+											 :locale="{emptyText: '暂无数据'}">
+										<span slot="isPk" slot-scope="text, record, index">
+											<a-radio :value="record.fieldName"/>
+										</span>
+										<span slot="isNull" slot-scope="text, record, index">
+											<a-checkbox v-model="record.isNotNull"/>
+										</span>
+									</a-table>
+								</a-radio-group>
+							</div>
+						</a-tab-pane>
+					</a-tabs>
+				</template>
             </a-form-model>
         </div>
         <div class="textCenter mB20">
@@ -91,24 +124,49 @@ export default {
                 {label:'数据源',model:'dsName'},
                 {label:'库表',model:'tableName'},
             ],
+			//
+			columns:[
+				{dataIndex: 'xh',key: 'xh',title:'序号',width: '5%',customRender:(text, record, index)=>`${index + 1}`},
+				{dataIndex: 'isPk',key: 'isPk',title:'主键',width: '5%',scopedSlots: { customRender: 'isPk' }},
+				{dataIndex: 'isNull',key: 'isNull',title:'非空',width: '5%',scopedSlots: { customRender: 'isNull' }},
+				{dataIndex: 'comment',key: 'comment',title:'备注',width: '12%'},
+				{dataIndex: 'fieldName',key: 'fieldName',title:'字段名',width: '12%'},
+				{dataIndex: 'name',key: 'name',title:'属性名',width: '12%'},
+				{dataIndex: 'columnType',key: 'columnType',title:'数据类型',width: '10%'},
+				{dataIndex: 'intLen',key: 'intLen',title:'长度',width: '10%'},
+				{dataIndex: 'decimalLen',key: 'decimalLen',title:'精度',width: '8%'},
+			],
+			columnList:[],
+			pkId: null,
         };
     },
     created() {
         this.loadData(this.params.id);
     },
     methods:{
+		back(){
+			this.$util.component(this).event('list');
+		},
+		getValue(data, key){
+			return data ? (data[key] ?? '') : '';
+		},
+		// 获取数据
         loadData(id){
             let that = this;
             if(id){
                 let api = "/form/bo/entity/info";
                 let params = Object.assign({id:id});
                 rxAjax.get(api, params).then(({success,data})=>{
-                    let sourceData = {};
-                    if(success && data){
-                        Object.keys(data).forEach(key=>{
-                            sourceData[key.toLowerCase()] = data[key]
-                        });
-                    }
+                    if(data.columns){
+						this.columnList = data.columns.map(item=>{
+							if(item.isPk){
+								this.pkId = item.fieldName;
+							}
+							return Object.assign(item, {
+								isNotNull: !item.isNull
+							})
+						})
+					}
                     that.sourceData = data;
                     that.formConfig.loading = false
                 })
@@ -125,7 +183,17 @@ export default {
             if(!(data.validate)){
                 return self_.loading = false;
             }
+            if(!this.pkId){
+				self_.$message.success("不能没有主键");
+				return self_.loading = false;
+			}
             let formData = data.formData;
+			formData.columns = this.columnList.map(item=>{
+				return Object.assign(item, {
+					isNull: item.isNotNull ? 0 : 1,
+					isPk: this.pkId == item.fieldName ? 1 : 0,
+				})
+			});
             // 调用保存表单
             let api = "/form/bo/entity/save";
             rxAjax.postJson(api, formData).then(({success,data})=>{
@@ -140,12 +208,25 @@ export default {
                 }
             });
         },
-        back(){
-            this.$util.component(this).event('list');
-        },
-        getValue(data, key){
-            return data ? (data[key] ?? '') : '';
-        }
+		// 获取列信息
+		getByName(tbName) {
+        	this.sourceData.tableName = tbName;
+        	if(!tbName){
+				return this.columnList = [];
+			}
+			let api = "/form/db/getByName";
+			let params = {dsAlias:this.sourceData.dsAlias, tbName};
+			rxAjax.postForm(api, params).then(data=>{
+				this.columnList = data.columnList.map(item=>{
+					if(item.isPk){
+						this.pkId = item.fieldName;
+					}
+					return Object.assign(item, {
+						isNotNull: !item.isNull
+					})
+				})
+			})
+		},
     }
 }
 </script>

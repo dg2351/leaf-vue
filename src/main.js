@@ -3,7 +3,7 @@ import App from './App.vue'
 import AntDesign from 'ant-design-vue'
 import store from './store/'
 import router from './router'
-import './permission'
+import './middleware/permission'
 import 'babel-polyfill'
 import 'ant-design-vue/dist/antd.css';
 
@@ -34,6 +34,9 @@ Router.prototype.push = function push(location) {
 // 全局事件总线，创建一个vue实例，挂载到根实例
 window.eventBus = new Vue();
 Vue.use(AntDesign);
+
+//敏感字符过滤
+import '@/plugins/filters/index';
 
 // 子应用单独运行
 new Vue({
