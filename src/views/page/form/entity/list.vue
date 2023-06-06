@@ -107,8 +107,8 @@ export default {
             }
             method.del = (record)=>{
                 self_.$util.modal(self_).confirm(null, '彻底删除后，数据不可恢复！请谨慎操作', function () {
-                    let api = "/form/datasource/def/delete";
-                    let params = {type:activeTab, id:record.id}
+                    let api = "/form/bo/entity/delete";
+                    let params = {id:record.id}
                     rxAjax.postForm(api, params).then(({success,data})=>{
                         if(success){
                             self_.$message.success('成功删除记录');

@@ -43,6 +43,15 @@ export function scrollToTop(){
 	window.scroll({ top: 0, left: 0, behavior: "smooth" });
 }
 
+String.prototype.toCamelCase = function(){
+	var re=/_(\w)/g;
+	let str = this??"";
+	str = str.replace(re,function($0,$1){
+		return $1.toUpperCase();
+	});
+	return str.replace('_','')
+}
+
 Array.prototype.quickSort = function () {
 	const rec = (arr) => {
 		console.log(arr)

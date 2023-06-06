@@ -15,7 +15,7 @@
                 <a-row>
                     <a-col :span="12" v-for="item in formTab1">
                         <template v-if="item.model == 'dsName'">
-                            <a-form-model-item :label="item.label" :label-col="{span: 8 }">
+                            <a-form-model-item :label="item.label" :label-col="{span: 8 }" :required="true">
                                 <a-input-search v-model="sourceData.dsName" enter-button :readOnly="true"
                                                 @search="$refs['dbModal'].openModal(getValue(sourceData,'dsAlias'))"/>
                             </a-form-model-item>
@@ -32,32 +32,48 @@
                     </a-col>
                 </a-row>
 				<!--已选择表-->
-				<template v-if="sourceData.tableName">
+				<template>
 					<div class="p10 bor_a">
 						<a-button-group>
-							<a-button type="primary" icon="plus" @click="">添加</a-button>
+							<a-button type="primary" icon="plus" @click="paramsEvent().add()">添加</a-button>
 							<a-button type="danger" icon="delete" @click="">删除</a-button>
 							<a-button type="" icon="up" @click="">向上</a-button>
 							<a-button type="" icon="down" @click="">向下</a-button>
-							<a-button type="primary" @click="">保存并生成表单</a-button>
+							<a-button type="primary" @click="onSubmit(true)">保存并生成表单</a-button>
 						</a-button-group>
 					</div>
 					<a-tabs class="nav_big1">
 						<a-tab-pane tab="实体字段">
 							<div class="p10 bor_a">
 								<a-radio-group name="pkId" v-model="pkId" style="width: 100%">
-									<a-table class="table_a mB20"
-											 rowKey="xh"
-											 :columns="columns"
-											 :data-source="columnList"
-											 :pagination="false"
-											 :locale="{emptyText: '暂无数据'}">
+									<a-table class="table_a mB20" rowKey="pk"
+											 :columns="columns" :data-source="columnList"
+											 :pagination="false" :locale="{emptyText: '暂无数据'}">
 										<span slot="isPk" slot-scope="text, record, index">
-											<a-radio :value="record.fieldName"/>
+											<a-radio :value="record.pk"/>
 										</span>
 										<span slot="isNull" slot-scope="text, record, index">
 											<a-checkbox v-model="record.isNotNull"/>
 										</span>
+										<template v-for="item in [
+                                                        {name:'comment',type:'input'},
+                                                        {name:'fieldName',type:'input'},
+                                                        {name:'name',type:'input'},
+                                                        {name:'columnType',type:'select'},
+                                                    ]" :slot="item.name" slot-scope="text, record">
+											<editable-cell :record="record" :type="item.type" :itemKey="item.name"/>
+										</template>
+										<template slot="intLen" slot-scope="text, record">
+											<editable-cell :record="record" type="input" itemKey="intLen"
+														   :disabled_="specialType.includes(record.columnType)"/>
+										</template>
+										<template slot="decimalLen" slot-scope="text, record">
+											<editable-cell :record="record" type="input" itemKey="decimalLen"
+														   :disabled_="!['DECIMAL'].includes(record.columnType)"/>
+										</template>
+										<a-button slot="action" slot-scope="text, record, index"
+												  type="danger" icon="delete"
+												  @click="paramsEvent().remove(index)"/>
 									</a-table>
 								</a-radio-group>
 							</div>
@@ -78,13 +94,69 @@ import form_model from "@/component/form/form_model";
 import dbModal from "@/views/page/form/entity/modal/dbModal";
 import tableModal from "@/views/page/form/entity/modal/tableModal";
 import rxAjax from "@/assets/js/ajax";
+import uuid from "@/plugins/utils/uuid"
 
+const specialType = ['INT','TEXT','LONGTEXT','MEDIUMTEXT','DATETIME'];
+const paramType = [
+	{label:'VARCHAR',value:'VARCHAR'},
+	{label:'CHAR',value:'CHAR'},
+	{label:'INT',value:'INT'},
+	{label:'DECIMAL',value:'DECIMAL'},
+	{label:'TEXT',value:'TEXT'},
+	{label:'LONGTEXT',value:'LONGTEXT'},
+	{label:'MEDIUMTEXT',value:'MEDIUMTEXT'},
+	{label:'DATETIME',value:'DATETIME'},
+];
+const EditableCell = {
+	template: `
+      <div class="editable-cell">
+          <div class="editable-cell-input-wrapper">
+              <a-input ref="ipt" v-if="type=='input'" style="width: calc(100% - 0px)"
+					   v-model="record[itemKey]" :disabled="disabled_" @blur="inputEvent"/>
+              <a-select ref="slt" v-if="type=='select'" v-model="record[itemKey]" :options="paramType" :disabled="disabled_"
+						option-filter-prop="children" @change="changeEvent"/>
+              <a-icon type="check" v-if="false" class="editable-cell-icon-check" @click="check"/>
+          </div>
+      </div>
+    `,
+	props: {
+		record: Object,
+		itemKey:String,
+		type: String,
+		disabled_: {
+			type: Boolean,
+			default: false
+		},
+	},
+	data() {
+		return {
+			editable: false,
+			paramType,
+		};
+	},
+	methods: {
+		changeEvent(v){
+			if(specialType.includes(v)){
+				this.record.intLen = 0;
+			}
+			if(!['DECIMAL'].includes(v)){
+				this.record.decimalLen = 0;
+			}
+		},
+		inputEvent(){
+			if(this.itemKey == 'fieldName'){
+				let str = String(this.record[this.itemKey]);
+				this.record['name'] = str.toCamelCase();
+			}
+		}
+	},
+};
 export default {
     name: "edit",
     props: {
         params: Object,
     },
-    components: {form_model, dbModal, tableModal},
+    components: {form_model, dbModal, tableModal, EditableCell},
     computed: {
         routerParams() {
             return this.$route.query;
@@ -92,6 +164,7 @@ export default {
     },
     data() {
         return {
+			specialType,
             loading:false,
             sourceData:{dsAlias:'',dsName:'',tableName:''},
             formConfig: {
@@ -126,15 +199,16 @@ export default {
             ],
 			//
 			columns:[
-				{dataIndex: 'xh',key: 'xh',title:'序号',width: '5%',customRender:(text, record, index)=>`${index + 1}`},
-				{dataIndex: 'isPk',key: 'isPk',title:'主键',width: '5%',scopedSlots: { customRender: 'isPk' }},
-				{dataIndex: 'isNull',key: 'isNull',title:'非空',width: '5%',scopedSlots: { customRender: 'isNull' }},
-				{dataIndex: 'comment',key: 'comment',title:'备注',width: '12%'},
-				{dataIndex: 'fieldName',key: 'fieldName',title:'字段名',width: '12%'},
-				{dataIndex: 'name',key: 'name',title:'属性名',width: '12%'},
-				{dataIndex: 'columnType',key: 'columnType',title:'数据类型',width: '10%'},
-				{dataIndex: 'intLen',key: 'intLen',title:'长度',width: '10%'},
-				{dataIndex: 'decimalLen',key: 'decimalLen',title:'精度',width: '8%'},
+				{dataIndex: 'xh',key: 'xh',title:'序号',width: '6%',customRender:(text, record, index)=>`${index + 1}`},
+				{dataIndex: 'isPk',key: 'isPk',title:'主键',width: '6%',scopedSlots: { customRender: 'isPk' }},
+				{dataIndex: 'isNull',key: 'isNull',title:'非空',width: '6%',scopedSlots: { customRender: 'isNull' }},
+				{dataIndex: 'comment',key: 'comment',title:'备注',width: '15%',scopedSlots: { customRender: 'comment' }},
+				{dataIndex: 'fieldName',key: 'fieldName',title:'字段名',width: '14%',scopedSlots: { customRender: 'fieldName' }},
+				{dataIndex: 'name',key: 'name',title:'属性名',width: '14%',scopedSlots: { customRender: 'name' }},
+				{dataIndex: 'columnType',key: 'columnType',title:'数据类型',width: '15%',scopedSlots: { customRender: 'columnType' }},
+				{dataIndex: 'intLen',key: 'intLen',title:'长度',width: '8%',scopedSlots: { customRender: 'intLen' }},
+				{dataIndex: 'decimalLen',key: 'decimalLen',title:'精度',width: '8%',scopedSlots: { customRender: 'decimalLen' }},
+				{dataIndex: 'action',key: 'action',title:'操作列',width: '8%',scopedSlots: { customRender: 'action' }},
 			],
 			columnList:[],
 			pkId: null,
@@ -159,12 +233,9 @@ export default {
                 rxAjax.get(api, params).then(({success,data})=>{
                     if(data.columns){
 						this.columnList = data.columns.map(item=>{
-							if(item.isPk){
-								this.pkId = item.fieldName;
-							}
-							return Object.assign(item, {
-								isNotNull: !item.isNull
-							})
+							let pk = item.id;
+							if(item.isPk) this.pkId = pk;
+							return Object.assign(item, {pk,isNotNull: !item.isNull})
 						})
 					}
                     that.sourceData = data;
@@ -183,17 +254,31 @@ export default {
             if(!(data.validate)){
                 return self_.loading = false;
             }
-            if(!this.pkId){
-				self_.$message.success("不能没有主键");
+			let formData = data.formData;
+			if(!formData.dsName){
+				this.$util.message().warning("操作提示","请选择数据源!");
 				return self_.loading = false;
 			}
-            let formData = data.formData;
+            if(!this.pkId){
+				this.$util.message().warning("操作提示","不能没有主键!");
+				return self_.loading = false;
+			}
+            let temp = true;
 			formData.columns = this.columnList.map(item=>{
+				if(!item.comment || !item.name || !item.fieldName || !item.columnType){
+					temp = false;
+				}
 				return Object.assign(item, {
 					isNull: item.isNotNull ? 0 : 1,
-					isPk: this.pkId == item.fieldName ? 1 : 0,
+					isPk: this.pkId == item.pk ? 1 : 0,
 				})
 			});
+			if(!temp){
+				this.$util.message().warning("操作提示","备注、字段名、属性名不能为空!");
+				return self_.loading = false;
+			}
+			if(!formData.tableName)
+				formData.tableName = formData.alias;
             // 调用保存表单
             let api = "/form/bo/entity/save";
             rxAjax.postJson(api, formData).then(({success,data})=>{
@@ -218,15 +303,32 @@ export default {
 			let params = {dsAlias:this.sourceData.dsAlias, tbName};
 			rxAjax.postForm(api, params).then(data=>{
 				this.columnList = data.columnList.map(item=>{
-					if(item.isPk){
-						this.pkId = item.fieldName;
-					}
-					return Object.assign(item, {
-						isNotNull: !item.isNull
-					})
+					let pk = uuid.getUuId(18)
+					if(item.isPk) this.pkId = pk;
+					return Object.assign(item, {pk,isNotNull: !item.isNull})
 				})
 			})
 		},
+		// 参数定义事件
+		paramsEvent(){
+			let self_ = this;
+			let method = {};
+			method.add = ()=>{
+				let pk = uuid.getUuId(18)
+				self_.columnList.push({
+					pk,entId:self_.params.id,isPk:0,isNull:1,
+					comment:"",fieldName:"",name:"",
+					columnType:"VARCHAR",intLen:64,decimalLen:0
+				})
+			}
+			method.remove = (index)=>{
+				let obj = self_.columnList;
+				const newFileList = obj.slice();
+				newFileList.splice(index, 1);
+				self_.columnList = newFileList;
+			}
+			return method;
+		}
     }
 }
 </script>

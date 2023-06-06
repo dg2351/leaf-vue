@@ -37,6 +37,8 @@ Vue.use(AntDesign);
 
 //敏感字符过滤
 import '@/plugins/filters/index';
+// 通用方法
+import "@/plugins/utils/util";
 
 // 子应用单独运行
 new Vue({

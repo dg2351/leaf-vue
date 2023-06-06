@@ -1,5 +1,5 @@
 export default {
-    uuid: function (len, radix) {
+    getUuId: function (len, radix) {
         var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
         var uuid = [], i;
         radix = radix || chars.length;
