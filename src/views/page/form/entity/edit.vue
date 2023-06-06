@@ -36,9 +36,9 @@
 					<div class="p10 bor_a">
 						<a-button-group>
 							<a-button type="primary" icon="plus" @click="paramsEvent().add()">添加</a-button>
-							<a-button type="danger" icon="delete" @click="">删除</a-button>
-							<a-button type="" icon="up" @click="">向上</a-button>
-							<a-button type="" icon="down" @click="">向下</a-button>
+							<a-button type="danger" icon="delete" @click="paramsEvent().removes()">删除</a-button>
+							<a-button type="" icon="up" @click="paramsEvent().up()">向上</a-button>
+							<a-button type="" icon="down" @click="paramsEvent().down()">向下</a-button>
 							<a-button type="primary" @click="onSubmit(true)">保存并生成表单</a-button>
 						</a-button-group>
 					</div>
@@ -47,6 +47,7 @@
 							<div class="p10 bor_a">
 								<a-radio-group name="pkId" v-model="pkId" style="width: 100%">
 									<a-table class="table_a mB20" rowKey="pk"
+											 :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
 											 :columns="columns" :data-source="columnList"
 											 :pagination="false" :locale="{emptyText: '暂无数据'}">
 										<span slot="isPk" slot-scope="text, record, index">
@@ -73,7 +74,7 @@
 										</template>
 										<a-button slot="action" slot-scope="text, record, index"
 												  type="danger" icon="delete"
-												  @click="paramsEvent().remove(index)"/>
+												  @click="paramsEvent().removes(record.pk)"/>
 									</a-table>
 								</a-radio-group>
 							</div>
@@ -115,7 +116,6 @@ const EditableCell = {
 					   v-model="record[itemKey]" :disabled="disabled_" @blur="inputEvent"/>
               <a-select ref="slt" v-if="type=='select'" v-model="record[itemKey]" :options="paramType" :disabled="disabled_"
 						option-filter-prop="children" @change="changeEvent"/>
-              <a-icon type="check" v-if="false" class="editable-cell-icon-check" @click="check"/>
           </div>
       </div>
     `,
@@ -144,7 +144,7 @@ const EditableCell = {
 			}
 		},
 		inputEvent(){
-			if(this.itemKey == 'fieldName'){
+			if(this.itemKey == 'fieldName' && !this.record['name']){
 				let str = String(this.record[this.itemKey]);
 				this.record['name'] = str.toCamelCase();
 			}
@@ -211,7 +211,8 @@ export default {
 				{dataIndex: 'action',key: 'action',title:'操作列',width: '8%',scopedSlots: { customRender: 'action' }},
 			],
 			columnList:[],
-			pkId: null,
+			pkId: null,//主键
+			selectedRowKeys:[],// 选择项
         };
     },
     created() {
@@ -321,13 +322,38 @@ export default {
 					columnType:"VARCHAR",intLen:64,decimalLen:0
 				})
 			}
-			method.remove = (index)=>{
-				let obj = self_.columnList;
-				const newFileList = obj.slice();
-				newFileList.splice(index, 1);
-				self_.columnList = newFileList;
+			method.removes = (pk)=>{
+				let keys = pk ? [pk] : (self_.selectedRowKeys ?? []);
+				self_.columnList = self_.columnList.filter(p=>!keys.includes(p.pk)).map(m=>{return m});
+			}
+			method.up = ()=>{
+				let keys = self_.selectedRowKeys ?? [];
+				let list = JSON.parse(JSON.stringify(self_.columnList));
+				for(let i=0;i<=list.length;i++){
+					let temp = list[i];
+					if(!temp) continue;
+					if(keys.includes(temp.pk) && i > 0){
+						list[i] = list.splice(i - 1, 1, list[i])[0];
+					}
+				}
+				self_.columnList = list;
+			}
+			method.down = ()=>{
+				let keys = self_.selectedRowKeys ?? [];
+				let list = JSON.parse(JSON.stringify(self_.columnList));
+				for(let i=list.length-1;i>=0;i--){
+					let temp = list[i];
+					if(!temp) continue;
+					if(keys.includes(temp.pk) && i != list.length-1){
+						list[i] = list.splice(i + 1, 1, list[i])[0];
+					}
+				}
+				self_.columnList = list;
 			}
 			return method;
+		},
+		onSelectChange(selectedRowKeys){
+			this.selectedRowKeys = selectedRowKeys;
 		}
     }
 }

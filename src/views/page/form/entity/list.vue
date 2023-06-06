@@ -55,7 +55,7 @@ export default {
             sourceData:[],
             // 查询条件
             queryConfig:[
-                {label:"数据源名称",value:null,key:"name",type:"input",placeholder:"请输入您要查找的内容",show:true},
+                {label:"实体名称",value:null,key:"name",type:"input",placeholder:"请输入您要查找的内容",show:true},
             ],
         }
     },
