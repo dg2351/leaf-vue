@@ -19,6 +19,7 @@
                     <template slot="action" slot-scope="text, record, index">
                         <a class="link_a_line" @click="event().edit(record)">编辑</a>
                         <a class="link_a_line" @click="event().del(record)">删除</a>
+						<a class="link_a_line" @click="event().test(record)">预览</a>
                     </template>
                 </a-table>
             </a-tab-pane>
@@ -30,6 +31,7 @@
 import FuncList from "@/plugins/mixin/FuncList";
 import queryParam from "@/component/query/queryParam";
 import rxAjax from '@/assets/js/ajax.js';
+import moment from "moment"
 
 let activeTab = null;
 export default {
@@ -42,8 +44,8 @@ export default {
             activeTab: "",
             tabTypes: [],
             queryParam: {},		// 查询条件
-            showColumns: ['xh','name','alias','action'],
-            showColumnsTitle:['序号','脚本名称','标识名','操作'],
+            showColumns: ['xh','name','alias','updateTime','action'],
+            showColumnsTitle:['序号','名称','标识名','更新时间','操作'],
             widthColumns:{xh:'60px'},
             alignColumns: {xh:'center'},
             slotColumn: ['xh','action'],
@@ -54,8 +56,8 @@ export default {
             sourceData:[],
             // 查询条件
             queryConfig:[
-                {label:"名称",value:null,key:"name",type:"input",placeholder:"请输入您要查找的内容",show:true,style:"width: 400px;"},
-                {label:"标识名",value:null,key:"alias",type:"input",placeholder:"请输入您要查找的内容",show:true,style:"width: 400px;"},
+                {label:"名称",value:null,key:"name",type:"input",placeholder:"请输入您要查找的内容",show:true},
+                {label:"标识名",value:null,key:"alias",type:"input",placeholder:"请输入您要查找的内容",show:true},
             ],
         }
     },
@@ -88,10 +90,14 @@ export default {
          * 加载数据
          */
         loadData(pageIndex){
-            let api = "/system/invokeScript/list";
+            let api = "/form/custom/query/list";
             let params = Object.assign(this.queryParam, {});
             rxAjax.postJson(api, params).then(({success,data})=>{
-                this.sourceData = data;
+                this.sourceData = data.map(map=>{
+                	return Object.assign(map,{
+                		updateTime: moment(map.updateTime).format("YYYY-MM-DD HH:mm:ss"),
+					})
+				});
             })
         },
         /**
@@ -119,6 +125,10 @@ export default {
                     })
                 })
             }
+            method.test = (record)=>{
+				let params = {type:activeTab, id:record?record.id:null}
+				self_.$util.component(self_).event('test', params);
+			}
             return method;
         }
     },

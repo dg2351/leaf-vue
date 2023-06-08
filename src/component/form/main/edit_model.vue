@@ -187,6 +187,8 @@
 						<subBaiduMap v-else-if="item.type==='baiduMap'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 						<!-- 对话弹框 -->
 						<subDialogbox v-else-if="item.type==='dialogbox'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
+						<!-- 自定义插槽 -->
+						<slot :name="item.model" v-else-if="item.type==='slot'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 					</a-form-model-item>
 				</a-col>
 			</a-row>

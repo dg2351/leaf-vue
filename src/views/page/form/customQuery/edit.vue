@@ -1,58 +1,30 @@
 <template>
     <a-spin :spinning="loading">
         <div class="inner_head mB10">
-            <h1>脚本定义</h1>
+            <h1>自定义查询</h1>
         </div>
-        <div class="p10 bor_a">
+        <div class="p10 bor_a" v-if="!formConfig.loading">
             <!---->
-            <a-form-model :label-col="{ span: 8 }" :wrapper-col="{ span: 12 }">
-                <a-row>
-                    <a-col :span="24" v-for="item in formTab1">
-                        <template v-if="item.model == 'config'">
-                            <a-form-model-item :label="item.label" :label-col="{span: 4 }">
-                                <div class="tableForm">
-                                    <a-button type="primary" class="mL10" @click="paramsEvent().add()">新增参数</a-button>
-                                    <a-button class="mL10">删除参数</a-button>
-                                    <a-button class="mL10">向上</a-button>
-                                    <a-button class="mL10">向下</a-button>
-                                    <a-button type="primary" class="mL10" @click="onTest()">测试</a-button>
-                                    <a-table class="tableForm" :columns="columns" :dataSource="dataSource" bordered
-                                             :pagination="false" :locale="{emptyText: '暂无数据'}">
-                                        <template v-for="item in [
-                                                        {name:'paramName',type:'input'},
-                                                        {name:'paramType',type:'select'},
-                                                        {name:'remark',type:'input'},
-                                                        {name:'value',type:'input'},
-                                                    ]" :slot="item.name" slot-scope="text, record">
-                                            <editable-cell :record="record" :type="item.type" :itemKey="item.name"/>
-                                        </template>
-                                        <a-button slot="action" slot-scope="text, record, index"
-                                                  @click="paramsEvent().remove(index)">移除</a-button>
-                                    </a-table>
-                                </div>
-                            </a-form-model-item>
-                        </template>
-                        <template v-else></template>
-                    </a-col>
-                </a-row>
-            </a-form-model>
-            <!---->
-            <form_model v-if="!formConfig.loading" ref="formModel" :sourceData="sourceData" :formConfig="formConfig"/>
+			<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig">
+				<!--弹框-->
+				<template #dsAlias>
+					<dbModal ref="dbModal" :alias="sourceData.dsAlias" @init="v=>{sourceData.dsName = v?.name}"
+							 @callBack="v=>{sourceData.dsName = v.name;sourceData.dsAlias = v.alias}"/>
+					<a-input-search v-model="sourceData.dsName" enter-button :readOnly="true"
+									@search="$refs['dbModal'].openModal(getValue(sourceData,'dsAlias'))"/>
+				</template>
+			</form_model>
         </div>
         <div class="textCenter mB20">
             <a-button type="primary" class="mR15" @click="onSubmit(true)">提交</a-button>
             <a-button class="mR15"  @click="back('list')">返回</a-button>
         </div>
-        <!--弹框-->
-        <a-modal title="测试结果" :visible="modalConfig.visible" :width="950" :height="700"
-                 @cancel="modalConfig.visible=false" :footer="null">
-            <a-textarea class="content_wrap" :readOnly="true" :auto-size="{minRows: 5,maxRows: 30}" v-model="modalConfig.content"/>
-        </a-modal>
     </a-spin>
 </template>
 
 <script>
 import form_model from "@/component/form/form_model";
+import dbModal from "@/views/page/form/entity/modal/dbModal";
 import rxAjax from "@/assets/js/ajax";
 
 const EditableCell = {
@@ -112,7 +84,7 @@ export default {
     props: {
         params: Object,
     },
-    components: {form_model, EditableCell},
+    components: {form_model, dbModal, EditableCell},
     computed: {
         routerParams() {
             return this.$route.query;
@@ -121,7 +93,7 @@ export default {
     data() {
         return {
             loading:false,
-            sourceData:{},
+            sourceData:{dsAlias:'',dsName:'',sql:''},
             formConfig: {
                 visible: false,
                 loading: true,
@@ -146,25 +118,66 @@ export default {
                         ],
                     },
                     {
-                        span:24, labelCol:4,
-                        label: "说明",
-                        type: "textarea",
-                        model: "descp",
-                        maxLength: 200,
+                        label: "分类",
+                        type: "select",
+                        model: "treeId",
+						data:[],
+						initFunction: function (item) {
+							item.data = []
+						},
                     },
-                    {
-                        span:24, labelCol:4,
-                        label: "Groovy脚本",
-                        type: "codemirror",
-                        model: "content",
-                        language: "java"
-                    },
+					{
+						label: "数据源选择",
+						type: "slot",
+						model: "dsAlias",
+					},
+					{
+						span:24, labelCol:4,
+						label: "SQL",
+						type: "codemirror",
+						model: "sql",
+						language: "sql"
+					},
+					{
+						label: "是否分页",
+						type: "radio",
+						model: "isPage",
+						data:[],
+						initFunction: function (item) {
+							item.data = [{label:'是',value:1},{label:'否',value:0}]
+						},
+					},
+					{
+						label: "分页大小",
+						type: "input",
+						model: "pageSize",
+						maxLength: 20,
+						rule: [
+							{required: false, message: '该输入项不能为空', trigger: 'change'},
+							{pattern: /^[0-9]*?$/, message: '请输入数字'},
+						],
+					},
+					{
+						label: "是否缓存",
+						type: "radio",
+						model: "isCache",
+						data:[],
+						initFunction: function (item) {
+							item.data = [{label:'是',value:1},{label:'否',value:0}]
+						},
+					},
+					{
+						label: "缓存时间",
+						type: "input",
+						model: "cacheTime",
+						maxLength: 4,
+						rule: [
+							{required: false, message: '该输入项不能为空', trigger: 'change'},
+							{pattern: /^[0-9]*?$/, message: '请输入数字'},
+						],
+					},
                 ],
             },
-            //
-            formTab1: [
-                {label:'参数定义',model:'config'},
-            ],
             columns:[
                 {dataIndex: 'paramName',key: 'paramName',title:'参数名',width: '20%',scopedSlots: { customRender: 'paramName' }},
                 {dataIndex: 'paramType',key: 'paramType',title:'类型',width: '20%',scopedSlots: { customRender: 'paramType' }},
@@ -173,26 +186,28 @@ export default {
                 {dataIndex: 'action',key: 'action',title:'操作列',width: '15%',scopedSlots: { customRender: 'action' }},
             ],
             dataSource:[],
-            //
-            modalConfig:{
-                visible: false,content: "",
-            }
         };
     },
     created() {
         this.loadData(this.params.id);
     },
     methods:{
+		back(){
+			this.$util.component(this).event('list');
+		},
+		getValue(data, key){
+			return data ? (data[key] ?? '') : '';
+		},
         loadData(id){
             let that = this;
             if(id){
-                let api = "/system/invokeScript/info";
+                let api = "/form/custom/query/info";
                 let params = Object.assign({id:id});
                 rxAjax.get(api, params).then(({success,data})=>{
-                    if(data.params != null){
-                        this.dataSource = JSON.parse(data.params);
-                    }
-                    that.sourceData = data;
+                    that.sourceData = Object.assign(data, {
+						dsName: data.dsName??'',
+						dsAlias: data.dsAlias??'',
+					});
                     that.formConfig.loading = false
                 })
             } else{
@@ -209,13 +224,8 @@ export default {
                 return self_.loading = false;
             }
             let formData = data.formData;
-            let {dataSource} = this;
-            if(dataSource.length > 0){
-                formData.params = JSON.stringify(dataSource);
-            }
-
             // 调用保存表单
-            let api = "/system/invokeScript/save";
+            let api = "/form/custom/query/save";
             rxAjax.postJson(api, formData).then(({success,data})=>{
                 self_.loading = false;
                 if(success){
@@ -227,28 +237,6 @@ export default {
                     self_.back();
                 }
             });
-        },
-        back(){
-            this.$util.component(this).event('list');
-        },
-        onTest(){
-            let data = this.$refs['formModel'].formMethods().getData(false);
-            let formData = data.formData;
-            let script = formData.content;
-            if(!script){
-                return;
-            }
-            let api = "/system/invokeScript/test";
-            let paramsConfig = this.dataSource ?? [];
-            let params = Object.assign({
-                params: paramsConfig,
-                script: script,
-            });
-            rxAjax.postJson(api, params).then(res=>{
-                Object.assign(this.modalConfig, {
-                    visible: true, content: JSON.stringify(res)
-                })
-            })
         },
         // 参数定义事件
         paramsEvent(){
@@ -272,49 +260,4 @@ export default {
 </script>
 
 <style scoped lang="less">
-.tableForm{
-    border: 1px solid #ddd;
-}
-.editable-cell {
-    position: relative;
-}
-
-.editable-cell-input-wrapper,
-.editable-cell-text-wrapper {
-    padding-right: 24px;
-}
-
-.editable-cell-text-wrapper {
-    padding: 5px 24px 5px 5px;
-}
-
-.editable-cell-icon,
-.editable-cell-icon-check {
-    position: absolute;
-    right: 0;
-    width: 20px;
-    cursor: pointer;
-}
-
-.editable-cell-icon {
-    line-height: 18px;
-    display: none;
-}
-
-.editable-cell-icon-check {
-    line-height: 28px;
-}
-
-.editable-cell:hover .editable-cell-icon {
-    display: inline-block;
-}
-
-.editable-cell-icon:hover,
-.editable-cell-icon-check:hover {
-    color: #108ee9;
-}
-
-.editable-add-btn {
-    margin-bottom: 8px;
-}
 </style>

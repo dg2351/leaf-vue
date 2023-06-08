@@ -51,6 +51,8 @@ export default {
             sourceData:[],
 			pagination: {
 				total: 0, // 总数，必须先有
+				current:1,
+				pageSize:5,
 				defaultCurrent: 1, // 默认当前页数
 				defaultPageSize: 5, // 默认当前页显示数据的大小
 				showSizeChanger: true,
@@ -61,14 +63,14 @@ export default {
 					return `共 ${val} 条`; // 显示总数
 				},
 				onShowSizeChange: (current, pageSize) => {
-					this.pagination.defaultCurrent = current;
-					this.pagination.defaultPageSize = pageSize;
+					this.pagination.defaultCurrent = this.pagination.current = current;
+					this.pagination.defaultPageSize = this.pagination.pageSize = pageSize;
 					this.loadData(current); //显示列表的接口名称
 				},
 				// 改变每页数量时更新显示
 				onChange: (current, size) => {
-					this.pagination.defaultCurrent = current;
-					this.pagination.defaultPageSize = size;
+					this.pagination.defaultCurrent = this.pagination.current = current;
+					this.pagination.defaultPageSize = this.pagination.pageSize = size;
 					this.loadData(current);
 				},
 			},
@@ -117,6 +119,8 @@ export default {
         visible:{
             async handler(){
                 if(this.visible){
+					this.pagination.defaultCurrent = this.pagination.current = 1;
+					this.pagination.defaultPageSize = this.pagination.pageSize = 5;
                     this.loadData();
                 }
             },deep: true

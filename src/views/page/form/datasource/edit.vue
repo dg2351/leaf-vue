@@ -303,13 +303,12 @@ export default {
                 self_.loading = false;
                 if(success){
                     self_.$message.success("保存成功");
-                } else{
-                    self_.$message.warning("保存失败");
+					if(validate) self_.back();
                 }
-                if(validate){
-                    self_.back();
-                }
-            });
+            }).catch(err=>{
+				self_.loading = false;
+				self_.$message.success("网络错误");
+			});
         },
         back(){
             this.$util.component(this).event('list');

@@ -4,12 +4,20 @@
 		<view_model v-if="formConfig.disabled"
 					:alias="alias" :className="className"
 					:sourceData="sourceData"
-					:formConfig="formConfig"></view_model>
+					:formConfig="formConfig">
+			<template :slot="val.model" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+				<slot :name="val.model"/>
+			</template>
+		</view_model>
 		<edit_model v-if="!formConfig.disabled"
 					ref="edit_model"
 					:alias="alias" :className="className"
 					:sourceData="sourceData"
-					:formConfig="formConfig"></edit_model>
+					:formConfig="formConfig">
+			<template :slot="val.model" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+				<slot :name="val.model"/>
+			</template>
+		</edit_model>
 	</a-spin>
 </template>
 
@@ -67,7 +75,7 @@ export default {
 	created() {
 		this.formConfig.data.forEach(item => {
 			// 选择框初始化方法
-			if(['select','selectTags'].includes(item.type)){
+			if(['radio','select','selectTags'].includes(item.type)){
 				// 初始化方法
 				if(!item.searchFunction)
 					item.searchFunction = function () {}

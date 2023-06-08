@@ -26,6 +26,7 @@ import rxAjax from '@/assets/js/ajax.js';
 
 export default {
     name: "dbModal",
+	props:['alias'],
     mixins: [FuncList],
     data() {
         return {
@@ -59,7 +60,14 @@ export default {
         this.initStatusMap();
         this.setColumnsByTab();
     },
-    methods:{
+	async mounted() {
+    	if(this.alias){
+			await this.loadData(1);
+			let data = this.sourceData.filter(p=>p.alias == this.alias);
+			this.$emit("init", data?.[0] ?? {});
+		}
+	},
+	methods:{
         paginationLoadData(pageIndex){
             this.loadData(pageIndex);
         },
