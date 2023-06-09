@@ -48,13 +48,13 @@
 								<a-radio-group name="pkId" v-model="pkId" style="width: 100%">
 									<a-table class="table_a mB20" rowKey="pk"
 											 :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-											 :columns="columns" :data-source="columnList"
+											 :columns="columns" :data-source="columnList.filter(p=>p.type!='del')"
 											 :pagination="false" :locale="{emptyText: '暂无数据'}">
 										<span slot="isPk" slot-scope="text, record, index">
-											<a-radio :value="record.pk"/>
+											<a-radio :value="record.pk" @change="paramsEvent().upd(record)"/>
 										</span>
 										<span slot="isNull" slot-scope="text, record, index">
-											<a-checkbox v-model="record.isNotNull"/>
+											<a-checkbox v-model="record.isNotNull" @change="paramsEvent().upd(record)"/>
 										</span>
 										<template v-for="item in [
                                                         {name:'comment',type:'input'},
@@ -70,7 +70,7 @@
 										</template>
 										<template slot="decimalLen" slot-scope="text, record">
 											<editable-cell :record="record" type="input" itemKey="decimalLen"
-														   :disabled_="!['DECIMAL'].includes(record.columnType)"/>
+														   :disabled_="!['decimal'].includes(record.columnType)"/>
 										</template>
 										<a-button slot="action" slot-scope="text, record, index"
 												  type="danger" icon="delete"
@@ -97,7 +97,7 @@ import tableModal from "@/views/page/form/entity/modal/tableModal";
 import rxAjax from "@/assets/js/ajax";
 import uuid from "@/plugins/utils/uuid"
 
-const specialType = ['INT','TEXT','LONGTEXT','MEDIUMTEXT','DATETIME'];
+const specialType = ['int','text','longtext','datetime'];
 const paramType = [
 	{label:'varchar',value:'varchar'},
 	{label:'int',value:'int'},
@@ -138,15 +138,24 @@ const EditableCell = {
 			if(specialType.includes(v)){
 				this.record.intLen = 0;
 			}
-			if(!['DECIMAL'].includes(v)){
+			if(['varchar'].includes(v)){
+				console.log(this.record.intLen)
+				this.record.intLen = this.record.intLen > 0 ? this.record.intLen : 64;
+				this.record.decimalLen = 0;
+			} else if(['decimal'].includes(v)){
+				this.record.intLen = this.record.intLen > 0 ? this.record.intLen : 8;
+				this.record.decimalLen = 2;
+			} else{
 				this.record.decimalLen = 0;
 			}
+			if(this.record.type != 'add')this.record.type = "upd";
 		},
 		inputEvent(){
 			if(this.itemKey == 'fieldName' && !this.record['name']){
 				let str = String(this.record[this.itemKey]);
 				this.record['name'] = str.toCamelCase();
 			}
+			if(this.record.type != 'add')this.record.type = "upd";
 		}
 	},
 };
@@ -235,7 +244,11 @@ export default {
 						this.columnList = data.columns.map(item=>{
 							let pk = item.id;
 							if(item.isPk) this.pkId = pk;
-							return Object.assign(item, {pk,isNotNull: !item.isNull})
+							return Object.assign(item, {
+								pk,
+								isNotNull: !item.isNull,
+								originName: item.fieldName,
+							})
 						})
 					}
                     that.sourceData = data;
@@ -264,7 +277,7 @@ export default {
 				return self_.loading = false;
 			}
             let temp = true;
-			formData.columns = this.columnList.map(item=>{
+			formData.columnList = this.columnList.map(item=>{
 				if(!item.comment || !item.name || !item.fieldName || !item.columnType){
 					temp = false;
 				}
@@ -277,21 +290,20 @@ export default {
 				this.$util.message().warning("操作提示","备注、字段名、属性名不能为空!");
 				return self_.loading = false;
 			}
-			if(!formData.tableName)
-				formData.tableName = formData.alias;
             // 调用保存表单
             let api = "/form/bo/entity/save";
             rxAjax.postJson(api, formData).then(({success,data})=>{
                 self_.loading = false;
                 if(success){
                     self_.$message.success("保存成功");
-                } else{
-                    self_.$message.warning("保存失败");
+					if(validate){
+						self_.back();
+					}
                 }
-                if(validate){
-                    self_.back();
-                }
-            });
+            }).catch(err=>{
+				self_.loading = false;
+				self_.$message.warning("保存失败");
+			});
         },
 		// 获取列信息
 		getByName(tbName) {
@@ -317,14 +329,19 @@ export default {
 				let pk = uuid.getUuId(18)
 				self_.columnList.push({
 					pk,entId:self_.params.id,isPk:0,isNull:1,
-					comment:"",fieldName:"",name:"",
+					comment:"",fieldName:"",name:"",type:"add",
 					columnType:"VARCHAR",intLen:64,decimalLen:0
 				})
 			}
 			method.removes = (pk)=>{
 				let keys = pk ? [pk] : (self_.selectedRowKeys ?? []);
-				self_.columnList = self_.columnList.filter(p=>!keys.includes(p.pk)).map(m=>{return m});
+				self_.columnList = self_.columnList.map(m=>{
+					if(keys.includes(m.pk))
+						m['type'] = 'del';
+					return m
+				});
 			}
+			// 上移
 			method.up = ()=>{
 				let keys = self_.selectedRowKeys ?? [];
 				let list = JSON.parse(JSON.stringify(self_.columnList));
@@ -337,6 +354,7 @@ export default {
 				}
 				self_.columnList = list;
 			}
+			// 下移
 			method.down = ()=>{
 				let keys = self_.selectedRowKeys ?? [];
 				let list = JSON.parse(JSON.stringify(self_.columnList));
@@ -348,6 +366,10 @@ export default {
 					}
 				}
 				self_.columnList = list;
+			}
+			method.upd = (record)=>{
+				if(record.type != 'add')
+					record.type = "upd"
 			}
 			return method;
 		},
