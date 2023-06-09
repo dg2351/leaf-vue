@@ -99,14 +99,13 @@ import uuid from "@/plugins/utils/uuid"
 
 const specialType = ['INT','TEXT','LONGTEXT','MEDIUMTEXT','DATETIME'];
 const paramType = [
-	{label:'VARCHAR',value:'VARCHAR'},
-	{label:'CHAR',value:'CHAR'},
-	{label:'INT',value:'INT'},
-	{label:'DECIMAL',value:'DECIMAL'},
-	{label:'TEXT',value:'TEXT'},
-	{label:'LONGTEXT',value:'LONGTEXT'},
-	{label:'MEDIUMTEXT',value:'MEDIUMTEXT'},
-	{label:'DATETIME',value:'DATETIME'},
+	{label:'varchar',value:'varchar'},
+	{label:'int',value:'int'},
+	{label:'decimal',value:'decimal'},
+	{label:'float',value:'float'},
+	{label:'text',value:'text'},
+	{label:'longtext',value:'longtext'},
+	{label:'datetime',value:'datetime'},
 ];
 const EditableCell = {
 	template: `
