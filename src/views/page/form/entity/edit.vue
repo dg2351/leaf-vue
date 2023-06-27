@@ -139,7 +139,6 @@ const EditableCell = {
 				this.record.intLen = 0;
 			}
 			if(['varchar'].includes(v)){
-				console.log(this.record.intLen)
 				this.record.intLen = this.record.intLen > 0 ? this.record.intLen : 64;
 				this.record.decimalLen = 0;
 			} else if(['decimal'].includes(v)){
@@ -330,7 +329,7 @@ export default {
 				self_.columnList.push({
 					pk,entId:self_.params.id,isPk:0,isNull:1,
 					comment:"",fieldName:"",name:"",type:"add",
-					columnType:"VARCHAR",intLen:64,decimalLen:0
+					columnType:"varchar",intLen:64,decimalLen:0
 				})
 			}
 			method.removes = (pk)=>{

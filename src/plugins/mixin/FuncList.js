@@ -103,6 +103,10 @@ const FuncList = {
 							key:showColumnKey,
 							dataIndex:showColumnKey,
 						});
+						// 序号
+						if(showColumnKey == 'xh'){
+							target.customRender = (text, record, index)=>`${index + 1}`;
+						}
 						// 获取宽度
 						let width = null
 						Object.keys(widthColumns).filter(key=>key===showColumnKey).forEach(key=>{width = widthColumns[key]});

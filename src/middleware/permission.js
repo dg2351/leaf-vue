@@ -17,13 +17,6 @@ router.beforeEach((to, from, next) => {
 			if (store.state.appSetting.routers.length > 0) {
 				next()
 			} else {
-				if (to.params && to.params.appKey) {
-					//设置应用标识
-					store.state.appSetting.appKey = to.params.appKey;
-				} else {
-					var ary = to.path.split("/");
-					store.state.appSetting.appKey = ary[1];
-				}
 				store.dispatch('buildRoutes').then((routers) => {
 					// 把已获取到的路由菜单加入到路由表中
 					for (var i = 0; i < routers.length; i++) {
