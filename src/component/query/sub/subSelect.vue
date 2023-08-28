@@ -5,7 +5,7 @@
 			  :options="item.data"
 			  :disabled="item.disabled"
 			  :getPopupContainer="triggerNode => {return triggerNode.parentNode || document.body;}"
-			  @change="item.changeFunction"/>
+			  @change="v=>item.changeFunction(v, item)"/>
 </template>
 
 <script>

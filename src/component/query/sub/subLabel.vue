@@ -38,3 +38,34 @@ export default {
 	}
 }
 </script>
+
+<style scoped lang="less">
+.cho_span_box{
+	padding-right: 70px;
+	position: relative;
+	height: 32px;
+	overflow: hidden;
+	.more{
+		position: absolute;
+		right: 20px;
+		color: #5991f7;
+		cursor: pointer;
+	}
+}
+.cho_span_box.more_box{
+	height: auto;
+}
+.cho_span{
+	>span{
+		display: inline-block;
+		margin-right: 10px;
+		line-height: 20px;
+		padding: 0px 10px;
+		cursor: pointer;
+	}
+	span.on{
+		background: #5991f7;
+		color: #fff;
+	}
+}
+</style>

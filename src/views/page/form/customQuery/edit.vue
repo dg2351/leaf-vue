@@ -4,16 +4,26 @@
             <h1>自定义查询</h1>
         </div>
         <div class="p10 bor_a" v-if="!formConfig.loading">
+			<a-tabs class="nav_big1" v-model="activeTab">
+				<a-tab-pane key="base" tab="基本配置">
+					<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig">
+						<!--弹框-->
+						<template #dsAlias>
+							<dbModal ref="dbModal" :alias="sourceData.dsAlias" @init="v=>{sourceData.dsName = v?.name}"
+									 @callBack="v=>{sourceData.dsName = v.name;sourceData.dsAlias = v.alias}"/>
+							<a-input-search v-model="sourceData.dsName" enter-button :readOnly="true"
+											@search="$refs['dbModal'].openModal(getValue(sourceData,'dsAlias'))"/>
+						</template>
+					</form_model>
+				</a-tab-pane>
+				<a-tab-pane key="result" tab="返回字段">
+					<editList ref="resultEdit" :columns="resultColumns" :data="sourceData.resultField"/>
+				</a-tab-pane>
+				<a-tab-pane key="where" tab="条件字段">
+					<editList ref="whereEdit" :columns="whereColumns" :data="sourceData.whereField"/>
+				</a-tab-pane>
+			</a-tabs>
             <!---->
-			<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig">
-				<!--弹框-->
-				<template #dsAlias>
-					<dbModal ref="dbModal" :alias="sourceData.dsAlias" @init="v=>{sourceData.dsName = v?.name}"
-							 @callBack="v=>{sourceData.dsName = v.name;sourceData.dsAlias = v.alias}"/>
-					<a-input-search v-model="sourceData.dsName" enter-button :readOnly="true"
-									@search="$refs['dbModal'].openModal(getValue(sourceData,'dsAlias'))"/>
-				</template>
-			</form_model>
         </div>
         <div class="textCenter mB20">
             <a-button type="primary" class="mR15" @click="onSubmit(true)">提交</a-button>
@@ -26,65 +36,14 @@
 import form_model from "@/component/form/form_model";
 import dbModal from "@/views/page/form/entity/modal/dbModal";
 import rxAjax from "@/assets/js/ajax";
+import editList from "@/views/page/form/customQuery/component/editList";
 
-const EditableCell = {
-    template: `
-      <div class="editable-cell">
-          <div v-if="editable" class="editable-cell-input-wrapper">
-              <a-input ref="ipt" v-if="type=='input'" style="width: calc(100% - 0px)" v-model="record[itemKey]"
-                       @pressEnter="check" @blur="check"/>
-              <a-select ref="slt" v-if="type=='select'" v-model="record[itemKey]" :options="paramType" option-filter-prop="children"
-                       @pressEnter="check" @blur="check"/>
-              <a-icon type="check" v-if="false" class="editable-cell-icon-check" @click="check"/>
-          </div>
-          <div v-else class="editable-cell-text-wrapper" @click="edit">
-              <a-icon v-if="type=='input'" type="edit" class="editable-cell-icon" @click="edit" /> {{ record[itemKey] }}
-          </div>
-      </div>
-    `,
-    props: {
-        record: Object,
-        itemKey:String,
-        type: String,
-    },
-    data() {
-        return {
-            editable: false,
-            paramType:[
-                {label:'字符串',value:'string'},
-                {label:'整形',value:'int'},
-                {label:'长整形',value:'long'},
-                {label:'数字',value:'double'},
-                {label:'布尔型',value:'boolean'},
-                {label:'日期型',value:'date'},
-                {label:'对象型',value:'obj'},
-            ],
-        };
-    },
-    methods: {
-        check() {
-            this.editable = false;
-        },
-        edit() {
-            this.editable = true;
-            if(this.type == 'input'){
-                this.$nextTick(() => {
-                    this.$refs.ipt.focus();
-                })
-            } else if(this.type == 'select'){
-                this.$nextTick(() => {
-                    this.$refs.slt.focus();
-                })
-            }
-        },
-    },
-};
 export default {
     name: "edit",
     props: {
         params: Object,
     },
-    components: {form_model, dbModal, EditableCell},
+    components: {form_model, dbModal, editList},
     computed: {
         routerParams() {
             return this.$route.query;
@@ -93,6 +52,8 @@ export default {
     data() {
         return {
             loading:false,
+			activeTab:"base",
+			// base
             sourceData:{dsAlias:'',dsName:'',sql:''},
             formConfig: {
                 visible: false,
@@ -178,14 +139,22 @@ export default {
 					},
                 ],
             },
-            columns:[
-                {dataIndex: 'paramName',key: 'paramName',title:'参数名',width: '20%',scopedSlots: { customRender: 'paramName' }},
-                {dataIndex: 'paramType',key: 'paramType',title:'类型',width: '20%',scopedSlots: { customRender: 'paramType' }},
-                {dataIndex: 'remark',key: 'remark',title:'描述',width: '25%',scopedSlots: { customRender: 'remark' }},
-                {dataIndex: 'value',key: 'value',title:'值',width: '20%',scopedSlots: { customRender: 'value' }},
-                {dataIndex: 'action',key: 'action',title:'操作列',width: '15%',scopedSlots: { customRender: 'action' }},
-            ],
             dataSource:[],
+			//
+			resultColumns:[
+				{dataIndex: 'id', title:'序号',width:"65px",align: "center"},
+				{dataIndex: 'comment',title:'字段注解',width:"255px",default:'',align: "center",scopedSlots: { customRender: 'comment' }},
+				{dataIndex: 'fieldName',title:'字段名',width:"255px",default:'',align: "center",scopedSlots: { customRender: 'fieldName' }},
+				{dataIndex: 'renderType',title:'字段渲染',default:'',align: "center",scopedSlots: { customRender: 'renderType' }},
+			],
+			//
+			whereColumns:[
+				{dataIndex: 'id', title:'序号',width:"65px",align: "center"},
+				{dataIndex: 'comment',title:'字段注解',default:'',align: "center",scopedSlots: { customRender: 'comment' }},
+				{dataIndex: 'fieldName',title:'字段名',default:'',align: "center",scopedSlots: { customRender: 'fieldName' }},
+				{dataIndex: 'columnType',title:'数据类型',width:"120px",default:'varchar',align: "center",scopedSlots: { customRender: 'columnType' }},
+				{dataIndex: 'valueSource',title:'来源',width:"85px",default:'param',align: "center"},
+			],
         };
     },
     created() {
@@ -207,6 +176,8 @@ export default {
                     that.sourceData = Object.assign(data, {
 						dsName: data.dsName??'',
 						dsAlias: data.dsAlias??'',
+						resultField : data.resultField ? JSON.parse(data.resultField) : [],
+						whereField : data.whereField ? JSON.parse(data.whereField) : [],
 					});
                     that.formConfig.loading = false
                 })
@@ -224,6 +195,28 @@ export default {
                 return self_.loading = false;
             }
             let formData = data.formData;
+            formData['sqlBuildType'] = "freeMarkerSql";
+			{// 字段处理
+				if(!this.$refs['resultEdit']){
+					delete formData['resultField'];
+					// self_.loading = false;
+					// return self_.activeTab = "result";
+				} else{
+					let resultField = this.$refs['resultEdit'].getParam();
+					resultField.forEach((item,i)=>{Object.assign(item,{id:(i+1)})})
+					formData['resultField'] = JSON.stringify(resultField);
+				}
+
+				if(!this.$refs['whereEdit']){
+					delete formData['whereField'];
+					// self_.loading = false;
+					// return self_.activeTab = "where";
+				} else{
+					let whereField = this.$refs['whereEdit'].getParam();
+					whereField.forEach((item,i)=>{Object.assign(item,{id:(i+1)})})
+					formData['whereField'] = JSON.stringify(whereField);
+				}
+			}
             // 调用保存表单
             let api = "/form/custom/query/save";
             rxAjax.postJson(api, formData).then(({success,data})=>{
@@ -238,23 +231,6 @@ export default {
                 }
             });
         },
-        // 参数定义事件
-        paramsEvent(){
-            let self_ = this;
-            let method = {};
-            method.add = ()=>{
-                self_.dataSource.push({
-                    paramName:"",paramType:'string',remark:"",value:""
-                })
-            }
-            method.remove = (index)=>{
-                let obj = self_.dataSource;
-                const newFileList = obj.slice();
-                newFileList.splice(index, 1);
-                self_.dataSource = newFileList;
-            }
-            return method;
-        }
     }
 }
 </script>

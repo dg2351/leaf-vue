@@ -5,7 +5,8 @@
 				:options="item.data"
 				:change-on-select="item.changeOnSelect"
 				:field-names="{ label: 'label', value: 'label', children: 'children' }"
-				:getPopupContainer="triggerNode => {return triggerNode.parentNode || document.body;}"/>
+				:getPopupContainer="triggerNode => {return triggerNode.parentNode || document.body;}"
+				@change="v=>item.changeFunction(v, item, queryParam)"/>
 </template>
 
 <script>

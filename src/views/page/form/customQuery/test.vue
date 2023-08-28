@@ -8,7 +8,7 @@
 			<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig"></form_model>
 			<div class="textCenter mB20">
 				<a-button type="primary" icon="search" class="mR15" @click="onSubmit(true)">查询</a-button>
-				<a-button class="mR15"  @click="">重置</a-button>
+				<a-button class="mR15"  @click="resetParams">重置</a-button>
 				<a-button class="mR15"  @click="back('list')">返回</a-button>
 			</div>
 			<h3>返回json数据：</h3>
@@ -35,19 +35,13 @@ export default {
     data() {
         return {
             loading:false,
+			alias:"",
             sourceData:{},
             formConfig: {
                 visible: false,
                 loading: true,
                 disabled: false,
-                data: [
-                    {
-                        label: "名称",
-                        type: "input",
-                        model: "name",
-                        maxLength: 20,
-                    },
-                ],
+                data: [],
             },
 			outputData:"",
         };
@@ -60,18 +54,28 @@ export default {
 			this.$util.component(this).event('list');
 		},
         loadData(id){
-            let that = this;
+            let self_ = this;
             if(id){
                 let api = "/form/custom/query/info";
                 let params = Object.assign({id:id});
                 rxAjax.get(api, params).then(({success,data})=>{
-                    that.sourceData = data;
-                    that.formConfig.loading = false
+					self_.alias = data.alias;
+					let whereField = data.whereField?JSON.parse(data.whereField) : [];
+					if(whereField.length > 0){
+						whereField.forEach(item=>{
+							self_.formConfig.data.push({type: "input",label: item.comment,model: item.fieldName})
+						})
+					}
+					self_.formConfig.loading = false
                 })
             } else{
-                that.formConfig.loading = false
+				self_.formConfig.loading = false
             }
         },
+		resetParams(){
+			this.sourceData = {};
+			this.onSubmit(true);
+		},
         // 提交
         onSubmit(validate){
             let self_ = this;
@@ -82,8 +86,8 @@ export default {
                 return self_.loading = false;
             }
             // 自定义查询
-			let sqlKey = this.sourceData.alias;
-			let params = {id:123,name:"hello"};
+			let sqlKey = this.alias;
+			let params = {...data.formData};
             rxAjax.postForm("/form/custom/query/queryForJson_"+sqlKey, {
             	params: JSON.stringify(params)
 			}).then(({success,data})=>{

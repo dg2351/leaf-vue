@@ -4,6 +4,7 @@
 			<a-form-item v-if="checkShow(item)" :label="item.label" style="width: 100%">
 				<subInput v-if="item.type=='input'" :item="item" :query-param="queryParam"/>
 				<subSelect v-else-if="item.type=='select'" :item="item" :query-param="queryParam"/>
+				<subSelectTree v-else-if="item.type=='subSelectTree'" :item="item" :query-param="queryParam"/>
 				<subCheckbox v-else-if="item.type=='checkbox'" :item="item" :query-param="queryParam"/>
 				<subRadio v-else-if="item.type=='radio'" :item="item" :query-param="queryParam"/>
 				<subCascader v-else-if="item.type=='cascader'" :item="item" :query-param="queryParam"/>
@@ -38,6 +39,7 @@
 <script>
 import subInput from "@/component/query/sub/subInput";
 import subSelect from "@/component/query/sub/subSelect";
+import subSelectTree from "@/component/query/sub/subSelectTree";
 import subRadio from "@/component/query/sub/subRadio";
 import subCheckbox from "@/component/query/sub/subCheckbox";
 import subCascader from "@/component/query/sub/subCascader";
@@ -98,7 +100,7 @@ export default {
 			}
 		},
 	},
-	components: {subInput, subSelect, subRadio, subCheckbox, subCascader, subLabel, subDatetime, subNumber},
+	components: {subInput, subSelect, subSelectTree, subRadio, subCheckbox, subCascader, subLabel, subDatetime, subNumber},
 	computed: {},
 	data() {
 		return {
@@ -128,9 +130,19 @@ export default {
 					item.children.forEach(children=>{
 						if(children.initFunction) children.initFunction(children);
 						params[children.key] = children.value;
+
+						if(['select','selectTree','radio','cascader'].includes(children.type)){// 初始化方法
+							if(!children.changeFunction)
+								children.changeFunction = function () {}
+						}
 					})
 				} else{
 					params[item.key] = item.value;
+				}
+
+				if(['select','selectTree','radio','cascader'].includes(item.type)){// 初始化方法
+					if(!item.changeFunction)
+						item.changeFunction = function () {}
 				}
 			})
 			if(callback)
