@@ -15,6 +15,7 @@
 					<template v-for="chrld in item.children">
 						<subInput v-if="chrld.type=='input'" :item="chrld" :query-param="queryParam"/>
 						<subSelect v-else-if="chrld.type=='select'" :item="chrld" :query-param="queryParam"/>
+						<subSelectTree v-else-if="chrld.type=='subSelectTree'" :item="chrld" :query-param="queryParam"/>
 						<subCheckbox v-else-if="chrld.type=='checkbox'" :item="chrld" :query-param="queryParam"/>
 						<subRadio v-else-if="chrld.type=='radio'" :item="chrld" :query-param="queryParam"/>
 						<subCascader v-else-if="chrld.type=='cascader'" :item="chrld" :query-param="queryParam"/>
