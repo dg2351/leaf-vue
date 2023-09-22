@@ -8,7 +8,8 @@
 				<a-col v-for="item in formConfig.data" v-if="!item.hidden"
 					   :span="item.span?item.span:wrapperCol">
 					<a-form-model-item :label="item.label" :prop="item.model"
-									   :label-col="{span:item.labelCol?item.labelCol:labelCol}">
+									   :label-col="{span:item.labelCol?item.labelCol:labelCol}"
+									   :wrapper-col="{span:item.wrapperCol?item.wrapperCol:wrapperCol}">
 						<!--输入框-->
 						<template v-if="item.type==='input'">
 							<template v-if="!(item.readonly || formConfig.readonly)">

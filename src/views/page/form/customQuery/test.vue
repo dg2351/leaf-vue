@@ -5,7 +5,7 @@
         </div>
         <div class="p10 bor_a" v-if="!formConfig.loading">
             <!---->
-			<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig"></form_model>
+			<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig"/>
 			<div class="textCenter mB20">
 				<a-button type="primary" icon="search" class="mR15" @click="onSubmit(true)">查询</a-button>
 				<a-button class="mR15"  @click="resetParams">重置</a-button>
@@ -36,7 +36,7 @@ export default {
         return {
             loading:false,
 			alias:"",
-            sourceData:{},
+            sourceData:{pageIndex:null},
             formConfig: {
                 visible: false,
                 loading: true,
@@ -66,6 +66,10 @@ export default {
 							self_.formConfig.data.push({type: "input",label: item.comment,model: item.fieldName})
 						})
 					}
+					if(data.isPage==1){
+						self_.formConfig.data.push({type: "input",label: '页码',model: "pageIndex"});
+						self_.sourceData.pageIndex= 1;
+					}
 					self_.formConfig.loading = false
                 })
             } else{
@@ -73,7 +77,7 @@ export default {
             }
         },
 		resetParams(){
-			this.sourceData = {};
+			this.sourceData = {pageIndex:null};
 			this.onSubmit(true);
 		},
         // 提交

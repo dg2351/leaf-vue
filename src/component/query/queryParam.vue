@@ -1,33 +1,38 @@
 <template>
-	<a-form class="select-box clear" layout="inline" :label-col="{ span: 2 }" :wrapper-col="{ span: 22 }">
-		<template v-if="queryParam" v-for="item in queryConfig">
-			<a-form-item v-if="checkShow(item)" :label="item.label" style="width: 100%">
-				<subInput v-if="item.type=='input'" :item="item" :query-param="queryParam"/>
-				<subSelect v-else-if="item.type=='select'" :item="item" :query-param="queryParam"/>
-				<subSelectTree v-else-if="item.type=='subSelectTree'" :item="item" :query-param="queryParam"/>
-				<subCheckbox v-else-if="item.type=='checkbox'" :item="item" :query-param="queryParam"/>
-				<subRadio v-else-if="item.type=='radio'" :item="item" :query-param="queryParam"/>
-				<subCascader v-else-if="item.type=='cascader'" :item="item" :query-param="queryParam"/>
-				<subLabel v-else-if="item.type=='label'" :item="item" :query-param="queryParam"/>
-				<subDatetime v-else-if="item.type=='datetimes'" :item="item" :query-param="queryParam"/>
-				<subNumber v-else-if="item.type=='numbers'" :item="item" :query-param="queryParam"/>
-				<template v-else-if="item.type=='other'">
-					<template v-for="chrld in item.children">
-						<subInput v-if="chrld.type=='input'" :item="chrld" :query-param="queryParam"/>
-						<subSelect v-else-if="chrld.type=='select'" :item="chrld" :query-param="queryParam"/>
-						<subSelectTree v-else-if="chrld.type=='subSelectTree'" :item="chrld" :query-param="queryParam"/>
-						<subCheckbox v-else-if="chrld.type=='checkbox'" :item="chrld" :query-param="queryParam"/>
-						<subRadio v-else-if="chrld.type=='radio'" :item="chrld" :query-param="queryParam"/>
-						<subCascader v-else-if="chrld.type=='cascader'" :item="chrld" :query-param="queryParam"/>
-						<subLabel v-else-if="chrld.type=='label'" :item="chrld" :query-param="queryParam"/>
-						<subDatetime v-else-if="chrld.type=='datetimes'" :item="chrld" :query-param="queryParam"/>
-						<subNumber v-else-if="chrld.type=='numbers'" :item="chrld" :query-param="queryParam"/>
-					</template>
-				</template>
-			</a-form-item>
-		</template>
+	<a-form class="select-box clear" layout="inline">
+		<a-row>
+			<template v-if="queryParam" v-for="(item,index) in queryConfig">
+				<a-col :span="item.span??24">
+					<a-form-item v-if="checkShow(item)" style="width: 100%"
+								 :label="item.label" :label-col="{span:item.labelCol??8}">
+						<subInput v-if="item.type=='input'" :item="item" :query-param="queryParam"/>
+						<subSelect v-else-if="item.type=='select'" :item="item" :query-param="queryParam"/>
+						<subSelectTree v-else-if="item.type=='subSelectTree'" :item="item" :query-param="queryParam"/>
+						<subCheckbox v-else-if="item.type=='checkbox'" :item="item" :query-param="queryParam"/>
+						<subRadio v-else-if="item.type=='radio'" :item="item" :query-param="queryParam"/>
+						<subCascader v-else-if="item.type=='cascader'" :item="item" :query-param="queryParam"/>
+						<subLabel v-else-if="item.type=='label'" :item="item" :query-param="queryParam"/>
+						<subDatetime v-else-if="item.type=='datetimes'" :item="item" :query-param="queryParam"/>
+						<subNumber v-else-if="item.type=='numbers'" :item="item" :query-param="queryParam"/>
+						<template v-else-if="item.type=='other'">
+							<template v-for="chrld in item.children" v-if="checkShow(chrld)">
+								<subInput v-if="chrld.type=='input'" :item="chrld" :query-param="queryParam"/>
+								<subSelect v-else-if="chrld.type=='select'" :item="chrld" :query-param="queryParam"/>
+								<subSelectTree v-else-if="chrld.type=='subSelectTree'" :item="chrld" :query-param="queryParam"/>
+								<subCheckbox v-else-if="chrld.type=='checkbox'" :item="chrld" :query-param="queryParam"/>
+								<subRadio v-else-if="chrld.type=='radio'" :item="chrld" :query-param="queryParam"/>
+								<subCascader v-else-if="chrld.type=='cascader'" :item="chrld" :query-param="queryParam"/>
+								<subLabel v-else-if="chrld.type=='label'" :item="chrld" :query-param="queryParam"/>
+								<subDatetime v-else-if="chrld.type=='datetimes'" :item="chrld" :query-param="queryParam"/>
+								<subNumber v-else-if="chrld.type=='numbers'" :item="chrld" :query-param="queryParam"/>
+							</template>
+						</template>
+					</a-form-item>
+				</a-col>
+			</template>
+		</a-row>
 		<a-form-item label="" style="width: 100%">
-			<div style="text-align: right">
+			<div class="mB10" style="text-align: right">
 				<a-button type="primary" class="mL10" @click="getParams()">{{button.query}}</a-button>
 				<a-button type="" class="mL10" @click="resetParams()">{{button.reset}}</a-button>
 				<a-button type="" v-if="show" class="mL10" @click="sxShow = !sxShow">{{sxShow?'收起':'展开'}}</a-button>
@@ -120,13 +125,21 @@ export default {
 	methods:{
 		//控制展开隐藏
 		checkShow(item){
-			return item.show || this.sxShow;
+			if(item.show==null)
+				item.show = true;
+			return !item.hidden && (item.show || this.sxShow);
 		},
 		//初始化查询条件
 		initQueryParamConfig(callback){
 			let params = {}
 			this.queryConfig.forEach(item=>{
-				if(item.initFunction) item.initFunction(item);
+				// 初始化方法
+				if(item.initFunction)
+					item.initFunction(item);
+				if(['select','selectTree','radio','cascader'].includes(item.type)){
+					if(!item.changeFunction)
+						item.changeFunction = function () {}
+				}
 				if(item.type == 'other'){
 					item.children.forEach(children=>{
 						if(children.initFunction) children.initFunction(children);
@@ -140,10 +153,12 @@ export default {
 				} else{
 					params[item.key] = item.value;
 				}
-
-				if(['select','selectTree','radio','cascader'].includes(item.type)){// 初始化方法
-					if(!item.changeFunction)
-						item.changeFunction = function () {}
+				// 初始化宽度
+				if(!item.span){
+					item.span = 24
+				}
+				if(!item.labelCol){
+					item.labelCol = 4
 				}
 			})
 			if(callback)

@@ -4,40 +4,30 @@
             <h1>脚本定义</h1>
         </div>
         <div class="p10 bor_a">
-            <!---->
-            <a-form-model :label-col="{ span: 8 }" :wrapper-col="{ span: 12 }">
-                <a-row>
-                    <a-col :span="24" v-for="item in formTab1">
-                        <template v-if="item.model == 'config'">
-                            <a-form-model-item :label="item.label" :label-col="{span: 4 }">
-                                <div class="tableForm">
-                                    <a-button type="primary" class="mL10" @click="paramsEvent().add()">新增参数</a-button>
-                                    <a-button class="mL10">删除参数</a-button>
-                                    <a-button class="mL10">向上</a-button>
-                                    <a-button class="mL10">向下</a-button>
-                                    <a-button type="primary" class="mL10" @click="onTest()">测试</a-button>
-                                    <a-table class="tableForm" :columns="columns" :dataSource="dataSource" bordered
-                                             :pagination="false" :locale="{emptyText: '暂无数据'}">
-                                        <template v-for="item in [
-                                                        {name:'paramName',type:'input'},
-                                                        {name:'paramType',type:'select'},
-                                                        {name:'remark',type:'input'},
-                                                        {name:'value',type:'input'},
-                                                    ]" :slot="item.name" slot-scope="text, record">
-                                            <editable-cell :record="record" :type="item.type" :itemKey="item.name"/>
-                                        </template>
-                                        <a-button slot="action" slot-scope="text, record, index"
-                                                  @click="paramsEvent().remove(index)">移除</a-button>
-                                    </a-table>
-                                </div>
-                            </a-form-model-item>
-                        </template>
-                        <template v-else></template>
-                    </a-col>
-                </a-row>
-            </a-form-model>
-            <!---->
-            <form_model v-if="!formConfig.loading" ref="formModel" :sourceData="sourceData" :formConfig="formConfig"/>
+            <form_model v-if="!formConfig.loading" ref="formModel" :sourceData="sourceData" :formConfig="formConfig">
+				<template #config>
+					<div class="tableForm">
+						<a-button type="primary" class="mL10" @click="paramsEvent().add()">新增参数</a-button>
+						<a-button class="mL10">删除参数</a-button>
+						<a-button class="mL10">向上</a-button>
+						<a-button class="mL10">向下</a-button>
+						<a-button type="primary" class="mL10" @click="onTest()">测试</a-button>
+						<a-table class="tableForm" :columns="columns" :dataSource="dataSource" bordered
+								 :pagination="false" :locale="{emptyText: '暂无数据'}">
+							<template v-for="item in [
+										{name:'paramName',type:'input'},
+										{name:'paramType',type:'select'},
+										{name:'remark',type:'input'},
+										{name:'value',type:'input'},
+									]" :slot="item.name" slot-scope="text, record">
+								<editable-cell :record="record" :type="item.type" :itemKey="item.name"/>
+							</template>
+							<a-button slot="action" slot-scope="text, record, index"
+									  @click="paramsEvent().remove(index)">移除</a-button>
+						</a-table>
+					</div>
+				</template>
+			</form_model>
         </div>
         <div class="textCenter mB20">
             <a-button type="primary" class="mR15" @click="onSubmit(true)">提交</a-button>
@@ -145,13 +135,12 @@ export default {
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
                         ],
                     },
-                    {
-                        span:24, labelCol:4,
-                        label: "说明",
-                        type: "textarea",
-                        model: "descp",
-                        maxLength: 200,
-                    },
+					{
+						span: 24, labelCol: 4,wrapperCol:19,
+						label: "参数定义",
+						type: "slot",
+						model: "config",
+					},
                     {
                         span:24, labelCol:4,
                         label: "Groovy脚本",
@@ -159,12 +148,15 @@ export default {
                         model: "content",
                         language: "java"
                     },
+					{
+						span:24, labelCol:4,
+						label: "说明",
+						type: "textarea",
+						model: "descp",
+						maxLength: 200,
+					},
                 ],
             },
-            //
-            formTab1: [
-                {label:'参数定义',model:'config'},
-            ],
             columns:[
                 {dataIndex: 'paramName',key: 'paramName',title:'参数名',width: '20%',scopedSlots: { customRender: 'paramName' }},
                 {dataIndex: 'paramType',key: 'paramType',title:'类型',width: '20%',scopedSlots: { customRender: 'paramType' }},

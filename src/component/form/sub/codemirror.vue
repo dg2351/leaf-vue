@@ -1,5 +1,5 @@
 <template>
-    <div class="common-editor">
+    <div id="CodeMirror" class="common-editor">
         <textarea ref="textarea"/>
     </div>
 </template>
@@ -75,7 +75,7 @@ export default {
             return {
                 line: true,
                 mode: 'application/json',       // json数据高亮
-                theme: 'blackboard',            // 设置主题
+                // theme: 'blackboard',            // 设置主题
                 tabSize: 2,
                 lint: true,                     // 开启语法检查
                 lineNumbers: true,              // 显示行号
@@ -239,6 +239,17 @@ export default {
 </script>
 
 <style lang="less">
+#CodeMirror {
+	height: 400px;
+	.CodeMirror {
+		overscroll-y: scroll !important;
+		height: auto !important;
+	}
+}
+.CodeMirror-scroll{
+	height: 400px;
+	border: 1px solid #ddd;
+}
 .common-editor{
     .CodeMirror{
         direction: ltr;

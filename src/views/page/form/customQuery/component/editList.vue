@@ -5,6 +5,7 @@
 			<a-button type="danger" icon="delete" @click="paramsEvent().removes()">删除</a-button>
 			<a-button type="" icon="up" @click="paramsEvent().up()">向上</a-button>
 			<a-button type="" icon="down" @click="paramsEvent().down()">向下</a-button>
+			<slot></slot>
 		</a-button-group>
 		<a-table class="table_a mT15" rowKey="id"
 				 :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"

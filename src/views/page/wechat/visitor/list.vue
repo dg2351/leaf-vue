@@ -1,91 +1,38 @@
 <template>
     <div class="textLeft">
-        <div class="pL10 pR10">
-            <queryParam ref="queryParam" :queryConfig="queryConfig" @queryBack="queryBack"/>
-        </div>
-        <a-button @click="event().edit()">新增</a-button>
-        <a-tabs v-model="activeTab" class="nav_big1" @change="callback">
-            <a-tab-pane v-for="item in tabTypes" :key="item.key" :tab="item.tab" style="text-align: center">
-                <a-table class="table_a mB20"
-                         :loading="loading"
-                         :rowKey="record=>record.ID_"
-                         :columns="statusMap[item.key].columns"
-                         :data-source="statusMap[item.key].data"
-                         :pagination="pagination"
-                         :locale="{emptyText: '暂无数据'}">
-                    <span slot="xh" slot-scope="text, record, index">
-                        <i class="xh">{{index+1}}</i>
-                    </span>
-                </a-table>
-            </a-tab-pane>
-        </a-tabs>
+		<table_model ref="table_model" method="postForm"
+					 alias="/form/custom/query/queryForJson_wechat_user" rowKey="id"
+					 :query-config="queryConfig" :params="queryParam"
+					 :columns="columns" @eventView="v=>event().edit(v)" :action="false"/>
     </div>
 </template>
 
 <script>
-import FuncList from "@/plugins/mixin/FuncList";
-import queryParam from "@/component/query/queryParam";
+import table_model from "@/component/table/table_model";
+import moment from "moment";
 
-let activeTab = null;
 export default {
     name: "list",
-    mixins: [FuncList],
-    components: {queryParam},
+    components: {table_model},
     data() {
         return {
-            loading: false,
-            activeTab: "",
-            tabTypes: [],
-            queryParam: {},		// 查询条件
-            showColumns: ['xh','QYMC','LXR','LXFS','TJSJ','HFSJ','HFZTSTR','PZ','action'],
-            showColumnsTitle:['序号','企业名称','联系人','联系方式','提交时间','回复时间','回复状态','评价状态','操作'],
-            widthColumns:{xh:'60px',action:'250px'},
-            alignColumns: {xh:'center'},
-            slotColumn: ['xh','action'],
-            //不同状态的不同点
-            statusMap: {
-                'i1': {title:'正在关注'},
-            },
-            sourceData:[],
-            // 查询条件
-            queryConfig:[
-                {label:"用户名称",value:null,key:"qymc",type:"input",placeholder:"请输入您要查找的内容",show:true,
-                    style:"width: 400px;"},
-            ],
+			// 查询条件
+			queryParam: {},
+			// 查询配置
+			queryConfig:[
+				{span:12,labelCol:6,label:"用户名称",value:null,key:"nickname",type:"input"},
+			],
+			columns:[
+				{title:"头像",dataIndex:"headimgurl",scopedSlots: { customRender: 'img' }},
+				{title:"appid",dataIndex:"appid"},
+				{title:"openid",dataIndex:"openid"},
+				{title:"昵称",dataIndex:"nickname"},
+				// {title:"性别",dataIndex:"sex",customRender:(text)=>{return text==0?'男':(text==1?'女':'其它')}},
+				{title:"时间",dataIndex:"create_time",customRender:(text)=>{return moment(text).format("YYYY-MM-DD hh:mm")}},
+			],
         }
     },
-    created() {
-        this.initStatusMap();
-        this.setColumnsByTab();
-        if(activeTab) this.activeTab = activeTab;
-    },
-    mounted() {
-        this.$refs['queryParam'].initQueryParamConfig();
-        this.loadData(1);
-    },
     methods:{
-        paginationLoadData(pageIndex){
-            this.loadData(pageIndex);
-        },
-        //
-        callback(e){
-            activeTab = this.activeTab;
-            this.loadData(1);
-        },
-        /**
-         * 查询
-         */
-        queryBack(e){
-            this.queryParam = e.params;//回填
-            this.loadData();
-        },
-        /**
-         * 加载数据
-         */
-        loadData(pageIndex){
-            let api = "fwpt_sqfw_qysqs";
-            let params = Object.assign(this.queryParam, {});
-        },
         /**
          * 修改
          * @param record
@@ -94,21 +41,10 @@ export default {
             let self_ = this;
             let method = {};
             method.edit = (record)=>{
-                let params = {type:activeTab, id:record?record.ID_:null}
+                let params = {id:record?record.ID_:null}
                 self_.$util.component(self_).event('edit', params);
             }
             return method;
-        }
-    },
-    watch: {
-        sourceData:{
-            handler(){
-                Object.keys(this.statusMap).forEach(key=>{
-                    this.$set(this.statusMap[key], 'data', this.sourceData)
-                    this.$set(this.statusMap[key], 'count', this.statusMap[key].data.length)
-                });
-                this.loading = false
-            },deep: true
         }
     },
 }

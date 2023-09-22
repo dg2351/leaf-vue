@@ -1,5 +1,8 @@
 <template>
     <a-spin :spinning="loading">
+		<!--列头设置窗口-->
+		<ColumnList ref="ColumnList"/>
+		<!---->
         <div class="inner_head mB10">
             <h1>自定义查询</h1>
         </div>
@@ -17,7 +20,9 @@
 					</form_model>
 				</a-tab-pane>
 				<a-tab-pane key="result" tab="返回字段">
-					<editList ref="resultEdit" :columns="resultColumns" :data="sourceData.resultField"/>
+					<editList ref="resultEdit" :columns="resultColumns" :data="sourceData.resultField">
+						<a-button type="primary" class="floatR" @click="findColumnList">列头设置</a-button>
+					</editList>
 				</a-tab-pane>
 				<a-tab-pane key="where" tab="条件字段">
 					<editList ref="whereEdit" :columns="whereColumns" :data="sourceData.whereField"/>
@@ -37,13 +42,14 @@ import form_model from "@/component/form/form_model";
 import dbModal from "@/views/page/form/entity/modal/dbModal";
 import rxAjax from "@/assets/js/ajax";
 import editList from "@/views/page/form/customQuery/component/editList";
+import ColumnList from "@/views/page/form/customQuery/component/ColumnList";
 
 export default {
     name: "edit",
     props: {
         params: Object,
     },
-    components: {form_model, dbModal, editList},
+    components: {form_model, dbModal, editList, ColumnList},
     computed: {
         routerParams() {
             return this.$route.query;
@@ -182,6 +188,10 @@ export default {
                     that.formConfig.loading = false
                 })
             } else{
+				that.sourceData = {
+					isPage: 0,pageSize: 10,
+					isCache: 0,
+				}
                 that.formConfig.loading = false
             }
         },
@@ -231,6 +241,17 @@ export default {
                 }
             });
         },
+		// 列头设置
+		findColumnList(){
+			let self_ = this;
+			let sourceData = self_.sourceData;
+			let params = {
+				queryType: "freeMarkerSql",
+				dsAlias: sourceData.dsAlias,
+				query: sourceData.sql
+			}
+			self_.$refs.ColumnList.openModal(params);
+		},
     }
 }
 </script>
