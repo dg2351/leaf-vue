@@ -1,20 +1,19 @@
 <template>
-    <a-spin :spinning="loading">
-        <div class="inner_head mB10">
-            <h1>自定义查询预览</h1>
-        </div>
-        <div class="p10 bor_a" v-if="!formConfig.loading">
-            <!---->
-			<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig"/>
-			<div class="textCenter mB20">
-				<a-button type="primary" icon="search" class="mR15" @click="onSubmit(true)">查询</a-button>
-				<a-button class="mR15"  @click="resetParams">重置</a-button>
-				<a-button class="mR15"  @click="back('list')">返回</a-button>
+	<a-modal title="自定义查询预览" dialogClass="modal_a" width="800px"
+			 :visible="visible" @cancel="closeModal" :footer="null">
+		<a-spin :spinning="loading">
+			<div class="p10 bor_a" v-if="!formConfig.loading">
+				<!---->
+				<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig"/>
+				<div class="textCenter mB10">
+					<a-button type="primary" icon="search" class="mR15" @click="onSubmit(true)">查询</a-button>
+					<a-button class="mR15" @click="resetParams">重置</a-button>
+				</div>
+				<p>返回json数据：</p>
+				<a-textarea v-model="outputData" :readOnly="true" :auto-size="{minRows: 12,maxRows:12}"/>
 			</div>
-			<h3>返回json数据：</h3>
-			<a-textarea v-model="outputData" :readOnly="true" :auto-size="{minRows: 12,maxRows:12}"/>
-        </div>
-    </a-spin>
+		</a-spin>
+	</a-modal>
 </template>
 
 <script>
@@ -34,6 +33,7 @@ export default {
     },
     data() {
         return {
+			visible: false,
             loading:false,
 			alias:"",
             sourceData:{pageIndex:null},
@@ -46,12 +46,13 @@ export default {
 			outputData:"",
         };
     },
-    created() {
-        this.loadData(this.params.id);
-    },
     methods:{
-		back(){
-			this.$util.component(this).event('list');
+		openModal(params){
+			this.visible = true;
+			this.loadData(params.id);
+		},
+		closeModal(){
+			this.visible = false;
 		},
         loadData(id){
             let self_ = this;

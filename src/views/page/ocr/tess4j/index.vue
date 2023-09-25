@@ -1,32 +1,47 @@
 <template>
     <div class="p10">
-        <div class="boxa">
+		<div class="xqPlace">
+			<h1 class="plTit">通用场景OCR </h1>
 			<!---->
-			<div class="inner_head mB10">
-				<h1>文本识别</h1>
-			</div>
-			<div class="p10">
-				<a-textarea v-model="result" :auto-size="{ minRows: 4,maxRows: 4 }" readOnly/>
-			</div>
-			<a-form-model class="from_model" :label-col="{ span: 2 }" :wrapper-col="{ span: 12 }">
-				<a-form-model-item label="请求地址">
-					<b>{{apiUrl}}</b>
-				</a-form-model-item>
-				<a-form-model-item label="图片">
-					<a-upload :showUploadList="false" :multiple="true"
-							  :remove="removeFile" :before-upload="uploadFile">
-						<a-button><a-icon type="upload"/>上传</a-button>
-					</a-upload>
-					<a-button type="primary" class="mL15" @click="onSubmit">提交</a-button>
-				</a-form-model-item>
-				<a-form-model-item label="base64">
-					<a-textarea v-model="sourceData.base64" style="width: 80%"
-								:auto-size="{ minRows: 6,maxRows: 8 }"/>
-				</a-form-model-item>
-				<a-form-model-item v-if="sourceData.base64" label="预览">
-					<img :src="sourceData.base64" width="100" height="40"/>
-				</a-form-model-item>
-			</a-form-model>
+			<a-row>
+				<a-col :span="6">
+					<h2 style="font-weight: bold">通用文字识别
+						<a-button type="primary" class="mL15" @click="onSubmit"><a-icon type="caret-right" />调试</a-button>
+					</h2>
+					<h1 style="font-weight: bold">Header</h1>
+					<div class="p10">
+						<h1>Content-Type：</h1>
+						<a-input class="mB10" disabled readOnly v-model="headData['Content-Type']"/>
+						<h1>Accept：</h1>
+						<a-input class="mB10" disabled readOnly v-model="headData['Accept']"/>
+					</div>
+
+					<h1 style="font-weight: bold">Query</h1>
+					<div class="p10">
+						<h1>base64：</h1>
+						<a-textarea class="mB10" v-model="sourceData.base64" :auto-size="{ minRows: 4,maxRows: 5 }"/>
+						<a-upload :showUploadList="false" :multiple="true"
+								  :remove="removeFile" :before-upload="uploadFile">
+							<a-button type="primary" size="small" class="mB10"><a-icon type="upload"/>上传</a-button>
+						</a-upload>
+
+						<template v-if="sourceData.base64">
+							<h1>预览：</h1>
+							<img :src="sourceData.base64" width="100" height="40"/>
+						</template>
+					</div>
+				</a-col>
+				<a-col :span="18">
+					<a-tabs class="nav_big1">
+						<a-tab-pane tab="调试结果">
+							<div class="p10">
+								<h1 style="font-weight: bold">请求地址：{{apiUrl}}</h1>
+								<a-textarea v-model="result" :auto-size="{ minRows: 4,maxRows: 4 }" readOnly/>
+							</div>
+						</a-tab-pane>
+					</a-tabs>
+				</a-col>
+			</a-row>
         </div>
     </div>
 </template>
@@ -37,10 +52,14 @@ import rxAjax from "@/assets/js/ajax";
 let apiUrl = "/ocr/tess4j/doPost";
 export default {
     name: "index",
-    components:{},
     data() {
         return {
+        	// 调试参数
 			apiUrl,
+			headData: {
+				"Content-Type":"application/json",
+				"Accept":"application/json, text/plain, */*"
+			},
 			sourceData:{
 				base64:''
 			},
@@ -48,6 +67,9 @@ export default {
         };
     },
     methods:{
+    	/**
+		 * 调试
+		 **/
 		onSubmit(){
 			if(!this.sourceData.base64){
 				this.$util.message().warning('操作提示','请上传图片')
@@ -58,7 +80,6 @@ export default {
 				this.result = '识别结果：' + data ?? '';
 			})
 		},
-
 		/**
 		 * 上传单个附件
 		 * @param file

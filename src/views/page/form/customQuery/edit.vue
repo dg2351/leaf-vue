@@ -2,6 +2,9 @@
     <a-spin :spinning="loading">
 		<!--列头设置窗口-->
 		<ColumnList ref="ColumnList"/>
+		<!--数据源设置-->
+		<dbModal ref="dbModal" :alias="sourceData.dsAlias" @init="v=>{sourceData.dsName = v?.name}"
+				 @callBack="v=>{sourceData.dsName = v.name;sourceData.dsAlias = v.alias}"/>
 		<!---->
         <div class="inner_head mB10">
             <h1>自定义查询</h1>
@@ -12,9 +15,7 @@
 					<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig">
 						<!--弹框-->
 						<template #dsAlias>
-							<dbModal ref="dbModal" :alias="sourceData.dsAlias" @init="v=>{sourceData.dsName = v?.name}"
-									 @callBack="v=>{sourceData.dsName = v.name;sourceData.dsAlias = v.alias}"/>
-							<a-input-search v-model="sourceData.dsName" enter-button :readOnly="true"
+							<a-input-search v-model="sourceData.dsAlias" enter-button :readOnly="true"
 											@search="$refs['dbModal'].openModal(getValue(sourceData,'dsAlias'))"/>
 						</template>
 					</form_model>
@@ -180,7 +181,6 @@ export default {
                 let params = Object.assign({id:id});
                 rxAjax.get(api, params).then(({success,data})=>{
                     that.sourceData = Object.assign(data, {
-						dsName: data.dsName??'',
 						dsAlias: data.dsAlias??'',
 						resultField : data.resultField ? JSON.parse(data.resultField) : [],
 						whereField : data.whereField ? JSON.parse(data.whereField) : [],
@@ -189,8 +189,8 @@ export default {
                 })
             } else{
 				that.sourceData = {
-					isPage: 0,pageSize: 10,
-					isCache: 0,
+					dsAlias:'',sql:'',
+					isPage: 0, pageSize: 10, isCache: 0,
 				}
                 that.formConfig.loading = false
             }
