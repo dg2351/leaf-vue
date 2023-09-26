@@ -100,8 +100,8 @@ sub { vertical-align: baseline;}
 /*谷歌滚动条样式*/
 ::-webkit-scrollbar {
   background: #f7f7f9;
-  width: .08rem;  /* 纵向滚动条滑块宽度 */
-  height: .09rem; /* 横向滚动条滑块宽度 */
+  width: 5px;  /* 纵向滚动条滑块宽度 */
+  height: 5px; /* 横向滚动条滑块宽度 */
 }
 ::-webkit-scrollbar-track-piece { /*滚动条背景颜色*/
   background: #f7f7f9;
@@ -111,10 +111,14 @@ sub { vertical-align: baseline;}
   background: #e5e5e5;
 }
 ::-webkit-scrollbar-thumb:vertical { /* 纵向滑块 */
-  background: #e5e5e5;
+	/*!*滚动条里面小方块*!*/
+	border-radius: 5px;
+	background:#c0c5cc!important;
 }
 ::-webkit-scrollbar-thumb:horizontal { /* 横向滑块 */
-  background: #e5e5e5;
+	/*!*滚动条里面小方块*!*/
+	border-radius: 5px;
+	background:#c0c5cc!important;
 }
 
 /*火狐滚动条样式*/

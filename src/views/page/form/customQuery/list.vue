@@ -30,6 +30,7 @@ export default {
 	},
     data() {
         return {
+			visible: false,
 			// 查询条件
 			queryParam: {},
 			// 查询配置

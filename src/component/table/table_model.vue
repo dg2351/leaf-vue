@@ -2,11 +2,17 @@
     <div>
 		<div class="pL10 pR10" v-if="queryConfig.length > 0">
 			<div class="">
-				<queryParam ref="queryParam" :queryConfig="queryConfig" :show="showGd" @queryBack="queryBack"/>
+				<slot name="queryParam"/>
+				<queryParam ref="queryParam" :queryConfig="queryConfig" :show="showGd" @queryBack="queryBack">
+					<template slot="queryParamBefore"><slot name="queryParamBefore"/></template>
+					<template slot="queryParamAfter"><slot name="queryParamAfter"/></template>
+				</queryParam>
 			</div>
+		</div>
+		<div>
 			<a-row>
 				<a-col :span="20">
-					<p class="tableTotal mT20">根据您的条件筛选，共有 <b>{{pagination.total}}</b> 条</p>
+					<p v-if="showTotal" class="tableTotal mT20">根据您的条件筛选，共有 <b>{{pagination.total}}</b> 条</p>
 				</a-col>
 				<a-col :span="4">
 					<slot name="headSlot"/>
@@ -14,7 +20,7 @@
 			</a-row>
 		</div>
 		<a-table class="table_a mT10 mB20" :loading="loading" :rowKey="rowKey?rowKey:'xh'"
-				 :columns="columns" :data-source="sourceData"
+				 :columns="columns" :data-source="sourceData" :expandIconColumnIndex="expandIconColumnIndex??0"
 				 :rowSelection="rowSelectChange ? { onChange: rowSelectChange,type: 'checkbox'} : null"
 				 :pagination="isPage ? pagination : false" :locale="{emptyText: '暂无数据'}">
 			<span slot="xh" slot-scope="text, record, index"><i class="xh">{{record.xh}}</i></span>
@@ -50,6 +56,12 @@ export default {
 		},
 		// 主键
 		rowKey:String,
+		rowPid:String,
+		// 展开的图标显示在哪一列
+		expandIconColumnIndex:{
+			type: Number,
+			default: 0
+		},
 		// 默认查询值
 		params:{
 			type: Object,
@@ -85,6 +97,11 @@ export default {
 		loadDataFunction:{
 			type:Function,
 			default: null,
+		},
+		// 筛选框是否更多
+		showTotal:{
+			type: Boolean,
+			default: true,
 		},
 		// 筛选框是否更多
 		showGd:{
@@ -200,6 +217,11 @@ export default {
 				methodApi.then(({success,data, extraData})=>{
 					self_.loading = false;
 					let sourceData = success && data ? data.map((m,i)=>{return Object.assign(m, {xh:i+1})}) : [];
+
+					// 构造树结构
+					if(self_.rowPid){
+						sourceData = self_.$util.buildTree(sourceData, self_.rowKey, self_.rowPid);
+					}
 					self_.sourceData = sourceData;
 					let total = sourceData.length;//extraData?.totalCount ?? 0;
 					self_.pagination.total = total;

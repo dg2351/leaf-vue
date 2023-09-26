@@ -56,6 +56,9 @@ export default {
 		},
         loadData(id){
             let self_ = this;
+			self_.formConfig.data = [];
+			self_.sourceData = {pageIndex:null};
+			self_.outputData = "";
             if(id){
                 let api = "/form/custom/query/info";
                 let params = Object.assign({id:id});

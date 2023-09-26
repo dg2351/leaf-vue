@@ -33,10 +33,11 @@
 		</a-row>
 		<a-form-item label="" style="width: 100%">
 			<div class="mB10" style="text-align: right">
+				<slot name="queryParamBefore"/>
 				<a-button type="primary" class="mL10" @click="getParams()">{{button.query}}</a-button>
 				<a-button type="" class="mL10" @click="resetParams()">{{button.reset}}</a-button>
 				<a-button type="" v-if="show" class="mL10" @click="sxShow = !sxShow">{{sxShow?'收起':'展开'}}</a-button>
-				<slot></slot>
+				<slot name="queryParamAfter"/>
 			</div>
 		</a-form-item>
 	</a-form>

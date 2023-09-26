@@ -57,6 +57,7 @@ export default {
         },
     },
     data() {
+    	let self_ = this;
         return {
             loading:false,
 			activeTab:"base",
@@ -87,11 +88,14 @@ export default {
                     },
                     {
                         label: "分类",
-                        type: "select",
+                        type: "selectTree",
                         model: "treeId",
 						data:[],
-						initFunction: function (item) {
-							item.data = []
+						initFunction: async function (item) {
+							let {data} = await rxAjax.postJson("/system/tree/list", {});
+							let sourceData = data.map(m=>{return {id:m.id, pid:m.parentId, label:m.name, value:m.id }})
+							let list = self_.$util.buildTree(sourceData, "id", "pid");
+							item.data = list
 						},
                     },
 					{

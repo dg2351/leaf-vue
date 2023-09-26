@@ -126,4 +126,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+.content_wrap {
+	word-break: break-all;
+}
 </style>

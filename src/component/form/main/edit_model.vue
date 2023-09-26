@@ -132,6 +132,20 @@
 							</a-select>
 							<p v-else class="content_wrap">{{getValue(item)}}</p>
 						</template>
+						<!--树状选择-->
+						<template v-else-if="item.type==='selectTree'">
+							<a-tree-select :style="item.style"
+										   v-if="!(item.readonly || formConfig.readonly)"
+										   v-model="sourceData[item.model]"
+										   :tree-checkable="item.treeCheckable??false"
+										   :tree-data="item.data" :maxTagCount="item.maxTagCount??1"
+										   :search-placeholder="item.placeholder?item.placeholder:('请选择'+item.label)"
+										   :readOnly="item.readonly || formConfig.readonly"
+										   :disabled="item.disabled || formConfig.disabled"
+										   :getPopupContainer="triggerNode => {return triggerNode.parentNode || document.body;}"
+										   @change="value=>item.changeFunction(value, item.data)"/>
+							<p v-else class="content_wrap">{{getValue(item)}}</p>
+						</template>
 						<!--滑块-->
 						<template v-else-if="item.type==='switch'">
 							<a-switch :default-checked="sourceData[item.model]"

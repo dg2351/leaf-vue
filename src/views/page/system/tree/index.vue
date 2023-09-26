@@ -1,9 +1,7 @@
 <template>
     <div class="p10">
-        <div class="boxa">
-            <component v-bind:is="currentTabComponent" :params="params"
-                       @formBack="formBack"></component>
-        </div>
+		<component v-bind:is="currentTabComponent" :params="params"
+				   @formBack="formBack"></component>
     </div>
 </template>
 

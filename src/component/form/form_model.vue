@@ -75,7 +75,7 @@ export default {
 	created() {
 		this.formConfig.data.forEach(item => {
 			// 选择框初始化方法
-			if(['radio','select','selectTags'].includes(item.type)){
+			if(['radio','select','selectTags','selectTree'].includes(item.type)){
 				// 初始化方法
 				if(!item.searchFunction)
 					item.searchFunction = function () {}
