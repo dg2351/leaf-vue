@@ -6,7 +6,7 @@
 			<a-row>
 				<a-col :span="6">
 					<h2 style="font-weight: bold">通用文字识别
-						<a-button type="primary" class="mL15" @click="onSubmit"><a-icon type="caret-right" />调试</a-button>
+						<a-button type="primary" icon="caret-right" class="mL15" @click="onSubmit">调试</a-button>
 					</h2>
 					<h1 style="font-weight: bold">Header</h1>
 					<div class="p10">

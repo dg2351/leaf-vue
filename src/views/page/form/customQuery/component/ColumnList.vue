@@ -1,8 +1,16 @@
 <template>
 	<a-modal title="设置列头" dialogClass="modal_a" width="600px"
 			 :visible="visible" @cancel="closeModal" :footer="null">
-		<table_model v-if="visible" ref="table_model" rowKey="fieldName"
-					 :load-data-function="loadData" :query-config="[]" :params="queryParam" :columns="columns"/>
+		<div style="height: 650px;overflow-y: auto">
+			<table_model v-if="visible" ref="table_model" rowKey="fieldName"
+						 :action="false" :rowSelectChange="rowSelectChange"
+						 :load-data-function="loadData" :query-config="[]"
+						 :params="queryParam" :columns="columns"/>
+		</div>
+		<div class="textCenter mB20">
+			<a-button type="primary" class="mR15" @click="onSubmit(true)">提交</a-button>
+			<a-button class="mR15"  @click="closeModal()">返回</a-button>
+		</div>
 	</a-modal>
 </template>
 
@@ -21,6 +29,8 @@ export default {
 				{title:"列名",dataIndex:"fieldName"},
 				{title:"注释",dataIndex:"fieldLabel"},
 			],
+			//
+			rowSelect: [],
 		}
 	},
 	methods:{
@@ -38,7 +48,20 @@ export default {
 					resolve({success:true, data, extraData:{totalCount:data.length}});
 				})
 			});
-		}
+		},
+		rowSelectChange(v, e){
+			this.rowSelect = e.map(map=>{
+				return {
+					fieldLabel: map.fieldLabel,
+					fieldName: map.fieldName,
+					fieldType: map.fieldType,
+				}
+			})
+		},
+		onSubmit(validate){
+			this.closeModal();
+			this.$emit("callback", {data:this.rowSelect})
+		},
 	}
 }
 </script>

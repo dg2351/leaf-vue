@@ -15,17 +15,14 @@
 
 <script>
 import form_model from "@/component/form/form_model";
-import dbModal from "@/views/page/form/entity/modal/dbModal";
 import rxAjax from "@/assets/js/ajax";
-import editList from "@/views/page/form/customQuery/component/editList";
-import ColumnList from "@/views/page/form/customQuery/component/ColumnList";
 
 export default {
     name: "edit",
     props: {
         params: Object,
     },
-    components: {form_model, dbModal, editList, ColumnList},
+    components: {form_model},
     computed: {
         routerParams() {
             return this.$route.query;
@@ -106,7 +103,7 @@ export default {
         loadData(id, parentId='0'){
             let that = this;
             if(id){
-                let api = "/system/tree//info";
+                let api = "/system/tree/info";
                 let params = Object.assign({id:id});
                 rxAjax.get(api, params).then(({success,data})=>{
                     that.sourceData = data;

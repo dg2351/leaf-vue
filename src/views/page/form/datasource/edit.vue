@@ -307,7 +307,7 @@ export default {
                 }
             }).catch(err=>{
 				self_.loading = false;
-				self_.$message.success("网络错误");
+				self_.$message.error("网络错误");
 			});
         },
         back(){

@@ -1,7 +1,7 @@
 <template>
     <a-spin :spinning="loading">
 		<!--列头设置窗口-->
-		<ColumnList ref="ColumnList"/>
+		<ColumnList ref="ColumnList" @callback="callback"/>
 		<!--数据源设置-->
 		<dbModal ref="dbModal" :alias="sourceData.dsAlias" @init="v=>{sourceData.dsName = v?.name}"
 				 @callBack="v=>{sourceData.dsName = v.name;sourceData.dsAlias = v.alias}"/>
@@ -21,12 +21,14 @@
 					</form_model>
 				</a-tab-pane>
 				<a-tab-pane key="result" tab="返回字段">
-					<editList ref="resultEdit" :columns="resultColumns" :data="sourceData.resultField">
-						<a-button type="primary" class="floatR" @click="findColumnList">列头设置</a-button>
-					</editList>
+					<edit_list ref="resultEdit" :columns="resultColumns" :data="sourceData.resultField">
+						<template slot="buttonBefore">
+							<a-button type="primary" class="floatR" @click="findColumnList">列头设置</a-button>
+						</template>
+					</edit_list>
 				</a-tab-pane>
 				<a-tab-pane key="where" tab="条件字段">
-					<editList ref="whereEdit" :columns="whereColumns" :data="sourceData.whereField"/>
+					<edit_list ref="whereEdit" :columns="whereColumns" :data="sourceData.whereField"/>
 				</a-tab-pane>
 			</a-tabs>
             <!---->
@@ -39,10 +41,10 @@
 </template>
 
 <script>
-import form_model from "@/component/form/form_model";
-import dbModal from "@/views/page/form/entity/modal/dbModal";
 import rxAjax from "@/assets/js/ajax";
-import editList from "@/views/page/form/customQuery/component/editList";
+import form_model from "@/component/form/form_model";
+import edit_list from "@/component/table/edit_list";
+import dbModal from "@/views/page/form/entity/modal/dbModal";
 import ColumnList from "@/views/page/form/customQuery/component/ColumnList";
 
 export default {
@@ -50,7 +52,7 @@ export default {
     props: {
         params: Object,
     },
-    components: {form_model, dbModal, editList, ColumnList},
+    components: {form_model, dbModal, edit_list, ColumnList},
     computed: {
         routerParams() {
             return this.$route.query;
@@ -154,16 +156,37 @@ export default {
 			//
 			resultColumns:[
 				{dataIndex: 'id', title:'序号',width:"65px",align: "center"},
-				{dataIndex: 'comment',title:'字段注解',width:"255px",default:'',align: "center",scopedSlots: { customRender: 'comment' }},
-				{dataIndex: 'fieldName',title:'字段名',width:"255px",default:'',align: "center",scopedSlots: { customRender: 'fieldName' }},
-				{dataIndex: 'renderType',title:'字段渲染',default:'',align: "center",scopedSlots: { customRender: 'renderType' }},
+				{dataIndex: 'comment',title:'字段注解',width:"255px",default:'',align: "center",
+					scopedSlots: { customRender: 'comment' },
+					editCell:true,type:'input'},
+				{dataIndex: 'fieldName',title:'字段名',width:"255px",default:'',align: "center",
+					scopedSlots: { customRender: 'fieldName' },
+					editCell:true,type:'input'},
+				{dataIndex: 'renderType',title:'字段渲染',default:'',align: "center",
+					scopedSlots: { customRender: 'renderType' },
+					editCell:true,type:'select',selectList:[
+						{label:"-",value:""},
+						{label:"日期",value:"DATE"},
+						{label:"数字",value:"NUMBER"},
+						{label:"数据匹配",value:"SEARCH"},
+					]},
 			],
 			//
 			whereColumns:[
 				{dataIndex: 'id', title:'序号',width:"65px",align: "center"},
-				{dataIndex: 'comment',title:'字段注解',default:'',align: "center",scopedSlots: { customRender: 'comment' }},
-				{dataIndex: 'fieldName',title:'字段名',default:'',align: "center",scopedSlots: { customRender: 'fieldName' }},
-				{dataIndex: 'columnType',title:'数据类型',width:"120px",default:'varchar',align: "center",scopedSlots: { customRender: 'columnType' }},
+				{dataIndex: 'comment',title:'字段注解',default:'',align: "center",
+					scopedSlots: { customRender: 'comment' },
+					editCell:true,type:'input'},
+				{dataIndex: 'fieldName',title:'字段名',default:'',align: "center",
+					scopedSlots: { customRender: 'fieldName' },
+					editCell:true,type:'input'},
+				{dataIndex: 'columnType',title:'数据类型',width:"120px",default:'varchar',align: "center",
+					scopedSlots: { customRender: 'columnType' },
+					editCell:true,type:'select',selectList:[
+						{label:"字符串",value:"varchar"},
+						{label:"数字",value:"number"},
+						{label:"日期",value:"date"},
+					]},
 				{dataIndex: 'valueSource',title:'来源',width:"85px",default:'param',align: "center"},
 			],
         };
@@ -255,6 +278,25 @@ export default {
 				query: sourceData.sql
 			}
 			self_.$refs.ColumnList.openModal(params);
+		},
+		callback(v){
+			console.log(v);
+			let resultField = this.$refs['resultEdit'].getParam();
+			let max = 0;
+			resultField.forEach(item=>{if(item.id > max) max = item.id});
+			v.data.forEach((m,i)=>{
+				let d = resultField.filter(p=>p.fieldName == m.fieldName);
+				if(d.length == 0){
+					resultField.push({
+						id: (max + i + 1),
+						comment: m.fieldLabel,
+						fieldName: m.fieldName,
+						columnType: 'varchar',//m.fieldType,
+						valueSource: 'param',
+					})
+				}
+			});
+			this.$refs['resultEdit'].setParam(resultField)
 		},
     }
 }

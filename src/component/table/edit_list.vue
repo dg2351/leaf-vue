@@ -1,29 +1,33 @@
 <template>
     <div>
 		<a-button-group>
+			<slot name="buttonBefore"></slot>
 			<a-button type="primary" icon="plus" @click="paramsEvent().add()">添加</a-button>
 			<a-button type="danger" icon="delete" @click="paramsEvent().removes()">删除</a-button>
 			<a-button type="" icon="up" @click="paramsEvent().up()">向上</a-button>
 			<a-button type="" icon="down" @click="paramsEvent().down()">向下</a-button>
-			<slot></slot>
+			<slot name="buttonAfter"></slot>
 		</a-button-group>
 		<a-table class="table_a mT15" rowKey="id"
 				 :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
 				 :columns="columns" :data-source="sourceData"
 				 :pagination="false" :locale="{emptyText: '暂无数据'}">
-			<template v-for="item in templateList" :slot="item.name" slot-scope="text, record">
-				<editable-cell :record="record" :type="item.type" :itemKey="item.name" :select-list="item?.selectList"/>
+			<template v-for="item in columns.filter(p=>p.editCell==true)"
+					  :slot="item.dataIndex" slot-scope="text, record">
+				<editable-cell :record="record" :type="item.type" :itemKey="item.dataIndex" :select-list="item?.selectList"/>
 			</template>
 		</a-table>
 	</div>
 </template>
 
 <script>
-import EditableCell from "@/views/page/form/customQuery/component/EditableCell";
+import EditableCell from "@/component/table/EditableCell";
 
 export default {
 	name: "editList",
-	components:{EditableCell},
+	components:{
+		EditableCell
+	},
 	props:{
 		data:{
 			type:Array,
@@ -40,21 +44,6 @@ export default {
 	},
 	data(){
 		return{
-			templateList:[
-				{name:'comment',type:'input'},
-				{name:'fieldName',type:'input'},
-				{name:'renderType',type:'select',selectList:[
-						{label:"-",value:""},
-						{label:"日期",value:"DATE"},
-						{label:"数字",value:"NUMBER"},
-						{label:"数据匹配",value:"SEARCH"},
-					]},
-				{name:'columnType',type:'select',selectList:[
-						{label:"字符串",value:"varchar"},
-						{label:"数字",value:"number"},
-						{label:"日期",value:"date"},
-					]},
-			],
 			selectedRowKeys:[],// 选择项
 			sourceData:[],
 		}
@@ -63,6 +52,9 @@ export default {
 		this.sourceData = this.data;
 	},
 	methods:{
+		setParam(data){
+			this.sourceData = data;
+		},
 		getParam(){
 			return this.sourceData;
 		},
