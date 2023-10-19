@@ -7,7 +7,7 @@
 								 :label="item.label" :label-col="{span:item.labelCol??8}">
 						<subInput v-if="item.type=='input'" :item="item" :query-param="queryParam"/>
 						<subSelect v-else-if="item.type=='select'" :item="item" :query-param="queryParam"/>
-						<subSelectTree v-else-if="item.type=='subSelectTree'" :item="item" :query-param="queryParam"/>
+						<subSelectTree v-else-if="item.type=='selectTree'" :item="item" :query-param="queryParam"/>
 						<subCheckbox v-else-if="item.type=='checkbox'" :item="item" :query-param="queryParam"/>
 						<subRadio v-else-if="item.type=='radio'" :item="item" :query-param="queryParam"/>
 						<subCascader v-else-if="item.type=='cascader'" :item="item" :query-param="queryParam"/>
@@ -18,7 +18,7 @@
 							<template v-for="chrld in item.children" v-if="checkShow(chrld)">
 								<subInput v-if="chrld.type=='input'" :item="chrld" :query-param="queryParam"/>
 								<subSelect v-else-if="chrld.type=='select'" :item="chrld" :query-param="queryParam"/>
-								<subSelectTree v-else-if="chrld.type=='subSelectTree'" :item="chrld" :query-param="queryParam"/>
+								<subSelectTree v-else-if="chrld.type=='selectTree'" :item="chrld" :query-param="queryParam"/>
 								<subCheckbox v-else-if="chrld.type=='checkbox'" :item="chrld" :query-param="queryParam"/>
 								<subRadio v-else-if="chrld.type=='radio'" :item="chrld" :query-param="queryParam"/>
 								<subCascader v-else-if="chrld.type=='cascader'" :item="chrld" :query-param="queryParam"/>

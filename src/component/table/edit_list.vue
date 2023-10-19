@@ -1,12 +1,12 @@
 <template>
     <div>
 		<a-button-group>
-			<slot name="buttonBefore"></slot>
+			<slot name="buttonBefore" :row="selectedRowKeys" :data="sourceData"/>
 			<a-button type="primary" icon="plus" @click="paramsEvent().add()">添加</a-button>
 			<a-button type="danger" icon="delete" @click="paramsEvent().removes()">删除</a-button>
 			<a-button type="" icon="up" @click="paramsEvent().up()">向上</a-button>
 			<a-button type="" icon="down" @click="paramsEvent().down()">向下</a-button>
-			<slot name="buttonAfter"></slot>
+			<slot name="buttonAfter" :row="selectedRowKeys" :data="sourceData"/>
 		</a-button-group>
 		<a-table class="table_a mT15" rowKey="id"
 				 :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
@@ -104,6 +104,13 @@ export default {
 		// 行选择
 		onSelectChange(selectedRowKeys){
 			this.selectedRowKeys = selectedRowKeys;
+		},
+		// 列表行赋值
+		setListData(v){
+			const idKey = 'id';
+			this.sourceData.filter(p=>p[idKey] == v[idKey]).forEach(map=>{
+				Object.assign(map, v);
+			})
 		},
 	}
 }

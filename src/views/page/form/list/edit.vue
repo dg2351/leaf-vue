@@ -1,46 +1,58 @@
 <template>
-	<a-modal title="编辑-自定义列表" dialogClass="modal_a" width="90%"
-			 :visible="visible" @cancel="closeModal" :footer="null">
-		<a-spin :spinning="loading">
-			<template v-if="step == 1">
-				<div class="p10 bor_a" style="height: 650px;overflow-y: auto">
-					<form_model ref="formModel" :sourceData="sourceData" :form-config="formConfig"/>
-				</div>
-				<div class="textCenter mB20">
-					<a-button type="primary" class="mR15" v-if="sourceData.id" @click="step = 2">下一步</a-button>
-					<a-button type="primary" class="mR15" @click="onSubmit1(true)">保存&下一步</a-button>
-					<a-button class="mR15"  @click="closeModal()">返回</a-button>
-				</div>
-			</template>
-			<template v-if="step == 2">
-				<div class="p10 bor_a" style="height: 650px;overflow-y: auto">
-					<a-tabs class="nav_big1">
-						<a-tab-pane key="fields" tab="列头配置">
-							<edit_list :key="fieldsTimer" ref="fieldsEdit" :columns="fieldsColumns" :data="sourceData.fieldsJson">
-								<template slot="buttonBefore">
-									<a-button type="primary" @click="getFields">重新加载表头</a-button>
-								</template>
-							</edit_list>
-						</a-tab-pane>
-						<a-tab-pane key="search" tab="条件配置">
-						</a-tab-pane>
-					</a-tabs>
-				</div>
-				<div class="textCenter mB20">
-					<a-button type="primary" class="mR15" @click="step = 1">上一步</a-button>
-					<a-button type="primary" class="mR15" @click="onSubmit2(true)">保存</a-button>
-					<a-button class="mR15"  @click="closeModal()">返回</a-button>
-				</div>
-			</template>
-		</a-spin>
-	</a-modal>
+	<div>
+		<a-modal title="编辑-自定义列表" dialogClass="modal_a" width="90%"
+				 :visible="visible" @cancel="closeModal" :footer="null">
+			<a-spin :spinning="loading">
+				<template v-if="step == 1">
+					<div class="p10 bor_a" style="height: 650px;overflow-y: auto">
+						<form_model ref="formModel" :sourceData="sourceData" :form-config="formConfig"/>
+					</div>
+					<div class="textCenter mB20">
+						<a-button type="primary" class="mR15" v-if="sourceData.id" @click="step = 2">下一步</a-button>
+						<a-button type="primary" class="mR15" @click="onSubmit1(true)">保存&下一步</a-button>
+						<a-button class="mR15"  @click="closeModal()">返回</a-button>
+					</div>
+				</template>
+				<template v-if="step == 2">
+					<div class="p10 bor_a" style="height: 650px;overflow-y: auto">
+						<a-tabs class="nav_big1">
+							<a-tab-pane key="fields" tab="列头配置">
+								<form_model ref="formModel" :sourceData="sourceData" :form-config="formFields"/>
+								<edit_list :key="fieldsTimer" ref="fieldsEdit" :columns="fieldsColumns" :data="sourceData.fieldsJson">
+									<template slot="buttonBefore">
+										<a-button type="primary" @click="getFields">重新加载表头</a-button>
+									</template>
+								</edit_list>
+							</a-tab-pane>
+							<a-tab-pane key="search" tab="条件配置">
+								<edit_list :key="searchTimer" ref="searchEdit" :columns="searchColumns" :data="sourceData.searchJson">
+									<template v-slot:buttonAfter="v">
+										<a-button type="primary" @click="setSearchData().open(v)">配置</a-button>
+									</template>
+								</edit_list>
+							</a-tab-pane>
+						</a-tabs>
+					</div>
+					<div class="textCenter mB20">
+						<a-button type="primary" class="mR15" @click="step = 1">上一步</a-button>
+						<a-button type="primary" class="mR15" @click="onSubmit2(true)">保存</a-button>
+						<a-button class="mR15"  @click="closeModal()">返回</a-button>
+					</div>
+				</template>
+			</a-spin>
+		</a-modal>
+		<!--弹窗-->
+		<SearchData :key="modalTimer" ref="SearchData" @callback="v=>setSearchData().callback(v)"/>
+	</div>
 </template>
 
 <script>
 import rxAjax from "@/assets/js/ajax";
 import form_model from "@/component/form/form_model";
 import edit_list from "@/component/table/edit_list";
+import SearchData from "@/views/page/form/list/component/SearchData";
 
+const dataKey = ['select','selectTree','checkbox','radio','cascader'];
 export default {
     name: "edit",
     props: {
@@ -49,6 +61,7 @@ export default {
     components: {
     	form_model,
 		edit_list,
+		SearchData,
 	},
     computed: {
         routerParams() {
@@ -145,8 +158,8 @@ export default {
 						type: "radio",
 						model: "urlMethod",
 						data:[
-							{label:'postjson',value:'postjson'},
-							{label:'postform',value:'postform'},
+							{label:'postForm',value:'postForm'},
+							// {label:'postJson',value:'postJson'},
 						],
 						rule: [
 							{required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -155,7 +168,24 @@ export default {
 				]
 			},
 			//
+			formFields: {
+				visible: false,
+				loading: true,
+				disabled: false,
+				data: [
+					{
+						label: "主键",
+						type: "input",
+						model: "idField",
+						maxLength: 20,
+						rule: [
+							{required: true, message: '该输入项不能为空', trigger: 'change'},
+						],
+					},
+				]
+			},
 			fieldsTimer:null,
+			searchTimer:null,
 			fieldsColumns:[
 				{title:"字段名称",dataIndex:"label",align: "center",default:'',
 					scopedSlots: { customRender: 'label' },
@@ -176,7 +206,54 @@ export default {
 						{label:"居左",value:"left"},
 						{label:"居右",value:"right"},
 					]},
+				{title:"渲染方式",dataIndex:"slots",width:"120px",align: "center",default:'',
+					scopedSlots: { customRender: 'slots' },
+					editCell:true,type:'select',selectList:[
+						{label:"无",value:""},
+						{label:"图片",value:"img"},
+						{label:"日期",value:"date"},
+					]},
 			],
+			searchColumns:[
+				{title:"字段名称",dataIndex:"label",align: "center",default:'',
+					scopedSlots: { customRender: 'label' },
+					editCell:true,type:'input'},
+				{title:"字段Key",dataIndex:"key",align: "center",default:'',
+					scopedSlots: { customRender: 'key' },
+					editCell:true,type:'input'},
+				{title:"组件类型",dataIndex:"type",width:"150px",align: "center",default:'input',
+					scopedSlots: { customRender: 'type' },
+					editCell:true,type:'select',selectList:[
+						{label:"输入框",value:"input"},
+						{label:"选择框",value:"select"},
+						{label:"树状选择",value:"selectTree"},
+						{label:"多选框",value:"checkbox"},
+						{label:"单选框",value:"radio"},
+						{label:"级联选择",value:"cascader"},
+						{label:"标签选择",value:"label"},
+						{label:"日期选择",value:"datetime"},
+						{label:"时间区间",value:"datetimes"},
+						{label:"数字区间",value:"numbers"},
+						{label:"其它",value:"other"},
+					]},
+				{title:"是否显示",dataIndex:"show",width:"100px",align: "center",default:1,
+					scopedSlots: { customRender: 'show' },
+					editCell:true,type:'check'},
+				{title:"span",dataIndex:"span",width:"120px",align: "center",default:12,
+					scopedSlots: { customRender: 'span' },
+					editCell:true,type:'number'},
+				{title:"labelCol",dataIndex:"labelCol",width:"120px",align: "center",default:6,
+					scopedSlots: { customRender: 'labelCol' },
+					editCell:true,type:'number'},
+				{title:"说明文本",dataIndex:"placeholder",align: "center",default:'',
+					scopedSlots: { customRender: 'placeholder' },
+					editCell:true,type:'input'},
+				// {title:"单位",dataIndex:"suffix",align: "center",default:'',
+				// 	scopedSlots: { customRender: 'suffix' },
+				// 	editCell:true,type:'input'},
+			],
+			//
+			modalTimer: null,
 		};
     },
     methods:{
@@ -200,7 +277,9 @@ export default {
 						searchJson: data.searchJson?JSON.parse(data.searchJson) : [],
 					});
 					this.fieldsTimer = new Date().getTime();
+					this.searchTimer = new Date().getTime();
 					this.formConfig.loading = false
+					console.log(this.sourceData)
                 })
             } else{
 				this.sourceData = Object.assign({
@@ -208,6 +287,7 @@ export default {
 					searchJson: [],
 				});
 				this.fieldsTimer = new Date().getTime();
+				this.searchTimer = new Date().getTime();
 				this.formConfig.loading = false
             }
         },
@@ -221,6 +301,7 @@ export default {
                 return self_.loading = false;
             }
             let formData = data.formData;
+			delete formData.idField;
             delete formData.fieldsJson;
 			delete formData.searchJson;
             // 调用保存表单
@@ -247,12 +328,44 @@ export default {
 				self_.$util.message().error("操作提示", "数据主键丢失");
 				return self_.closeModal(true)
 			}
-
-			let fieldsEdit = this.$refs['fieldsEdit'].getParam();
+			// 组装数据
 			let formData = {
 				id: sourceData.id,
-				fieldsJson: JSON.stringify(fieldsEdit),
-				searchJson: JSON.stringify(sourceData.searchJson),
+				idField: sourceData.idField,
+			}
+			if(this.$refs['fieldsEdit']){
+				let fieldsEdit = this.$refs['fieldsEdit'].getParam();
+				fieldsEdit.map(map=>{return Object.assign(map, {title:map.label})})
+				Object.assign(formData, {fieldsJson:JSON.stringify(fieldsEdit)})
+			}
+			if(this.$refs['searchEdit']){
+				let searchEdit = this.$refs['searchEdit'].getParam();
+				searchEdit.filter(p=>p.show == 1).map(map=>{
+					// 选择项
+					if(dataKey.includes(map.key)){
+						if(!map.data){
+							map.data = [];
+						}
+					}
+					// 初始值
+					{
+						if(['input','radio','cascader','datetime','datetimes','numbers'].includes(map.key)){
+							if(!map.value){
+								map.value = null;
+							}
+						} else if(['select','label'].includes(map.key)){
+							if(!map.value){
+								map.value = '';
+							}
+						} else if(['checkbox','selectTree'].includes(map.key)){
+							if(!map.value){
+								map.value = [];
+							}
+						}
+					}
+					return map;
+				})
+				Object.assign(formData, {searchJson:JSON.stringify(searchEdit)})
 			}
 			// 调用保存表单
 			let api = "/form/bo/list/save";
@@ -282,7 +395,11 @@ export default {
 				let sourceData = data[0];
 				let resultField = JSON.parse(sourceData.resultField??[]);
 				let fieldsJson = [];
+				let idField = "";
 				resultField.forEach((map,i)=>{
+					if(i==0){
+						idField = map.fieldName
+					}
 					fieldsJson.push({
 						id: (i+1),
 						label:map.comment,
@@ -291,10 +408,49 @@ export default {
 						align:'left',
 					})
 				})
+				if(!self_.sourceData.idField)
+					self_.sourceData.idField = idField;
 				self_.sourceData.fieldsJson = fieldsJson;
 				self_.fieldsTimer = new Date().getTime();
 			})
-		}
+		},
+		// 设置查询数据
+		setSearchData(){
+			let self_ = this;
+			let dataIndex = 0;
+			let $data = {};
+			let method = {};
+			method.open = function(v){
+				if(v.row.length == 0){
+					self_.$util.message().warning('操作提示', '请选择渲染项');
+					return;
+				} else if(v.row.length > 1){
+					self_.$util.message().warning('操作提示', '仅支持一个选项进行渲染');
+					return;
+				}
+				dataIndex = v.row[0];
+				$data = v.data.filter(p=>p.id == dataIndex)[0];
+				if(!dataKey.includes($data.type)){
+					self_.$util.message().warning('操作提示', '该数据类型无须配置');
+					return;
+				}
+				if(!$data.datasource){
+					$data.datasource = 'config';
+				}
+				self_.modalTimer = new Date().getTime();
+				self_.$nextTick(() => {
+					self_.$refs.SearchData.openModal($data);
+				})
+
+			}
+			method.callback = function(v){
+				// 赋值
+				if(v.validate){
+					self_.$refs.searchEdit.setListData(v.data);
+				}
+			}
+			return method;
+		},
     }
 }
 </script>
