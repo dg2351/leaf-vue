@@ -32,7 +32,7 @@ export default {
 		let self_ = this;
 		return {
 			visible: false,
-			sourceData:{},
+			sourceData:{data:[]},
 			formConfig: {
 				visible: false,
 				loading: true,
@@ -87,11 +87,30 @@ export default {
 								self_.$message.error("网络错误");
 								return;
 							}
-							item.data = data.map(map=>{return {label:map.name, value:map.alias}});
+							item.data = data.map(map=>{return {label:map.name, value:map.alias, field:map.resultField}});
+							if(self_.sourceData.url){
+								let $data = item.data.filter(p=>p.value == self_.sourceData.url);
+								self_.changeEvent($data);
+							}
 						},
 						changeFunction: function (v, e) {
-							console.log(v, e);
+							let $data = e.data.filter(p=>p.value == v);
+							self_.changeEvent($data);
 						}
+					},
+					{
+						span:12, labelCol:8,
+						label: "文本",
+						type: "select",
+						model: "dataLabel",
+						data:[],
+					},
+					{
+						span:12, labelCol:8,
+						label: "值",
+						type: "select",
+						model: "dataValue",
+						data:[],
 					},
 				]
 			},
@@ -108,13 +127,30 @@ export default {
 		},
 		onSubmit(validate){
 			let {sourceData} = this;
-			if(!['config'].includes(sourceData.datasource)){
+			if(['config'].includes(sourceData.datasource)) {
 				delete sourceData.url;
+				delete sourceData.dataLabel;
+				delete sourceData.dataValue;
+				sourceData.data = this.$refs['dataEdit'].getParam()
+			} else if(['queryForJson'].includes(sourceData.datasource)){
 				Object.assign(sourceData, {data: []})
 			}
 			this.closeModal();
 			this.$emit("callback", {validate,data:sourceData})
 		},
+		changeEvent($data){
+			let self_ = this;
+			let $label = self_.queryConfig.data.filter(p=>p.model == 'dataLabel')[0];
+			let $value = self_.queryConfig.data.filter(p=>p.model == 'dataValue')[0];
+			let selectData = [];
+			if($data.length > 0){
+				let field = JSON.parse($data[0].field);
+				selectData = field.map(m=>{
+					return {label:m.comment, value:m.fieldName}
+				})
+			}
+			$label.data = $value.data = selectData;
+		}
 	}
 }
 </script>

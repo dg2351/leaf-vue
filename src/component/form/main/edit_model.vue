@@ -15,7 +15,11 @@
 								<a-form-model-item :label="item.label" :prop="item.model"
 												   :label-col="{span:item.labelCol?item.labelCol:labelCol}"
 												   :wrapper-col="{span:item.wrapperCol?item.wrapperCol:wrapperCol}">
-									<subMain :item="item" :form-config="formConfig" :source-data="sourceData"/>
+									<subMain :item="item" :form-config="formConfig" :source-data="sourceData">
+										<template :slot="val.model" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+											<slot :name="val.model"/>
+										</template>
+									</subMain>
 								</a-form-model-item>
 							</a-col>
 						</a-row>
@@ -29,7 +33,11 @@
 				<a-form-model-item :label="item.label" :prop="item.model"
 								   :label-col="{span:item.labelCol?item.labelCol:labelCol}"
 								   :wrapper-col="{span:item.wrapperCol?item.wrapperCol:wrapperCol}">
-					<subMain :item="item" :form-config="formConfig" :source-data="sourceData"/>
+					<subMain :item="item" :form-config="formConfig" :source-data="sourceData">
+						<template :slot="val.model" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+							<slot :name="val.model"/>
+						</template>
+					</subMain>
 				</a-form-model-item>
 			</a-col>
 		</a-row>

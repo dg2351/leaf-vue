@@ -43,6 +43,7 @@
 
 <script>
 import FuncList from "@/plugins/mixin/FuncList";
+import FormMethods from "@/plugins/js-comps/FormMethods";
 import queryParam from "@/component/query/queryParam";
 import rxAjax from '@/assets/js/ajax.js';
 
@@ -205,10 +206,8 @@ export default {
 				let methodApi = null;
 				if(this.method == 'postJson'){
 					methodApi = rxAjax.postJson(api, {...this.params, ...params})
-				} else if(this.method == 'postForm'){
-					methodApi = rxAjax.postForm(api, {
-						params: JSON.stringify({...this.params, ...params})
-					})
+				} else if(this.method == 'postForm'){// 自定义查询
+					methodApi = FormMethods.invokeCustomQueryPromise(api, {...this.params, ...params})
 				}
 				if(!methodApi){
 					this.$util.message().error("操作提示", "method类型错误");

@@ -425,7 +425,7 @@ export default {
 					self_.$util.message().warning('操作提示', '请选择渲染项');
 					return;
 				} else if(v.row.length > 1){
-					self_.$util.message().warning('操作提示', '仅支持一个选项进行渲染');
+					self_.$util.message().warning('操作提示', '不能同时选择多项进行渲染');
 					return;
 				}
 				dataIndex = v.row[0];
@@ -437,15 +437,16 @@ export default {
 				if(!$data.datasource){
 					$data.datasource = 'config';
 				}
+				if(!$data.data){
+					$data.data = [];
+				}
 				self_.modalTimer = new Date().getTime();
 				self_.$nextTick(() => {
 					self_.$refs.SearchData.openModal($data);
 				})
-
 			}
 			method.callback = function(v){
-				// 赋值
-				if(v.validate){
+				if(v.validate){// 赋值
 					self_.$refs.searchEdit.setListData(v.data);
 				}
 			}

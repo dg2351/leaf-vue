@@ -3,7 +3,7 @@
 		<table_model v-if="!loading"
 					 ref="table_model"
 					 :method="sourceData.urlMethod"
-					 :alias="'/form/custom/query/queryForJson_'+sourceData.url"
+					 :alias="sourceData.url"
 					 :rowKey="sourceData.idField ?? 'id'"
 					 :xh="sourceData.isXh == 1"
 					 :is-page="sourceData.isPage == 1"
@@ -17,6 +17,7 @@
 
 <script>
 import table_model from "@/component/table/table_model";
+import FormMethods from "@/plugins/js-comps/FormMethods";
 import moment from "moment";
 import rxAjax from "@/assets/js/ajax";
 
@@ -25,6 +26,7 @@ export default {
     components: {table_model},
     data() {
         return {
+        	alias: "wechat_user",
         	loading: true,
 			sourceData: {},
         }
@@ -34,9 +36,12 @@ export default {
 	},
 	methods:{
     	loadData(){
-    		let id = "1695721118946";
-			let api = "/form/bo/list/info";
-			let params = Object.assign({id:id});
+    		if(!this.alias){
+    			this.$util.message().error('操作提示', 'alias参数缺失')
+    			return;
+			}
+			let api = "/form/bo/list/alias";
+			let params = Object.assign({alias:this.alias});
 			rxAjax.get(api, params).then(({success,data})=>{
 				let sourceData = data;
 				let searchJson = data.searchJson?JSON.parse(data.searchJson) : []
@@ -62,8 +67,15 @@ export default {
 					searchJson: searchJson,
 					fieldsJson: fieldsJson,
 				})
+				searchJson.forEach(async (map)=>{
+					if(map.datasource == "queryForJson"){
+						let {data} = await FormMethods.invokeCustomQueryPromise(map.url, {})
+						map.data = data.map(m=>{
+							return {label:m[map.dataLabel],value:m[map.dataValue]}
+						});
+					}
+				})
 				this.sourceData = sourceData;
-				console.log(sourceData)
 				this.loading = false;
 			})
 		},
