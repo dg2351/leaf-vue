@@ -72,6 +72,7 @@ export default {
 			method.removes = (pk)=>{
 				let keys = pk ? [pk] : (self_.selectedRowKeys ?? []);
 				self_.sourceData = self_.sourceData.filter(m=>!keys.includes(m.id));
+				self_.selectedRowKeys = [];
 			}
 			// 上移
 			method.up = ()=>{
