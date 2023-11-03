@@ -31,10 +31,10 @@
 				<a :href="text" target="_blank">{{text}}</a>
 			</template>
 			<template slot="vhtml" slot-scope="text, record, index">
-				<p v-html="text"/>
+				<div v-html="text"/>
 			</template>
 			<span slot="action" slot-scope="text, record">
-				<a-button type="primary" size="small" @click="eventView(record)">查看</a-button>
+				<a-button v-if="isView" type="primary" size="small" @click="eventView(record)">查看</a-button>
 				<slot name="action" :data="record"/>
 			</span>
 		</a-table>
@@ -87,6 +87,11 @@ export default {
 		},
 		// 是否分页
 		isPage:{
+			type: Boolean,
+			default: true,
+		},
+		// 是否可查看
+		isView:{
 			type: Boolean,
 			default: true,
 		},

@@ -7,9 +7,9 @@
 								v-model="sourceData[item.model]"
 								:min="item.min" :max="item.max"
 								:disabled="item.disabled || formConfig.disabled"
-								:suffix="item.suffix"
-								:formatter="value => `${value}${item.suffix}`"
-								:parser="value => value.replace(item.suffix, '')"
+								:suffix="item.suffix ?? ''"
+								:formatter="value => `${value}${item.suffix??''}`"
+								:parser="value => value.replace(item.suffix??'', '')"
 								@change="value=>item.changeFunction(value, item)"/>
 				<a-input-password :style="item.style" v-else-if="item.inputType=='password'"
 								  v-model="sourceData[item.model]"
