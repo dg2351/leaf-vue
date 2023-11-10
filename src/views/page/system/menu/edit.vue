@@ -6,18 +6,26 @@
 			  @close="closeModal">
 		<a-spin :spinning="loading">
 			<div class="p10 bor_a" v-if="!formConfig.loading">
-				<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig"/>
+				<form_model ref="formModel" :sourceData="sourceData" :formConfig="formConfig">
+					<template #icon>
+						<a-input v-model="sourceData.icon" placeholder="请选择" readOnly @click="selectIcon(sourceData.icon)"/>
+					</template>
+				</form_model>
 			</div>
 			<div class="textCenter mB20">
 				<a-button type="primary" class="mR15" @click="onSubmit(true)">提交</a-button>
 				<a-button class="mR15"  @click="closeModal">返回</a-button>
 			</div>
 		</a-spin>
+
+		<!--弹窗-->
+		<iconModal ref="iconModal" :key="timer" @callback="callback"/>
 	</a-drawer>
 </template>
 
 <script>
 import form_model from "@/component/form/form_model";
+import iconModal from "@/views/page/system/menu/iconModal";
 import rxAjax from "@/assets/js/ajax";
 
 export default {
@@ -25,7 +33,7 @@ export default {
     props: {
         params: Object,
     },
-    components: {form_model},
+    components: {form_model,iconModal},
     computed: {
         routerParams() {
             return this.$route.query;
@@ -35,6 +43,8 @@ export default {
         return {
 			visible: false,
             loading:false,
+			//
+			timer: null,
 			// base
             sourceData:{},
             formConfig: {
@@ -99,11 +109,8 @@ export default {
 					{
 						span:24, labelCol:6,
 						label: "图标",
-						type: "select",
+						type: "slot",
 						model: "icon",
-						data:[
-							{label: '<a-icon type="desktop" />',value:'desktop'}
-						],
 						rule: [
 							{required: true, message: '该输入项不能为空', trigger: 'change'},
 						],
@@ -209,6 +216,17 @@ export default {
                 }
             });
         },
+		// icon弹窗
+		selectIcon(data){
+			this.timer = new Date().getTime();
+			this.$nextTick(()=>{
+				this.$refs.iconModal.openModal(data);
+			})
+		},
+		callback(v){
+			console.log(v)
+			this.sourceData.icon = v.data;
+		}
     }
 }
 </script>
