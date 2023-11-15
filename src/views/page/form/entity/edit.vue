@@ -11,17 +11,17 @@
             <!---->
             <form_model ref="formModel" :sourceData="sourceData" :form-config="formConfig"/>
             <!---->
-            <a-form-model :label-col="{ span: 8 }" :wrapper-col="{ span: 12 }">
+            <a-form-model>
                 <a-row>
-                    <a-col :span="12" v-for="item in formTab1">
+                    <a-col :span="8" v-for="item in formTab1">
                         <template v-if="item.model == 'dsName'">
-                            <a-form-model-item :label="item.label" :label-col="{span: 8 }" :required="true">
+                            <a-form-model-item :label="item.label" :label-col="{span: 5 }" :required="true">
                                 <a-input-search v-model="sourceData.dsName" enter-button :readOnly="true"
                                                 @search="$refs['dbModal'].openModal(getValue(sourceData,'dsAlias'))"/>
                             </a-form-model-item>
                         </template>
                         <template v-if="item.model == 'tableName'">
-                            <a-form-model-item :label="item.label" :label-col="{span: 8 }">
+                            <a-form-model-item :label="item.label" :label-col="{span: 5 }">
                                 <button type="button" class="ant-btn ant-btn-icon-only"
                                         @click="$refs['tableModal'].openModal(getValue(sourceData,'dsAlias'))">
                                     <i aria-label="图标: database" class="anticon anticon-database"><svg viewBox="64 64 896 896" data-icon="database" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class=""><path d="M832 64H192c-17.7 0-32 14.3-32 32v832c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V96c0-17.7-14.3-32-32-32zm-600 72h560v208H232V136zm560 480H232V408h560v208zm0 272H232V680h560v208zM304 240a40 40 0 1 0 80 0 40 40 0 1 0-80 0zm0 272a40 40 0 1 0 80 0 40 40 0 1 0-80 0zm0 272a40 40 0 1 0 80 0 40 40 0 1 0-80 0z"></path></svg></i>
@@ -170,6 +170,7 @@ export default {
         },
     },
     data() {
+    	let self_ = this;
         return {
 			specialType,
             loading:false,
@@ -180,6 +181,7 @@ export default {
                 disabled: false,
                 data: [
                     {
+						span:8, labelCol:5,
                         label: "名称",
                         type: "input",
                         model: "name",
@@ -189,6 +191,7 @@ export default {
                         ],
                     },
                     {
+						span:8, labelCol:5,
                         label: "标识",
                         type: "input",
                         model: "alias",
@@ -197,6 +200,22 @@ export default {
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
                         ],
                     },
+					{
+						span:8, labelCol:5,
+						label: "分类",
+						type: "selectTree",
+						model: "treeId",
+						maxLength: 20,
+						data:[],
+						initFunction: async function (item) {
+							let {data} = await rxAjax.postJson("/system/tree/list", {});
+							let sourceData = data.map(m=>{return {id:m.id, pid:m.parentId, label:m.name, value:m.id }})
+							item.data = self_.$util.buildTree(sourceData, "id", "pid");
+						},
+						rule: [
+							{required: true, message: '该输入项不能为空', trigger: 'change'},
+						],
+					},
                 ],
             },
             //
@@ -278,6 +297,7 @@ export default {
             let temp = true;
 			formData.columnList = this.columnList.map(item=>{
 				if(!item.comment || !item.name || !item.fieldName || !item.columnType){
+					console.log(item.comment,item.name,item.fieldName,item.columnType)
 					temp = false;
 				}
 				return Object.assign(item, {

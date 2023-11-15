@@ -109,6 +109,7 @@ export default {
         },
     },
     data() {
+    	let self_ = this;
         return {
             loading:false,
             sourceData:{},
@@ -135,6 +136,18 @@ export default {
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
                         ],
                     },
+					{
+						span:12, labelCol:8,
+						label: "分类",
+						type: "selectTree",
+						model: "treeId",
+						data:[],
+						initFunction: async function (item) {
+							let {data} = await rxAjax.postJson("/system/tree/list", {});
+							let sourceData = data.map(m=>{return {id:m.id, pid:m.parentId, label:m.name, value:m.id }})
+							item.data = self_.$util.buildTree(sourceData, "id", "pid");
+						},
+					},
 					{
 						span: 24, labelCol: 4,wrapperCol:19,
 						label: "参数定义",

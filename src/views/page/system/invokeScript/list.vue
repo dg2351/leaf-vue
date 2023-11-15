@@ -1,26 +1,37 @@
 <template>
     <div class="textLeft">
-		<table_model ref="table_model" alias="/system/invokeScript/list" rowKey="id"
-					 :query-config="queryConfig" :params="queryParam"
-					 :columns="columns" @eventView="v=>event().edit(v)">
-			<template v-slot:headSlot>
-				<a-button type="primary" class="floatR mT10" @click="event().edit()">新增</a-button>
-			</template>
-			<template v-slot:action="v">
-				<a-button type="danger" size="small" @click="event().del(v.data)">删除</a-button>
-			</template>
-		</table_model>
+		<a-row>
+			<a-col :span="6">
+				<tree_model ref="tree_model" alias="/system/tree/list" @callback="treeCallback"/>
+			</a-col>
+			<a-col :span="18">
+				<table_model ref="table_model" alias="/system/invokeScript/list" rowKey="id"
+							 :query-config="queryConfig" :params="queryParam"
+							 :columns="columns" @eventView="v=>event().edit(v)">
+					<template v-slot:headSlot>
+						<a-button type="primary" class="floatR mT10" @click="event().edit()">新增</a-button>
+					</template>
+					<template v-slot:action="v">
+						<a-button type="danger" size="small" @click="event().del(v.data)">删除</a-button>
+					</template>
+				</table_model>
+			</a-col>
+		</a-row>
     </div>
 </template>
 
 <script>
 import table_model from "@/component/table/table_model";
+import tree_model from "@/component/tree/tree_model";
 import rxAjax from '@/assets/js/ajax.js';
 import moment from "moment";
 
 export default {
     name: "list",
-    components: {table_model},
+    components: {
+    	table_model,
+		tree_model,
+	},
     data() {
         return {
 			// 查询条件
@@ -65,7 +76,12 @@ export default {
                 })
             }
             return method;
-        }
+        },
+		//
+		treeCallback(e){
+			this.queryParam.treeId = e;
+			this.$refs.table_model.loadData(1);
+		},
     },
 }
 </script>

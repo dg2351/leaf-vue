@@ -96,8 +96,7 @@ export default {
 						initFunction: async function (item) {
 							let {data} = await rxAjax.postJson("/system/tree/list", {});
 							let sourceData = data.map(m=>{return {id:m.id, pid:m.parentId, label:m.name, value:m.id }})
-							let list = self_.$util.buildTree(sourceData, "id", "pid");
-							item.data = list
+							item.data = self_.$util.buildTree(sourceData, "id", "pid");
 						},
                     },
 					{

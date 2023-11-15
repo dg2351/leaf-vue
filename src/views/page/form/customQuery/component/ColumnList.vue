@@ -1,5 +1,5 @@
 <template>
-	<a-modal title="设置列头" dialogClass="modal_a" width="600px"
+	<a-modal title="设置列头" dialogClass="modal_a" width="80%"
 			 :visible="visible" @cancel="closeModal" :footer="null">
 		<div style="height: 650px;overflow-y: auto">
 			<table_model v-if="visible" ref="table_model" rowKey="fieldName"

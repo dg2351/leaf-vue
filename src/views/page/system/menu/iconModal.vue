@@ -1,6 +1,6 @@
 <template>
 	<a-modal title="图标选择" dialogClass="modal_a" width="88%"
-			 :visible="visible" @cancel="closeModal" :footer="null">
+			 :visible="visible" @cancel="closeModal(false)" :footer="null">
 		<a-spin :spinning="loading">
 			<div class="p10 bor_a" style="height:550px;max-height: 600px">
 				<a-tabs class="nav_big1" v-model="curtab">
@@ -17,7 +17,7 @@
 			</div>
 			<div class="textCenter mB20">
 				<a-button type="primary" class="mR15" @click="onSubmit(true)">确认</a-button>
-				<a-button class="mR15"  @click="closeModal">返回</a-button>
+				<a-button class="mR15"  @click="closeModal(false)">返回</a-button>
 			</div>
 		</a-spin>
 	</a-modal>

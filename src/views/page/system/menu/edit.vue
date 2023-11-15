@@ -224,7 +224,6 @@ export default {
 			})
 		},
 		callback(v){
-			console.log(v)
 			this.sourceData.icon = v.data;
 		}
     }
