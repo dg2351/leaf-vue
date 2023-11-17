@@ -1,6 +1,7 @@
 <template>
 	<!--a-directory-tree-->
-	<a-tree class="treeA" :tree-data="treeData" @select="clickEvent">
+	<a-tree style="max-height: 900px" class="treeA"
+			:tree-data="treeData" @select="clickEvent">
 		<template slot="custom" slot-scope="{title,key}">
 			<a-dropdown :trigger="['contextmenu']">
 				<span>{{ title }}</span>

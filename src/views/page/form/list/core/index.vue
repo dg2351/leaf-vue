@@ -1,7 +1,7 @@
 <template>
     <div class="p10">
         <div class="boxa">
-            <component v-bind:is="currentTabComponent" :params="params"
+            <component :key="routerQuery.alias" v-bind:is="currentTabComponent" :params="params"
                        @formBack="formBack"></component>
         </div>
     </div>
@@ -14,13 +14,21 @@ import edit from "./edit"
 export default {
     name: "index",
     components:{list,edit},
+	computed: {
+		routerParams() {
+			return this.$route.params;
+		},
+		routerQuery() {
+			return this.$route.query;
+		},
+	},
     data() {
         return {
             currentTabComponent: "list",
             params:{},
         };
     },
-    methods:{
+	methods:{
         formBack(e){
             this.$util.component(this).back(e);
         }

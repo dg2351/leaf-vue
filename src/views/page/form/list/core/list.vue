@@ -24,6 +24,14 @@ import rxAjax from "@/assets/js/ajax";
 export default {
     name: "list",
     components: {table_model},
+	computed: {
+		routerParams() {
+			return this.$route.params;
+		},
+		routerQuery() {
+			return this.$route.query;
+		},
+	},
     data() {
         return {
         	alias: "wechat_user",
@@ -36,12 +44,13 @@ export default {
 	},
 	methods:{
     	loadData(){
-    		if(!this.alias){
+    		let {alias} = this.routerQuery;
+    		if(!alias){
     			this.$util.message().error('操作提示', 'alias参数缺失')
     			return;
 			}
 			let api = "/form/bo/list/alias";
-			let params = Object.assign({alias:this.alias});
+			let params = Object.assign({alias});
 			rxAjax.get(api, params).then(({success,data})=>{
 				let sourceData = data;
 				let searchJson = data.searchJson?JSON.parse(data.searchJson) : []

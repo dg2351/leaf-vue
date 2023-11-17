@@ -1,10 +1,10 @@
 <template>
     <div class="textLeft">
 		<a-row>
-			<a-col :span="6">
+			<a-col :span="4">
 				<tree_model ref="tree_model" alias="/system/tree/list" @callback="callback"/>
 			</a-col>
-			<a-col :span="18">
+			<a-col :span="20">
 				<table_model ref="table_model" alias="/form/bo/entity/list" rowKey="id"
 							 :query-config="queryConfig" :params="queryParam"
 							 :columns="columns" @eventView="v=>event().edit(v)">

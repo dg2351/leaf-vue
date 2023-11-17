@@ -181,14 +181,18 @@ export default {
                     that.formConfig.loading = false
                 })
             } else{
-				that.sourceData = {
+            	let sourceData = {};
+            	this.formConfig.data.forEach(item=>{
+            		sourceData[item.model] = null;
+				})
+				that.sourceData = Object.assign(sourceData, {
 					pid,
 					showType:1,
 					sort:1,
 					status:1,
 					settingType:'custom',
 					sys:0,
-				}
+				})
                 that.formConfig.loading = false
             }
         },
