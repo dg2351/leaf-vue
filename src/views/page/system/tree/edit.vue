@@ -97,9 +97,6 @@ export default {
 				this.$emit("callback", {refresh})
 			}
 		},
-		getValue(data, key){
-			return data ? (data[key] ?? '') : '';
-		},
         loadData(id, parentId='0'){
             let that = this;
             if(id){

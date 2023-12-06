@@ -12,6 +12,7 @@
 						<a-button type="primary" class="floatR mT10" @click="event().edit()">新增</a-button>
 					</template>
 					<template v-slot:action="v">
+						<a-button type="" size="small" @click="event().page(v.data)">设计</a-button>
 						<a-button type="danger" size="small" @click="event().del(v.data)">删除</a-button>
 					</template>
 				</table_model>
@@ -44,6 +45,7 @@ export default {
 				{title:"标识",dataIndex:"alias"},
 				{title:"数据源",dataIndex:"dsName"},
 				{title:"表名",dataIndex:"tableName"},
+				{title:"操作列",dataIndex:"action",width:"220px",align:"center",scopedSlots: { customRender: 'action' }}
 			],
         }
     },
@@ -73,6 +75,9 @@ export default {
                     })
                 })
             }
+            method.page = (record)=>{
+				console.log(record)
+			}
             return method;
         },
 		//

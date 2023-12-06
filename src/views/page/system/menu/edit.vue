@@ -98,6 +98,7 @@ export default {
                         type: "input",
                         model: "component",
                         maxLength: 60,
+						remark: "组件路径是src/views 目录下的组件。<br>列表组件路径：page/form/list/core/index"
                     },
 					{
 						span:24, labelCol:6,

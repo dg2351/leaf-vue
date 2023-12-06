@@ -11,7 +11,13 @@
 					 :params="{}"
 					 :query-config="sourceData.searchJson"
 					 :columns="sourceData.fieldsJson"
-					 @eventView="v=>event().edit(v)"/>
+					 @eventView="v=>event().edit(v)">
+			<template v-slot:headSlot>
+				<a-button type="primary" class="floatR mT10" @click="event().add()">新增</a-button>
+			</template>
+		</table_model>
+
+		<editModal ref="editModal"/>
     </div>
 </template>
 
@@ -20,10 +26,11 @@ import table_model from "@/component/table/table_model";
 import FormMethods from "@/plugins/js-comps/FormMethods";
 import moment from "moment";
 import rxAjax from "@/assets/js/ajax";
+import editModal from "./edit"
 
 export default {
     name: "list",
-    components: {table_model},
+    components: {table_model,editModal},
 	computed: {
 		routerParams() {
 			return this.$route.params;
@@ -95,10 +102,14 @@ export default {
         event(){
             let self_ = this;
             let method = {};
-            method.edit = (record)=>{
+            method.add = (record)=>{
                 let params = {id:record?record.ID_:null}
-                self_.$util.component(self_).event('edit', params);
+                self_.$refs.editModal.openModal(params);
             }
+			method.edit = (record)=>{
+				let params = {id:record?record.ID_:null}
+				self_.$util.component(self_).event('edit', params);
+			}
             return method;
         }
     },

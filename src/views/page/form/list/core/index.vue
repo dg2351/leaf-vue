@@ -9,11 +9,12 @@
 
 <script>
 import list from "./list"
-import edit from "./edit"
 
 export default {
     name: "index",
-    components:{list,edit},
+    components:{
+    	list,
+	},
 	computed: {
 		routerParams() {
 			return this.$route.params;

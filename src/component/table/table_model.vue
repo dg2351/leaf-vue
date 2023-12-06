@@ -23,6 +23,11 @@
 				 :columns="columns" :data-source="sourceData" :expandIconColumnIndex="expandIconColumnIndex??0"
 				 :rowSelection="rowSelectChange ? { onChange: rowSelectChange,type: 'checkbox'} : null"
 				 :pagination="isPage ? pagination : false" :locale="{emptyText: '暂无数据'}">
+			<!--列头自定义插槽-->
+			<template :slot="val.slots.title" v-for="val in columns.filter(p=>p.slots && p.slots.title)">
+				<slot :name="val.slots.title"/>
+			</template>
+			<!--列插槽-->
 			<span slot="xh" slot-scope="text, record, index"><i class="xh">{{record.xh}}</i></span>
 			<template slot="img" slot-scope="text, record, index">
 				<img :src="text" height="55"/>

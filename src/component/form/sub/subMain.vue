@@ -194,6 +194,13 @@
 		<subDialogbox v-else-if="item.type==='dialogbox'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 		<!-- 自定义插槽 -->
 		<slot :name="item.model" v-else-if="item.type==='slot'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
+		<!-- 备注说明 -->
+		<a-tooltip v-if="!(item.readonly || formConfig.readonly) && item.remark">
+			<template slot="title">
+				<p v-html="item.remark"></p>
+			</template>
+			<a-icon type="question-circle"/>
+		</a-tooltip>
 	</div>
 </template>
 
