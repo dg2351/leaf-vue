@@ -39,16 +39,6 @@ export default {
 				loading: true,
 				disabled: false,
 				data: [
-					{
-						span:24, labelCol:4,
-						label: "名称",
-						type: "input",
-						model: "name",
-						maxLength: 20,
-						rule: [
-							{required: true, message: '该输入项不能为空', trigger: 'change'},
-						],
-					},
 				]
 			}
 		}

@@ -5,7 +5,7 @@
 				<tree_model ref="tree_model" alias="/system/tree/list" @callback="callback"/>
 			</a-col>
 			<a-col :span="20">
-				<table_model ref="table_model" alias="/form/bo/entity/list" rowKey="id"
+				<table_model ref="table_model" alias="/form/design/list" rowKey="id"
 							 :query-config="queryConfig" :params="queryParam"
 							 :columns="columns" @eventView="v=>event().edit(v)">
 					<template v-slot:headSlot>
@@ -17,6 +17,8 @@
 				</table_model>
 			</a-col>
 		</a-row>
+
+		<editModal ref="editModal"/>
     </div>
 </template>
 
@@ -24,12 +26,14 @@
 import table_model from "@/component/table/table_model";
 import tree_model from "@/component/tree/tree_model";
 import rxAjax from '@/assets/js/ajax.js';
+import editModal from "./editModal";
 
 export default {
     name: "list",
     components: {
     	table_model,
 		tree_model,
+		editModal,
 	},
     data() {
         return {
@@ -37,13 +41,11 @@ export default {
 			queryParam: {},
 			// 查询配置
 			queryConfig:[
-				{span:12,labelCol:6,label:"实体名称",value:null,key:"name",type:"input"},
+				{span:12,labelCol:6,label:"表单名称",value:null,key:"name",type:"input"},
 			],
 			columns:[
 				{title:"名称",dataIndex:"name"},
 				{title:"标识",dataIndex:"alias"},
-				{title:"数据源",dataIndex:"dsName"},
-				{title:"表名",dataIndex:"tableName"},
 				{title:"操作列",dataIndex:"action",width:"220px",align:"center",scopedSlots: { customRender: 'action' }}
 			],
         }
@@ -58,11 +60,11 @@ export default {
             let method = {};
             method.edit = (record)=>{
                 let params = {id:record?record.id:null}
-                self_.$util.component(self_).event('edit', params);
+                self_.$refs.editModal.openModal(params);
             }
             method.del = (record)=>{
                 self_.$util.modal(self_).confirm(null, '彻底删除后，数据不可恢复！请谨慎操作', function () {
-                    let api = "/form/bo/entity/delete";
+                    let api = "/form/design/delete";
                     let params = {id:record.id}
                     rxAjax.postForm(api, params).then(({success,data})=>{
                         if(success){
