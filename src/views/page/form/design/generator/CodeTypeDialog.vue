@@ -27,7 +27,7 @@
 							</a-radio-group>
 						</a-form-item>
 						<a-form-item v-if="showFileName" label="文件名" prop="fileName">
-							<a-input v-model="formData.fileName" placeholder="请输入文件名" clearable />
+							<a-input v-model="formData.fileName" placeholder="请输入文件名" allowClear />
 						</a-form-item>
 					</a-col>
 				</el-form>

@@ -77,12 +77,13 @@
 					</a-radio-group>
 				</a-form-item>
 				<a-form-item v-if="activeData.labelWidth!==undefined" label="标签宽度">
-					<a-input v-model.number="activeData.labelWidth" type="number" placeholder="请输入标签宽度" />
+					<a-slider v-model="activeData.labelWidth" :max="24" :min="1" :marks="{12:''}" @change="v=>{formConf.span = v}" />
+					<!--<a-input v-model.number="activeData.labelWidth" type="number" :min="1" :max="24" placeholder="请输入标签宽度" />-->
 				</a-form-item>
 				<a-form-item v-if="activeData.style&&activeData.style.width!==undefined" label="组件宽度">
-					<a-input v-model="activeData.style.width" placeholder="请输入组件宽度" clearable />
+					<a-input v-model="activeData.style.width" placeholder="请输入组件宽度" allowClear />
 				</a-form-item>
-				<a-form-item v-if="activeData.tag==='el-checkbox-group'" label="至少应选">
+				<a-form-item v-if="activeData.tag==='a-checkbox-group'" label="至少应选">
 					<a-input-number
 						:value="activeData.min"
 						:min="0"
@@ -90,7 +91,7 @@
 						@input="$set(activeData, 'min', $event?$event:undefined)"
 					/>
 				</a-form-item>
-				<a-form-item v-if="activeData.tag==='el-checkbox-group'" label="最多可选">
+				<a-form-item v-if="activeData.tag==='a-checkbox-group'" label="最多可选">
 					<a-input-number
 						:value="activeData.max"
 						:min="0"
@@ -98,34 +99,30 @@
 						@input="$set(activeData, 'max', $event?$event:undefined)"
 					/>
 				</a-form-item>
-				<a-form-item v-if="activeData.prepend!==undefined" label="前缀">
-					<a-input v-model="activeData.prepend" placeholder="请输入前缀" />
+				<a-form-item v-if="activeData.addonBefore!==undefined" label="前缀">
+					<a-input v-model="activeData.addonBefore" placeholder="请输入前缀" />
 				</a-form-item>
-				<a-form-item v-if="activeData.append!==undefined" label="后缀">
-					<a-input v-model="activeData.append" placeholder="请输入后缀" />
+				<a-form-item v-if="activeData.addonAfter!==undefined" label="后缀">
+					<a-input v-model="activeData.addonAfter" placeholder="请输入后缀" />
 				</a-form-item>
-				<a-form-item v-if="activeData['prefix-icon']!==undefined" label="前图标">
-					<a-input v-model="activeData['prefix-icon']" placeholder="请输入前图标名称">
-						<el-button slot="append" icon="el-icon-thumb" @click="openIconsDialog('prefix-icon')">
-							选择
-						</el-button>
+				<a-form-item v-if="activeData['prefix']!==undefined" label="前图标">
+					<a-input v-model="activeData['prefix']" placeholder="请输入前图标名称">
+						<a slot="addonAfter" @click="openIconsDialog('prefix')">选择</a>
 					</a-input>
 				</a-form-item>
-				<a-form-item v-if="activeData['suffix-icon'] !== undefined" label="后图标">
-					<a-input v-model="activeData['suffix-icon']" placeholder="请输入后图标名称">
-						<el-button slot="append" icon="el-icon-thumb" @click="openIconsDialog('suffix-icon')">
-							选择
-						</el-button>
+				<a-form-item v-if="activeData['suffix'] !== undefined" label="后图标">
+					<a-input v-model="activeData['suffix']" placeholder="请输入后图标名称">
+						<a slot="addonAfter" @click="openIconsDialog('suffix')">选择</a>
 					</a-input>
 				</a-form-item>
-				<a-form-item v-if="activeData.tag === 'el-cascader'" label="选项分隔符">
+				<a-form-item v-if="activeData.tag === 'a-cascader'" label="选项分隔符">
 					<a-input v-model="activeData.separator" placeholder="请输入选项分隔符" />
 				</a-form-item>
-				<a-form-item v-if="activeData.autosize !== undefined" label="最小行数">
-					<a-input-number v-model="activeData.autosize.minRows" :min="1" placeholder="最小行数" />
+				<a-form-item v-if="activeData.autoSize !== undefined" label="最小行数">
+					<a-input-number v-model="activeData.autoSize.minRows" :min="1" :max="activeData.autoSize.maxRows" placeholder="最小行数" />
 				</a-form-item>
-				<a-form-item v-if="activeData.autosize !== undefined" label="最大行数">
-					<a-input-number v-model="activeData.autosize.maxRows" :min="1" placeholder="最大行数" />
+				<a-form-item v-if="activeData.autoSize !== undefined" label="最大行数">
+					<a-input-number v-model="activeData.autoSize.maxRows" :min="activeData.autoSize.minRows" :max="99" placeholder="最大行数" />
 				</a-form-item>
 				<a-form-item v-if="activeData.min !== undefined" label="最小值">
 					<a-input-number v-model="activeData.min" placeholder="最小值" />
@@ -188,12 +185,7 @@
 					<a-input v-model="activeData.name" placeholder="请输入上传文件字段名" />
 				</a-form-item>
 				<a-form-item v-if="activeData.accept !== undefined" label="文件类型">
-					<a-select
-						v-model="activeData.accept"
-						placeholder="请选择文件类型"
-						:style="{ width: '100%' }"
-						clearable
-					>
+					<a-select v-model="activeData.accept" placeholder="请选择文件类型" :style="{ width: '100%' }" allowClear>
 						<a-option label="图片" value="image/*" />
 						<a-option label="视频" value="video/*" />
 						<a-option label="音频" value="audio/*" />
@@ -213,7 +205,7 @@
 					</a-input>
 				</a-form-item>
 				<a-form-item v-if="activeData.action !== undefined" label="上传地址">
-					<a-input v-model="activeData.action" placeholder="请输入上传地址" clearable />
+					<a-input v-model="activeData.action" placeholder="请输入上传地址" allowClear />
 				</a-form-item>
 				<a-form-item v-if="activeData['list-type'] !== undefined" label="列表类型">
 					<a-radio-group v-model="activeData['list-type']" size="small">
@@ -251,8 +243,8 @@
 						@input="setTimeValue($event)"
 					/>
 				</a-form-item>
-				<template v-if="['el-checkbox-group', 'a-radio-group', 'a-select'].indexOf(activeData.tag) > -1">
-					<el-divider>选项</el-divider>
+				<template v-if="['a-checkbox-group', 'a-radio-group', 'a-select'].indexOf(activeData.tag) > -1">
+					<a-divider>选项</a-divider>
 					<draggable
 						:list="activeData.options"
 						:animation="340"
@@ -276,20 +268,20 @@
 						</div>
 					</draggable>
 					<div style="margin-left: 20px;">
-						<el-button
+						<a-button
 							style="padding-bottom: 0"
 							icon="el-icon-circle-plus-outline"
 							type="text"
 							@click="addSelectItem"
 						>
 							添加选项
-						</el-button>
+						</a-button>
 					</div>
-					<el-divider />
+					<a-divider />
 				</template>
 
-				<template v-if="['el-cascader'].indexOf(activeData.tag) > -1">
-					<el-divider>选项</el-divider>
+				<template v-if="['a-cascader'].indexOf(activeData.tag) > -1">
+					<a-divider>选项</a-divider>
 					<a-form-item label="数据类型">
 						<a-radio-group v-model="activeData.dataType" size="small">
 							<a-radio-button label="dynamic">
@@ -331,7 +323,7 @@
 							添加父级
 						</a-button>
 					</div>
-					<el-divider />
+					<a-divider />
 				</template>
 
 				<a-form-item v-if="activeData.optionType !== undefined" label="选项样式">
@@ -362,10 +354,7 @@
 				<a-form-item v-if="activeData.range !== undefined" label="范围选择">
 					<a-switch v-model="activeData.range" @change="rangeChange" />
 				</a-form-item>
-				<a-form-item
-					v-if="activeData.border !== undefined && activeData.optionType === 'default'"
-					label="是否带边框"
-				>
+				<a-form-item v-if="activeData.border !== undefined && activeData.optionType === 'default'" label="是否带边框">
 					<a-switch v-model="activeData.border" />
 				</a-form-item>
 				<a-form-item v-if="activeData.tag === 'el-color-picker'" label="颜色格式">
@@ -382,34 +371,25 @@
 				<a-form-item v-if="activeData.size !== undefined && (activeData.optionType === 'button' || activeData.border || activeData.tag === 'el-color-picker')"
 							 label="选项尺寸">
 					<a-radio-group v-model="activeData.size">
-						<a-radio-button label="medium">
-							中等
-						</a-radio-button>
-						<a-radio-button label="small">
-							较小
-						</a-radio-button>
-						<a-radio-button label="mini">
-							迷你
-						</a-radio-button>
+						<a-radio-button label="medium">中等</a-radio-button>
+						<a-radio-button label="small">较小</a-radio-button>
+						<a-radio-button label="mini">迷你</a-radio-button>
 					</a-radio-group>
-				</a-form-item>
-				<a-form-item v-if="activeData['show-word-limit'] !== undefined" label="输入统计">
-					<a-switch v-model="activeData['show-word-limit']" />
 				</a-form-item>
 				<a-form-item v-if="activeData.tag === 'a-input-number'" label="严格步数">
 					<a-switch v-model="activeData['step-strictly']" />
 				</a-form-item>
-				<a-form-item v-if="activeData.tag === 'el-cascader'" label="是否多选">
+				<a-form-item v-if="activeData.tag === 'a-cascader'" label="是否多选">
 					<a-switch v-model="activeData.props.props.multiple" />
 				</a-form-item>
-				<a-form-item v-if="activeData.tag === 'el-cascader'" label="展示全路径">
+				<a-form-item v-if="activeData.tag === 'a-cascader'" label="展示全路径">
 					<a-switch v-model="activeData['show-all-levels']" />
 				</a-form-item>
-				<a-form-item v-if="activeData.tag === 'el-cascader'" label="可否筛选">
+				<a-form-item v-if="activeData.tag === 'a-cascader'" label="可否筛选">
 					<a-switch v-model="activeData.filterable" />
 				</a-form-item>
-				<a-form-item v-if="activeData.clearable !== undefined" label="能否清空">
-					<a-switch v-model="activeData.clearable" />
+				<a-form-item v-if="activeData.allowClear !== undefined" label="能否清空">
+					<a-switch v-model="activeData.allowClear" />
 				</a-form-item>
 				<a-form-item v-if="activeData.showTip !== undefined" label="显示提示">
 					<a-switch v-model="activeData.showTip" />
@@ -435,13 +415,8 @@
 
 				<template v-if="activeData.layoutTree">
 					<a-divider>布局结构树</a-divider>
-					<a-tree
-						:data="[activeData]"
-						:props="layoutTreeProps"
-						node-key="renderKey"
-						default-expand-all
-						draggable
-					>
+					<a-tree :data="[activeData]" :props="layoutTreeProps"
+						node-key="renderKey" default-expand-all draggable>
 					  <span slot-scope="{ node, data }">
 						<span class="node-label">
 						  {{ node.label }}
@@ -450,13 +425,9 @@
 					</a-tree>
 				</template>
 
-				<template v-if="activeData.layout === 'colFormItem' && activeData.tag !== 'el-button'">
+				<template v-if="activeData.layout === 'colFormItem' && activeData.tag !== 'a-button'">
 					<a-divider>正则校验</a-divider>
-					<div
-						v-for="(item, index) in activeData.regList"
-						:key="index"
-						class="reg-item"
-					>
+					<div v-for="(item, index) in activeData.regList" :key="index" class="reg-item">
 						  <span class="close-btn" @click="activeData.regList.splice(index, 1)">
 							<i class="el-icon-close" />
 						  </span>
@@ -468,9 +439,7 @@
 						</a-form-item>
 					</div>
 					<div style="margin-left: 20px">
-						<a-button icon="el-icon-circle-plus-outline" type="text" @click="addReg">
-							添加规则
-						</a-button>
+						<a-button icon="el-icon-circle-plus-outline" type="text" @click="addReg">添加规则</a-button>
 					</div>
 				</template>
 			</a-form>
@@ -530,7 +499,8 @@
 		</div>
 
 		<!-- <treeNode-dialog :visible.sync="dialogVisible" title="添加选项" @commit="addNode" /> -->
-		<!-- <icons-dialog :visible.sync="iconsVisible" :current="activeData[currentIconModel]" @select="setIcon" /> -->
+		<!--弹窗-->
+		<iconModal ref="iconModal" :key="iconsVisible" @callback="setIcon"/>
 	</div>
 </template>
 
@@ -543,6 +513,7 @@ import {
 	selectComponents,
 	layoutComponents
 } from './config'
+import iconModal from "@/views/page/system/menu/iconModal";
 
 const dateTimeFormat = {
 	date: 'yyyy-MM-dd',
@@ -557,7 +528,7 @@ const dateTimeFormat = {
 
 export default {
 	components: {
-		draggable,
+		draggable,iconModal
 	},
 	props: ['showField', 'activeData', 'formConf'],
 	data() {
@@ -566,7 +537,6 @@ export default {
 			currentNode: null,
 			dialogVisible: false,
 			iconsVisible: false,
-			currentIconModel: null,
 			dateTypeOptions: [
 				{
 					label: '日(date)',
@@ -809,11 +779,13 @@ export default {
 			this.activeData.renderKey = +new Date() // 更新renderKey,重新渲染该组件
 		},
 		openIconsDialog(model) {
-			this.iconsVisible = true
-			this.currentIconModel = model
+			this.iconsVisible = new Date().getTime();
+			this.$nextTick(()=>{
+				this.$refs.iconModal.openModal(this.activeData[model], model)
+			})
 		},
-		setIcon(val) {
-			this.activeData[this.currentIconModel] = val
+		setIcon(v) {
+			this.activeData[v.key] = v.data
 		},
 		tagChange(tagIcon) {
 			let target = inputComponents.find(item => item.tagIcon === tagIcon)

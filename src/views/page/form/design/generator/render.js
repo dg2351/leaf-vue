@@ -22,7 +22,8 @@ const isAttr = makeMap(
 	+ 'preload,radiogroup,readOnly,rel,required,reversed,rows,rowspan,sandbox,'
 	+ 'scope,scoped,seamless,selected,shape,size,type,text,password,sizes,span,'
 	+ 'spellcheck,src,srcdoc,srclang,srcset,start,step,style,summary,tabindex,'
-	+ 'target,title,type,usemap,value,width,wrap'
+	+ 'target,title,type,usemap,value,width,wrap,'
+	+ 'autoSize'
 )
 
 function vModel(self, dataObject, defaultValue) {
@@ -41,12 +42,18 @@ const componentChild = {
 		},
 	},
 	'a-input': {
-		prepend(h, conf, key) {
-			return <template slot="prepend">{conf[key]}</template>
+		addonBefore(h, conf, key) {
+			return <template slot="addonBefore">{conf[key]}</template>
 		},
-		append(h, conf, key) {
-			return <template slot="append">{conf[key]}</template>
-		}
+		addonAfter(h, conf, key) {
+			return <template slot="addonAfter">{conf[key]}</template>
+		},
+		prefix(h, conf, key) {
+			return (<a-icon slot="prefix" type={conf[key]}></a-icon>)
+		},
+		suffix(h, conf, key) {
+			return (<a-icon slot="suffix" type={conf[key]}></a-icon>)
+		},
 	},
 	'a-select': {
 		options(h, conf, key) {
@@ -86,7 +93,7 @@ const componentChild = {
 			if (conf['list-type'] === 'picture-card') {
 				list.push(<i class="el-icon-plus"></i>)
 			} else {
-				list.push(<el-button size="small" type="primary" icon="el-icon-upload">{conf.buttonText}</el-button>)
+				list.push(<a-button size="small" type="primary" icon="el-icon-upload">{conf.buttonText}</a-button>)
 			}
 			if (conf.showTip) {
 				list.push(<div slot="tip" class="el-upload__tip">只能上传不超过 {conf.fileSize}{conf.sizeUnit} 的{conf.accept}文件</div>)
@@ -97,6 +104,7 @@ const componentChild = {
 }
 
 export default {
+	props: ['conf'],
 	render(h) {
 		const dataObject = {
 			attrs: {},
@@ -112,11 +120,12 @@ export default {
 			Object.keys(childObjs).forEach(key => {
 				const childFunc = childObjs[key]
 				if (confClone[key]) {
+					console.log(h)
 					children.push(childFunc(h, confClone, key))
 				}
 			})
+			console.log(children)
 		}
-
 		Object.keys(confClone).forEach(key => {
 			const val = confClone[key]
 			if (key === 'vModel') {
@@ -135,5 +144,4 @@ export default {
 		})
 		return h(this.conf.tag, dataObject, children)
 	},
-	props: ['conf']
 }

@@ -85,9 +85,9 @@ const layouts = {
 		}
 		const required = !trigger[element.tag] && element.required ? 'required' : ''
 		const tagDom = tags[element.tag] ? tags[element.tag](element) : null
-		let str = `<el-form-item ${labelWidth} label="${element.label}" prop="${element.vModel}" ${required}>
-        ${tagDom}
-      </el-form-item>`
+		let str = `<a-form-item ${labelWidth} label="${element.label}" prop="${element.vModel}" ${required}>
+					${tagDom}
+				  </a-form-item>`
 		str = colWrapper(element, str)
 		return str
 	},
@@ -106,7 +106,7 @@ const layouts = {
 }
 
 const tags = {
-	'el-button': el => {
+	'a-button': el => {
 		const {
 			tag, disabled
 		} = attrBuilder(el)
@@ -118,26 +118,25 @@ const tags = {
 		if (child) child = `\n${child}\n` // 换行
 		return `<${el.tag} ${type} ${icon} ${size} ${disabled}>${child}</${el.tag}>`
 	},
-	'el-input': el => {
+	'a-input': el => {
 		const {
-			disabled, vModel, clearable, placeholder, width
+			disabled, vModel, allowClear, placeholder, width
 		} = attrBuilder(el)
 		const maxlength = el.maxlength ? `:maxlength="${el.maxlength}"` : ''
 		const showWordLimit = el['show-word-limit'] ? 'show-word-limit' : ''
 		const readonly = el.readonly ? 'readonly' : ''
-		const prefixIcon = el['prefix-icon'] ? `prefix-icon='${el['prefix-icon']}'` : ''
-		const suffixIcon = el['suffix-icon'] ? `suffix-icon='${el['suffix-icon']}'` : ''
-		const showPassword = el['show-password'] ? 'show-password' : ''
+		const prefixIcon = el['prefix'] ? `prefix='${el['prefix']}'` : ''
+		const suffixIcon = el['suffix'] ? `suffix='${el['suffix']}'` : ''
 		const type = el.type ? `type="${el.type}"` : ''
-		const autosize = el.autosize && el.autosize.minRows
-			? `:autosize="{minRows: ${el.autosize.minRows}, maxRows: ${el.autosize.maxRows}}"`
+		const autoSize = el.autoSize && el.autoSize.minRows
+			? `:autosize="{minRows: ${el.autoSize.minRows}, maxRows: ${el.autoSize.maxRows}}"`
 			: ''
 		let child = buildElInputChild(el)
 
 		if (child) child = `\n${child}\n` // 换行
-		return `<${el.tag} ${vModel} ${type} ${placeholder} ${maxlength} ${showWordLimit} ${readonly} ${disabled} ${clearable} ${prefixIcon} ${suffixIcon} ${showPassword} ${autosize} ${width}>${child}</${el.tag}>`
+		return `<${el.tag} ${vModel} ${type} ${placeholder} ${maxlength} ${showWordLimit} ${readonly} ${disabled} ${allowClear} ${prefixIcon} ${suffixIcon} ${autoSize} ${width}>${child}</${el.tag}>`
 	},
-	'el-input-number': el => {
+	'a-input-number': el => {
 		const { disabled, vModel, placeholder } = attrBuilder(el)
 		const controlsPosition = el['controls-position'] ? `controls-position=${el['controls-position']}` : ''
 		const min = el.min ? `:min='${el.min}'` : ''
@@ -148,18 +147,18 @@ const tags = {
 
 		return `<${el.tag} ${vModel} ${placeholder} ${step} ${stepStrictly} ${precision} ${controlsPosition} ${min} ${max} ${disabled}></${el.tag}>`
 	},
-	'el-select': el => {
+	'a-select': el => {
 		const {
-			disabled, vModel, clearable, placeholder, width
+			disabled, vModel, allowClear, placeholder, width
 		} = attrBuilder(el)
 		const filterable = el.filterable ? 'filterable' : ''
 		const multiple = el.multiple ? 'multiple' : ''
 		let child = buildElSelectChild(el)
 
 		if (child) child = `\n${child}\n` // 换行
-		return `<${el.tag} ${vModel} ${placeholder} ${disabled} ${multiple} ${filterable} ${clearable} ${width}>${child}</${el.tag}>`
+		return `<${el.tag} ${vModel} ${placeholder} ${disabled} ${multiple} ${filterable} ${allowClear} ${width}>${child}</${el.tag}>`
 	},
-	'el-radio-group': el => {
+	'a-radio-group': el => {
 		const { disabled, vModel } = attrBuilder(el)
 		const size = `size="${el.size}"`
 		let child = buildElRadioGroupChild(el)
@@ -167,7 +166,7 @@ const tags = {
 		if (child) child = `\n${child}\n` // 换行
 		return `<${el.tag} ${vModel} ${size} ${disabled}>${child}</${el.tag}>`
 	},
-	'el-checkbox-group': el => {
+	'a-checkbox-group': el => {
 		const { disabled, vModel } = attrBuilder(el)
 		const size = `size="${el.size}"`
 		const min = el.min ? `:min="${el.min}"` : ''
@@ -177,7 +176,7 @@ const tags = {
 		if (child) child = `\n${child}\n` // 换行
 		return `<${el.tag} ${vModel} ${min} ${max} ${size} ${disabled}>${child}</${el.tag}>`
 	},
-	'el-switch': el => {
+	'a-switch': el => {
 		const { disabled, vModel } = attrBuilder(el)
 		const activeText = el['active-text'] ? `active-text="${el['active-text']}"` : ''
 		const inactiveText = el['inactive-text'] ? `inactive-text="${el['inactive-text']}"` : ''
@@ -188,9 +187,9 @@ const tags = {
 
 		return `<${el.tag} ${vModel} ${activeText} ${inactiveText} ${activeColor} ${inactiveColor} ${activeValue} ${inactiveValue} ${disabled}></${el.tag}>`
 	},
-	'el-cascader': el => {
+	'a-cascader': el => {
 		const {
-			disabled, vModel, clearable, placeholder, width
+			disabled, vModel, allowClear, placeholder, width
 		} = attrBuilder(el)
 		const options = el.options ? `:options="${el.vModel}Options"` : ''
 		const props = el.props ? `:props="${el.vModel}Props"` : ''
@@ -198,9 +197,9 @@ const tags = {
 		const filterable = el.filterable ? 'filterable' : ''
 		const separator = el.separator === '/' ? '' : `separator="${el.separator}"`
 
-		return `<${el.tag} ${vModel} ${options} ${props} ${width} ${showAllLevels} ${placeholder} ${separator} ${filterable} ${clearable} ${disabled}></${el.tag}>`
+		return `<${el.tag} ${vModel} ${options} ${props} ${width} ${showAllLevels} ${placeholder} ${separator} ${filterable} ${allowClear} ${disabled}></${el.tag}>`
 	},
-	'el-slider': el => {
+	'a-slider': el => {
 		const { disabled, vModel } = attrBuilder(el)
 		const min = el.min ? `:min='${el.min}'` : ''
 		const max = el.max ? `:max='${el.max}'` : ''
@@ -210,9 +209,9 @@ const tags = {
 
 		return `<${el.tag} ${min} ${max} ${step} ${vModel} ${range} ${showStops} ${disabled}></${el.tag}>`
 	},
-	'el-time-picker': el => {
+	'a-time-picker': el => {
 		const {
-			disabled, vModel, clearable, placeholder, width
+			disabled, vModel, allowClear, placeholder, width
 		} = attrBuilder(el)
 		const startPlaceholder = el['start-placeholder'] ? `start-placeholder="${el['start-placeholder']}"` : ''
 		const endPlaceholder = el['end-placeholder'] ? `end-placeholder="${el['end-placeholder']}"` : ''
@@ -222,11 +221,11 @@ const tags = {
 		const valueFormat = el['value-format'] ? `value-format="${el['value-format']}"` : ''
 		const pickerOptions = el['picker-options'] ? `:picker-options='${JSON.stringify(el['picker-options'])}'` : ''
 
-		return `<${el.tag} ${vModel} ${isRange} ${format} ${valueFormat} ${pickerOptions} ${width} ${placeholder} ${startPlaceholder} ${endPlaceholder} ${rangeSeparator} ${clearable} ${disabled}></${el.tag}>`
+		return `<${el.tag} ${vModel} ${isRange} ${format} ${valueFormat} ${pickerOptions} ${width} ${placeholder} ${startPlaceholder} ${endPlaceholder} ${rangeSeparator} ${allowClear} ${disabled}></${el.tag}>`
 	},
-	'el-date-picker': el => {
+	'a-date-picker': el => {
 		const {
-			disabled, vModel, clearable, placeholder, width
+			disabled, vModel, allowClear, placeholder, width
 		} = attrBuilder(el)
 		const startPlaceholder = el['start-placeholder'] ? `start-placeholder="${el['start-placeholder']}"` : ''
 		const endPlaceholder = el['end-placeholder'] ? `end-placeholder="${el['end-placeholder']}"` : ''
@@ -236,9 +235,9 @@ const tags = {
 		const type = el.type === 'date' ? '' : `type="${el.type}"`
 		const readonly = el.readonly ? 'readonly' : ''
 
-		return `<${el.tag} ${type} ${vModel} ${format} ${valueFormat} ${width} ${placeholder} ${startPlaceholder} ${endPlaceholder} ${rangeSeparator} ${clearable} ${readonly} ${disabled}></${el.tag}>`
+		return `<${el.tag} ${type} ${vModel} ${format} ${valueFormat} ${width} ${placeholder} ${startPlaceholder} ${endPlaceholder} ${rangeSeparator} ${allowClear} ${readonly} ${disabled}></${el.tag}>`
 	},
-	'el-rate': el => {
+	'a-rate': el => {
 		const { disabled, vModel } = attrBuilder(el)
 		const max = el.max ? `:max='${el.max}'` : ''
 		const allowHalf = el['allow-half'] ? 'allow-half' : ''
@@ -247,7 +246,7 @@ const tags = {
 
 		return `<${el.tag} ${vModel} ${allowHalf} ${showText} ${showScore} ${disabled}></${el.tag}>`
 	},
-	'el-color-picker': el => {
+	'a-color-picker': el => {
 		const { disabled, vModel } = attrBuilder(el)
 		const size = `size="${el.size}"`
 		const showAlpha = el['show-alpha'] ? 'show-alpha' : ''
@@ -255,7 +254,7 @@ const tags = {
 
 		return `<${el.tag} ${vModel} ${size} ${showAlpha} ${colorFormat} ${disabled}></${el.tag}>`
 	},
-	'el-upload': el => {
+	'a-upload': el => {
 		const disabled = el.disabled ? ':disabled=\'true\'' : ''
 		const action = el.action ? `:action="${el.vModel}Action"` : ''
 		const multiple = el.multiple ? 'multiple' : ''
@@ -276,7 +275,7 @@ const tags = {
 function attrBuilder(el) {
 	return {
 		vModel: `v-model="${confGlobal.formModel}.${el.vModel}"`,
-		clearable: el.clearable ? 'clearable' : '',
+		allowClear: el.allowClear ? 'allowClear' : '',
 		placeholder: el.placeholder ? `placeholder="${el.placeholder}"` : '',
 		width: el.style && el.style.width ? ':style="{width: \'100%\'}"' : '',
 		disabled: el.disabled ? ':disabled=\'true\'' : ''
@@ -295,11 +294,11 @@ function buildElButtonChild(conf) {
 // el-input innerHTML
 function buildElInputChild(conf) {
 	const children = []
-	if (conf.prepend) {
-		children.push(`<template slot="prepend">${conf.prepend}</template>`)
+	if (conf.addonBefore) {
+		children.push(`<template slot="addonBefore">${conf.addonBefore}</template>`)
 	}
-	if (conf.append) {
-		children.push(`<template slot="append">${conf.append}</template>`)
+	if (conf.addonAfter) {
+		children.push(`<template slot="addonAfter">${conf.addonAfter}</template>`)
 	}
 	return children.join('\n')
 }
@@ -325,7 +324,7 @@ function buildElRadioGroupChild(conf) {
 function buildElCheckboxGroupChild(conf) {
 	const children = []
 	if (conf.options && conf.options.length) {
-		const tag = conf.optionType === 'button' ? 'el-checkbox-button' : 'el-checkbox'
+		const tag = conf.optionType === 'button' ? 'a-checkbox-button' : 'a-checkbox'
 		const border = conf.border ? 'border' : ''
 		children.push(`<${tag} v-for="(item, index) in ${conf.vModel}Options" :key="index" :label="item.value" :disabled="item.disabled" ${border}>{{item.label}}</${tag}>`)
 	}

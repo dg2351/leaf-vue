@@ -20,10 +20,9 @@ const layouts = {
 		const { activeItem } = this.$listeners
 		let className = this.activeId === element.formId ? 'drawing-item active-from-item' : 'drawing-item'
 		if (this.formConf.unFocusedComponentBorder) className += ' unfocus-bordered'
-		// :label-col="{span:item.labelCol??8}"
 		return (
 			<a-col span={element.span} class={className} nativeOnClick={event => { activeItem(element); event.stopPropagation() }}>
-				<a-form-item label-col={element.labelWidth ? `${element.labelWidth}` : null} label={element.label} required={element.required}>
+				<a-form-item label-col={{span:element.labelWidth??4}} label={element.label} required={element.required}>
 					<render key={element.renderKey} conf={element}
 						/*onInput={ event => {this.$set(element, 'defaultValue', event.data)}}*/
 					/>
