@@ -84,7 +84,7 @@ export default {
 					fieldsJson: fieldsJson,
 				})
 				searchJson.forEach(async (map)=>{
-					if(map.datasource == "queryForJson"){
+					if(map.datasource == "customQuery"){
 						let {data} = await FormMethods.invokeCustomQueryPromise(map.url, {})
 						map.data = data.map(m=>{
 							return {label:m[map.dataLabel],value:m[map.dataValue]}

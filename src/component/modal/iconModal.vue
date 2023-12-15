@@ -35,7 +35,7 @@ export default {
 			visible: false,
             loading:false,
 			//
-			selectKey: null,
+			modalKey: null,
 			selectId: null,
 			//
 			curtab:"",
@@ -46,13 +46,13 @@ export default {
 		openModal(val, key){
 			this.visible = true;
 			this.selectId = val;
-			this.selectKey = key;
+			this.modalKey = key;
 			this.loadData(val);
 		},
 		closeModal(refresh = false){
 			this.visible = false;
 			if(refresh){
-				this.$emit("callback", {refresh, data:this.selectId, key: this.selectKey})
+				this.$emit("callback", {refresh, data:this.selectId, modalKey: this.modalKey})
 			}
 		},
 		getValue(data, key){

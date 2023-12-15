@@ -306,7 +306,7 @@ function buildElInputChild(conf) {
 function buildElSelectChild(conf) {
 	const children = []
 	if (conf.options && conf.options.length) {
-		children.push(`<el-option v-for="(item, index) in ${conf.vModel}Options" :key="index" :label="item.label" :value="item.value" :disabled="item.disabled"></el-option>`)
+		children.push(`<a-option v-for="(item, index) in ${conf.vModel}Options" :key="index" :label="item.label" :value="item.value" :disabled="item.disabled"></a-option>`)
 	}
 	return children.join('\n')
 }
@@ -334,7 +334,7 @@ function buildElCheckboxGroupChild(conf) {
 function buildElUploadChild(conf) {
 	const list = []
 	if (conf['list-type'] === 'picture-card') list.push('<i class="el-icon-plus"></i>')
-	else list.push(`<el-button size="small" type="primary" icon="el-icon-upload">${conf.buttonText}</el-button>`)
+	else list.push(`<a-button size="small" type="primary" icon="el-icon-upload">${conf.buttonText}</a-button>`)
 	if (conf.showTip) list.push(`<div slot="tip" class="el-upload__tip">只能上传不超过 ${conf.fileSize}${conf.sizeUnit} 的${conf.accept}文件</div>`)
 	return list.join('\n')
 }

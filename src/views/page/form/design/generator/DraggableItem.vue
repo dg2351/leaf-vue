@@ -7,10 +7,10 @@ const components = {
 		const { copyItem, deleteItem } = this.$listeners
 		return [
 			<span class="drawing-item-copy" title="复制" onClick={event => {copyItem(element, parent); event.stopPropagation()}}>
-				<a-icon type="copy" />
+				<a-icon type="copy" />复制
 			</span>,
 			<span class="drawing-item-delete" title="删除" onClick={event => {deleteItem(index, parent); event.stopPropagation()}}>
-				<a-icon type="delete" />
+				<a-icon type="delete" />删除
 			</span>
 		]
 	}
@@ -20,14 +20,15 @@ const layouts = {
 		const { activeItem } = this.$listeners
 		let className = this.activeId === element.formId ? 'drawing-item active-from-item' : 'drawing-item'
 		if (this.formConf.unFocusedComponentBorder) className += ' unfocus-bordered'
+		/*onInput={ event => {this.$set(element, 'defaultValue', event.data)}}*/
 		return (
 			<a-col span={element.span} class={className} nativeOnClick={event => { activeItem(element); event.stopPropagation() }}>
-				<a-form-item label-col={{span:element.labelWidth??4}} label={element.label} required={element.required}>
-					<render key={element.renderKey} conf={element}
-						/*onInput={ event => {this.$set(element, 'defaultValue', event.data)}}*/
-					/>
-				</a-form-item>
-				{components.itemBtns.apply(this, arguments)}
+				<a-tooltip placement="bottomRight">
+					<a-form-item label-col={{span:element.labelWidth??4}} label={element.label} required={element.required}>
+							<render key={element.renderKey} conf={element}/>
+					</a-form-item>
+					<template slot="title">{components.itemBtns.apply(this, arguments)}</template>
+				</a-tooltip>
 			</a-col>
 		)
 	},
@@ -81,7 +82,6 @@ export default {
 	],
 	render(h) {
 		const layout = layouts[this.element.layout]
-
 		if (layout) {
 			return layout.call(this, h, this.element, this.index, this.drawingList)
 		}

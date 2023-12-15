@@ -92,8 +92,8 @@
 
 <script>
 import form_model from "@/component/form/form_model";
-import dbModal from "@/views/page/form/entity/modal/dbModal";
-import tableModal from "@/views/page/form/entity/modal/tableModal";
+import dbModal from "@/component/modal/dbModal";
+import tableModal from "@/component/modal/tableModal";
 import rxAjax from "@/assets/js/ajax";
 import uuid from "@/plugins/utils/uuid"
 

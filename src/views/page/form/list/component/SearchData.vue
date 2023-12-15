@@ -6,7 +6,7 @@
 			<template v-if="current == 'config'">
 				<edit_list ref="dataEdit" :columns="dataColumns" :data="sourceData.data"/>
 			</template>
-			<template v-else-if="current == 'queryForJson'">
+			<template v-else-if="current == 'customQuery'">
 				<form_model ref="queryModel" :sourceData="sourceData" :form-config="queryConfig"/>
 			</template>
 		</div>
@@ -46,7 +46,7 @@ export default {
 						initFunction: async function (item) {
 							item.data = [
 								{label:'自定义',value:'config'},
-								{label:'自定查询',value:'queryForJson'},
+								{label:'自定义查询',value:'customQuery'},
 							]
 						},
 						changeFunction: function (v) {
@@ -67,7 +67,7 @@ export default {
 					scopedSlots: { customRender: 'value' },
 					editCell:true,type:'input'},
 			],
-			// queryForJson
+			//
 			queryConfig: {
 				visible: false,
 				loading: true,
@@ -75,7 +75,7 @@ export default {
 				data: [
 					{
 						span:24, labelCol:4,
-						label: "自定查询",
+						label: "自定义查询",
 						type: "select",
 						model: "url",
 						data:[],
@@ -132,7 +132,7 @@ export default {
 				delete sourceData.dataLabel;
 				delete sourceData.dataValue;
 				sourceData.data = this.$refs['dataEdit'].getParam()
-			} else if(['queryForJson'].includes(sourceData.datasource)){
+			} else if(['customQuery'].includes(sourceData.datasource)){
 				Object.assign(sourceData, {data: []})
 			}
 			this.closeModal();

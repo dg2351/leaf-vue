@@ -1,3 +1,5 @@
+import FormMethods from "@/plugins/js-comps/FormMethods";
+
 function makeMap(str, expectsLowerCase) {
 	const map = Object.create(null)
 	const list = str.split(',')
@@ -43,23 +45,23 @@ const componentChild = {
 	},
 	'a-input': {
 		addonBefore(h, conf, key) {
-			return <template slot="addonBefore">{conf[key]}</template>
+			return `<template slot="addonBefore">{conf[key]}</template>`
 		},
 		addonAfter(h, conf, key) {
-			return <template slot="addonAfter">{conf[key]}</template>
+			return `<template slot="addonAfter">{conf[key]}</template>`
 		},
 		prefix(h, conf, key) {
-			return (<a-icon slot="prefix" type={conf[key]}></a-icon>)
+			return `<a-icon slot="prefix" type={conf[key]}></a-icon>`
 		},
 		suffix(h, conf, key) {
-			return (<a-icon slot="suffix" type={conf[key]}></a-icon>)
+			return `<a-icon slot="suffix" type={conf[key]}></a-icon>`
 		},
 	},
 	'a-select': {
 		options(h, conf, key) {
 			const list = []
 			conf.options.forEach(item => {
-				list.push(<a-option label={item.label} value={item.value} disabled={item.disabled}></a-option>)
+				list.push(`<a-option label={item.label} value={item.value} disabled={item.disabled}></a-option>`)
 			})
 			return list
 		}
@@ -68,8 +70,8 @@ const componentChild = {
 		options(h, conf, key) {
 			const list = []
 			conf.options.forEach(item => {
-				if (conf.optionType === 'button') list.push(<a-radio-button label={item.value}>{item.label}</a-radio-button>)
-				else list.push(<a-radio label={item.value} border={conf.border}>{item.label}</a-radio>)
+				if (conf.optionType === 'button') list.push(`<a-radio-button label={item.value}>{item.label}</a-radio-button>`)
+				else list.push(`<a-radio label={item.value} border={conf.border}>{item.label}</a-radio>`)
 			})
 			return list
 		}
@@ -79,9 +81,9 @@ const componentChild = {
 			const list = []
 			conf.options.forEach(item => {
 				if (conf.optionType === 'button') {
-					list.push(<a-checkbox-button label={item.value}>{item.label}</a-checkbox-button>)
+					list.push(`<a-checkbox-button label={item.value}>{item.label}</a-checkbox-button>`)
 				} else {
-					list.push(<a-checkbox label={item.value} border={conf.border}>{item.label}</a-checkbox>)
+					list.push(`<a-checkbox label={item.value} border={conf.border}>{item.label}</a-checkbox>`)
 				}
 			})
 			return list
@@ -91,12 +93,12 @@ const componentChild = {
 		'list-type': (h, conf, key) => {
 			const list = []
 			if (conf['list-type'] === 'picture-card') {
-				list.push(<i class="el-icon-plus"></i>)
+				list.push(`<i class="a-icon-plus"></i>`)
 			} else {
-				list.push(<a-button size="small" type="primary" icon="el-icon-upload">{conf.buttonText}</a-button>)
+				list.push(`<a-button size="small" type="primary" icon="el-icon-upload">{conf.buttonText}</a-button>`)
 			}
 			if (conf.showTip) {
-				list.push(<div slot="tip" class="el-upload__tip">只能上传不超过 {conf.fileSize}{conf.sizeUnit} 的{conf.accept}文件</div>)
+				list.push(`<div slot="tip" class="el-upload__tip">只能上传不超过 {conf.fileSize}{conf.sizeUnit} 的{conf.accept}文件</div>`)
 			}
 			return list
 		}
@@ -120,16 +122,21 @@ export default {
 			Object.keys(childObjs).forEach(key => {
 				const childFunc = childObjs[key]
 				if (confClone[key]) {
-					console.log(h)
 					children.push(childFunc(h, confClone, key))
 				}
 			})
-			console.log(children)
+			console.log('子节点未生效',children)
 		}
 		Object.keys(confClone).forEach(key => {
 			const val = confClone[key]
 			if (key === 'vModel') {
 				vModel(this, dataObject, confClone.defaultValue)
+			} else if (key === 'options') {
+				if(confClone.dataType == 'customQuery'){// 自定义查询
+					let {data} = FormMethods.invokeCustomQueryPromise(confClone.dataUrl, {});
+					console.log(data)
+				}
+				dataObject.props[key] = val
 			} else if (dataObject[key]) {
 				dataObject[key] = val
 			} else if (!isAttr(key)) {

@@ -112,15 +112,14 @@ export const selectComponents = [
 		required: true,
 		filterable: false,
 		multiple: false,
-		options: [{
-			label: '选项一',
-			value: 1
-		}, {
-			label: '选项二',
-			value: 2
-		}],
+		options: [],
 		regList: [],
 		changeTag: true,
+		dataType:"static",
+		dataUrl:"",
+		data:{
+			label:"",value:""
+		}
 	},
 	{
 		label: '级联选择',
@@ -152,6 +151,7 @@ export const selectComponents = [
 			}]
 		}],
 		dataType: 'dynamic',
+		dataUrl:"",
 		labelKey: 'label',
 		valueKey: 'value',
 		childrenKey: 'children',

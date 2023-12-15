@@ -24,9 +24,8 @@
 <script>
 import view_model from "@/component/form/main/view_model";
 import edit_model from "@/component/form/main/edit_model";
-// import FormBoListFunc from "@/api/form/core/formBoListFunc";
-// import FormPcApi from "@/views/modules/form/core/js-comps/api/FormApi";
 import {mapState} from "vuex";
+import FormMethods from "@/plugins/js-comps/FormMethods";
 
 function getFormData(obj, key){
 	return obj[key]?obj[key]:'';
@@ -129,7 +128,7 @@ export default {
 					return
 				}
 				if(!alias) alias = that.alias
-				FormPcApi.queryForJson(alias, {params: JSON.stringify(that.params)}).then(res=>{
+				FormMethods.invokeCustomQueryPromise(alias, that.params).then(res=>{
 					let sourceData = {};
 					if(res.success && res.data && res.data.length > 0){
 						Object.keys(res.data[0]).forEach(key=>{

@@ -21,7 +21,7 @@
 		</div>
 		<a-table class="table_a mT10 mB20" :loading="loading" :rowKey="rowKey?rowKey:'xh'"
 				 :columns="columns" :data-source="sourceData" :expandIconColumnIndex="expandIconColumnIndex??0"
-				 :rowSelection="rowSelectChange ? { onChange: rowSelectChange,type: 'checkbox'} : null"
+				 :rowSelection="rowSelectChange ? { onChange: rowSelectChange, type: rowSelectType} : null"
 				 :pagination="isPage ? pagination : false" :locale="{emptyText: '暂无数据'}">
 			<!--列头自定义插槽-->
 			<template :slot="val.slots.title" v-for="val in columns.filter(p=>p.slots && p.slots.title)">
@@ -118,6 +118,10 @@ export default {
 		showGd:{
 			type: Boolean,
 			default: false,
+		},
+		rowSelectType:{
+			type: String,
+			default: 'checkbox',
 		},
 		// 行选择
 		rowSelectChange:{

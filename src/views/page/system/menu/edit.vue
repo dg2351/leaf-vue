@@ -25,7 +25,7 @@
 
 <script>
 import form_model from "@/component/form/form_model";
-import iconModal from "@/views/page/system/menu/iconModal";
+import iconModal from "@/component/modal/iconModal";
 import rxAjax from "@/assets/js/ajax";
 
 export default {
