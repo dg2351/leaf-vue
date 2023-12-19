@@ -57,12 +57,8 @@
 											@input="$set(activeData, 'min', $event?$event:undefined)"/>
 						</a-form-item>
 						<a-form-item v-if="activeData.tag==='a-checkbox-group'" label="最多可选">
-							<a-input-number
-								:value="activeData.max"
-								:min="0"
-								placeholder="最多可选"
-								@input="$set(activeData, 'max', $event?$event:undefined)"
-							/>
+							<a-input-number :value="activeData.max" :min="0" placeholder="最多可选"
+											@input="$set(activeData, 'max', $event?$event:undefined)"/>
 						</a-form-item>
 						<a-form-item v-if="activeData.autoSize !== undefined" label="最小行数">
 							<a-input-number v-model="activeData.autoSize.minRows" :min="1" :max="activeData.autoSize.maxRows" placeholder="最小行数" />
@@ -71,10 +67,10 @@
 							<a-input-number v-model="activeData.autoSize.maxRows" :min="activeData.autoSize.minRows" :max="99" placeholder="最大行数" />
 						</a-form-item>
 						<a-form-item v-if="activeData.min !== undefined" label="最小值">
-							<a-input-number v-model="activeData.min" placeholder="最小值" />
+							<a-input-number v-model="activeData.min" :max="activeData.max" placeholder="最小值" />
 						</a-form-item>
 						<a-form-item v-if="activeData.max !== undefined" label="最大值">
-							<a-input-number v-model="activeData.max" placeholder="最大值" />
+							<a-input-number v-model="activeData.max" :min="activeData.min" placeholder="最大值" />
 						</a-form-item>
 						<a-form-item v-if="activeData.step !== undefined" label="步长">
 							<a-input-number v-model="activeData.step" placeholder="步数" />
@@ -104,8 +100,8 @@
 						<a-form-item v-if="activeData.tag === 'a-cascader'" label="展示全路径">
 							<a-switch v-model="activeData['show-all-levels']" />
 						</a-form-item>
-						<a-form-item v-if="activeData.tag === 'a-cascader'" label="可否筛选">
-							<a-switch v-model="activeData.filterable" />
+						<a-form-item v-if="['a-select','a-cascader'].includes(activeData.tag)" label="能否搜索">
+							<a-switch v-model="activeData.showSearch" />
 						</a-form-item>
 						<a-form-item v-if="activeData.allowClear !== undefined" label="能否清空">
 							<a-switch v-model="activeData.allowClear" />
@@ -118,9 +114,6 @@
 						</a-form-item>
 						<a-form-item v-if="activeData['auto-upload'] !== undefined" label="自动上传">
 							<a-switch v-model="activeData['auto-upload']" />
-						</a-form-item>
-						<a-form-item v-if="activeData.tag === 'a-select'" label="是否可搜索">
-							<a-switch v-model="activeData.filterable" />
 						</a-form-item>
 						<a-form-item v-if="activeData.tag === 'a-select'" label="是否多选">
 							<a-switch v-model="activeData.multiple" @change="multipleChange" />
@@ -135,19 +128,11 @@
 								<a-radio-button label="right">右侧</a-radio-button>
 							</a-radio-group>
 						</a-form-item>
-						<a-form-item v-if="activeData['active-text'] !== undefined" label="开启提示">
-							<a-input v-model="activeData['active-text']" placeholder="请输入开启提示" />
+						<a-form-item v-if="activeData['checkedChildren'] !== undefined" label="开启提示">
+							<a-input v-model="activeData['checkedChildren']" placeholder="请输入开启提示" />
 						</a-form-item>
-						<a-form-item v-if="activeData['inactive-text'] !== undefined" label="关闭提示">
-							<a-input v-model="activeData['inactive-text']" placeholder="请输入关闭提示" />
-						</a-form-item>
-						<a-form-item v-if="activeData['active-value'] !== undefined" label="开启值">
-							<a-input :value="setDefaultValue(activeData['active-value'])" placeholder="请输入开启值"
-									 @input="onSwitchValueInput($event, 'active-value')"/>
-						</a-form-item>
-						<a-form-item v-if="activeData['inactive-value'] !== undefined" label="关闭值">
-							<a-input :value="setDefaultValue(activeData['inactive-value'])" placeholder="请输入关闭值"
-									 @input="onSwitchValueInput($event, 'inactive-value')"/>
+						<a-form-item v-if="activeData['unCheckedChildren'] !== undefined" label="关闭提示">
+							<a-input v-model="activeData['unCheckedChildren']" placeholder="请输入关闭提示" />
 						</a-form-item>
 						<a-form-item label="时间类型" v-if="activeData.type !== undefined && 'el-date-picker' === activeData.tag">
 							<a-select v-model="activeData.type" placeholder="请选择时间类型"
@@ -212,33 +197,24 @@
 						<a-form-item v-if="activeData['show-score'] !== undefined" label="显示分数">
 							<a-switch v-model="activeData['show-score']" @change="rateScoreChange" />
 						</a-form-item>
-						<a-form-item v-if="activeData['show-stops'] !== undefined" label="显示间断点">
-							<a-switch v-model="activeData['show-stops']" />
-						</a-form-item>
 						<a-form-item v-if="activeData.range !== undefined" label="范围选择">
 							<a-switch v-model="activeData.range" @change="rangeChange" />
 						</a-form-item>
-						<a-form-item v-if="activeData.size !== undefined && (activeData.optionType === 'button' || activeData.border || activeData.tag === 'el-color-picker')"
-									 label="选项尺寸">
+						<a-form-item v-if="activeData.size !== undefined" label="选项尺寸">
 							<a-radio-group v-model="activeData.size">
-								<a-radio-button label="medium">中等</a-radio-button>
-								<a-radio-button label="small">较小</a-radio-button>
-								<a-radio-button label="mini">迷你</a-radio-button>
+								<a-radio-button value="large">较大</a-radio-button>
+								<a-radio-button value="default">默认</a-radio-button>
+								<a-radio-button value="small">较你</a-radio-button>
 							</a-radio-group>
-						</a-form-item>
-						<a-form-item v-if="activeData.tag === 'a-input-number'" label="严格步数">
-							<a-switch v-model="activeData['step-strictly']" />
 						</a-form-item>
 
 						<template v-if="activeData.layoutTree">
 							<a-divider>布局结构树</a-divider>
 							<a-tree :data="[activeData]" :props="layoutTreeProps"
 									node-key="renderKey" default-expand-all draggable>
-					  <span slot-scope="{ node, data }">
-						<span class="node-label">
-						  {{ node.label }}
-						</span>
-					  </span>
+								<span slot-scope="{ node, data }">
+									<span class="node-label">{{ node.label }}</span>
+								</span>
 							</a-tree>
 						</template>
 					</a-collapse-panel>
@@ -248,7 +224,7 @@
 									 placeholder="请输入默认值"
 									 v-model="activeData.defaultValue"/>
 						</a-form-item>
-						<template v-if="['a-select','a-cascader'].indexOf(activeData.tag) > -1">
+						<template v-if="['a-select','a-cascader','a-radio-group'].indexOf(activeData.tag) > -1">
 							<a-divider>数据来源</a-divider>
 							<a-form-item>
 								<a-select v-model="activeData.dataType" showSearch :options="[
@@ -265,8 +241,8 @@
 											<div class="select-line-icon option-drag">
 												<i class="el-icon-s-operation" />
 											</div>
-											<a-input v-model="item.label" placeholder="选项名" size="small" />
-											<a-input placeholder="选项值" size="small" :value="item.value" @input="setOptionValue(item, $event)"/>
+											<a-input placeholder="选项名" size="small" v-model="item.label" />
+											<a-input placeholder="选项值" size="small" v-model="item.value" />
 											<div class="close-btn select-line-icon" @click="activeData.options.splice(index, 1)">
 												<i class="el-icon-remove-outline" />
 											</div>
@@ -316,9 +292,9 @@
 						<template v-if="activeData.layout === 'colFormItem' && activeData.tag !== 'a-button'">
 							<a-divider>正则校验</a-divider>
 							<div v-for="(item, index) in activeData.regList" :key="index" class="reg-item">
-						  <span class="close-btn" @click="activeData.regList.splice(index, 1)">
-							<i class="el-icon-close" />
-						  </span>
+								<span class="close-btn" @click="activeData.regList.splice(index, 1)">
+									<i class="el-icon-close" />
+								</span>
 								<a-form-item label="表达式">
 									<a-input v-model="item.pattern" placeholder="请输入正则" />
 								</a-form-item>
@@ -346,12 +322,8 @@
 						</a-form-item>
 						<a-form-item v-if="activeData.justify!==undefined&&activeData.type==='flex'" label="水平排列">
 							<a-select v-model="activeData.justify" placeholder="请选择水平排列" :style="{width: '100%'}">
-								<a-option
-									v-for="(item, index) in justifyOptions"
-									:key="index"
-									:label="item.label"
-									:value="item.value"
-								/>
+								<a-option v-for="(item, index) in justifyOptions" :key="index"
+										  :label="item.label" :value="item.value"/>
 							</a-select>
 						</a-form-item>
 						<a-form-item v-if="activeData.align!==undefined&&activeData.type==='flex'" label="垂直排列">
@@ -372,12 +344,6 @@
 								<a-radio-button label="default">默认</a-radio-button>
 								<a-radio-button label="button">按钮</a-radio-button>
 							</a-radio-group>
-						</a-form-item>
-						<a-form-item v-if="activeData['active-color'] !== undefined" label="开启颜色">
-							<a-color-picker v-model="activeData['active-color']" />
-						</a-form-item>
-						<a-form-item v-if="activeData['inactive-color'] !== undefined" label="关闭颜色">
-							<a-color-picker v-model="activeData['inactive-color']" />
 						</a-form-item>
 						<a-form-item v-if="activeData.border !== undefined && activeData.optionType === 'default'" label="是否带边框">
 							<a-switch v-model="activeData.border" />
@@ -650,9 +616,6 @@ export default {
 			const index = children.findIndex(d => d.id === data.id)
 			children.splice(index, 1)
 		},
-		setOptionValue(item, val) {
-			item.value = isNumberStr(val) ? +val : val
-		},
 		setDefaultValue(val) {
 			if (Array.isArray(val)) {
 				return val.join(',')
@@ -722,7 +685,9 @@ export default {
 		},
 		setCustomQuery(v) {
 			if(v.alias){
-				this.activeData[v.modalKey] = v.alias
+				Object.assign(this.activeData, {
+					[v.modalKey]: v.alias, data:{label:"",value:""}
+				})
 				this.dataField = v.field;
 			}
 		},

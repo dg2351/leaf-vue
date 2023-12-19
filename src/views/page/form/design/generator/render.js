@@ -132,11 +132,16 @@ export default {
 			if (key === 'vModel') {
 				vModel(this, dataObject, confClone.defaultValue)
 			} else if (key === 'options') {
-				if(confClone.dataType == 'customQuery'){// 自定义查询
-					let {data} = FormMethods.invokeCustomQueryPromise(confClone.dataUrl, {});
-					console.log(data)
+				if(confClone.dataType == 'customQuery' && confClone.dataUrl){// 自定义查询
+					let res = FormMethods.invokeCustomQueryJquery(confClone.dataUrl, {});
+					let options = [];
+					if(confClone.data.label && confClone.data.value && res && res.length > 0){
+						options = res.map(m=>{return {label: m[confClone.data.label], value:m[confClone.data.value]}})
+					}
+					dataObject.props[key] = options
+				} else{
+					dataObject.props[key] = val
 				}
-				dataObject.props[key] = val
 			} else if (dataObject[key]) {
 				dataObject[key] = val
 			} else if (!isAttr(key)) {

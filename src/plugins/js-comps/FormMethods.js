@@ -1,5 +1,6 @@
 let FormMethods={};
 import rxAjax from "@/assets/js/ajax";
+import jqAjax from "@/assets/ajax-jquery";
 
 /**
  * 调用自定义查询
@@ -20,6 +21,15 @@ FormMethods.invokeCustomQuery=function(alias,params,callback){
 			callback(res.data);
 		}
 	})
+}
+
+/**
+ * 调用自定义查询
+ */
+FormMethods.invokeCustomQueryJquery=function(alias,params){
+	return jqAjax.postForm("/form/custom/query/queryForJson_"+alias, {
+		params: JSON.stringify(params)
+	});
 }
 
 /**

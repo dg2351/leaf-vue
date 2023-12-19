@@ -142,21 +142,20 @@ const tags = {
 		const min = el.min ? `:min='${el.min}'` : ''
 		const max = el.max ? `:max='${el.max}'` : ''
 		const step = el.step ? `:step='${el.step}'` : ''
-		const stepStrictly = el['step-strictly'] ? 'step-strictly' : ''
 		const precision = el.precision ? `:precision='${el.precision}'` : ''
 
-		return `<${el.tag} ${vModel} ${placeholder} ${step} ${stepStrictly} ${precision} ${controlsPosition} ${min} ${max} ${disabled}></${el.tag}>`
+		return `<${el.tag} ${vModel} ${placeholder} ${step} ${precision} ${controlsPosition} ${min} ${max} ${disabled}></${el.tag}>`
 	},
 	'a-select': el => {
 		const {
 			disabled, vModel, allowClear, placeholder, width
 		} = attrBuilder(el)
-		const filterable = el.filterable ? 'filterable' : ''
+		const showSearch = el.showSearch ? 'showSearch' : ''
 		const multiple = el.multiple ? 'multiple' : ''
 		let child = buildElSelectChild(el)
 
 		if (child) child = `\n${child}\n` // 换行
-		return `<${el.tag} ${vModel} ${placeholder} ${disabled} ${multiple} ${filterable} ${allowClear} ${width}>${child}</${el.tag}>`
+		return `<${el.tag} ${vModel} ${placeholder} ${disabled} ${multiple} ${showSearch} ${allowClear} ${width}>${child}</${el.tag}>`
 	},
 	'a-radio-group': el => {
 		const { disabled, vModel } = attrBuilder(el)
@@ -178,14 +177,10 @@ const tags = {
 	},
 	'a-switch': el => {
 		const { disabled, vModel } = attrBuilder(el)
-		const activeText = el['active-text'] ? `active-text="${el['active-text']}"` : ''
-		const inactiveText = el['inactive-text'] ? `inactive-text="${el['inactive-text']}"` : ''
-		const activeColor = el['active-color'] ? `active-color="${el['active-color']}"` : ''
-		const inactiveColor = el['inactive-color'] ? `inactive-color="${el['inactive-color']}"` : ''
-		const activeValue = el['active-value'] !== true ? `:active-value='${JSON.stringify(el['active-value'])}'` : ''
-		const inactiveValue = el['inactive-value'] !== false ? `:inactive-value='${JSON.stringify(el['inactive-value'])}'` : ''
+		const checkedChildren = el['checkedChildren'] ? `checkedChildren="${el['checkedChildren']}"` : ''
+		const unCheckedChildren = el['unCheckedChildren'] ? `unCheckedChildren="${el['unCheckedChildren']}"` : ''
 
-		return `<${el.tag} ${vModel} ${activeText} ${inactiveText} ${activeColor} ${inactiveColor} ${activeValue} ${inactiveValue} ${disabled}></${el.tag}>`
+		return `<${el.tag} ${vModel} ${checkedChildren} ${unCheckedChildren} ${disabled}></${el.tag}>`
 	},
 	'a-cascader': el => {
 		const {
@@ -194,10 +189,10 @@ const tags = {
 		const options = el.options ? `:options="${el.vModel}Options"` : ''
 		const props = el.props ? `:props="${el.vModel}Props"` : ''
 		const showAllLevels = el['show-all-levels'] ? '' : ':show-all-levels="false"'
-		const filterable = el.filterable ? 'filterable' : ''
+		const showSearch = el.showSearch ? 'showSearch' : ''
 		const separator = el.separator === '/' ? '' : `separator="${el.separator}"`
 
-		return `<${el.tag} ${vModel} ${options} ${props} ${width} ${showAllLevels} ${placeholder} ${separator} ${filterable} ${allowClear} ${disabled}></${el.tag}>`
+		return `<${el.tag} ${vModel} ${options} ${props} ${width} ${showAllLevels} ${placeholder} ${separator} ${showSearch} ${allowClear} ${disabled}></${el.tag}>`
 	},
 	'a-slider': el => {
 		const { disabled, vModel } = attrBuilder(el)
@@ -205,9 +200,8 @@ const tags = {
 		const max = el.max ? `:max='${el.max}'` : ''
 		const step = el.step ? `:step='${el.step}'` : ''
 		const range = el.range ? 'range' : ''
-		const showStops = el['show-stops'] ? `:show-stops="${el['show-stops']}"` : ''
 
-		return `<${el.tag} ${min} ${max} ${step} ${vModel} ${range} ${showStops} ${disabled}></${el.tag}>`
+		return `<${el.tag} ${min} ${max} ${step} ${vModel} ${range} ${disabled}></${el.tag}>`
 	},
 	'a-time-picker': el => {
 		const {
