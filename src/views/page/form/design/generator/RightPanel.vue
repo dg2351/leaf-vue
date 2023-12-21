@@ -33,17 +33,14 @@
 						<a-form-item v-if="activeData.placeholder!==undefined" label="占位提示">
 							<a-input v-model="activeData.placeholder" placeholder="请输入占位提示" />
 						</a-form-item>
-						<a-form-item v-if="activeData['start-placeholder']!==undefined" label="开始占位">
-							<a-input v-model="activeData['start-placeholder']" placeholder="请输入占位提示" />
-						</a-form-item>
-						<a-form-item v-if="activeData['end-placeholder']!==undefined" label="结束占位">
-							<a-input v-model="activeData['end-placeholder']" placeholder="请输入占位提示" />
-						</a-form-item>
 						<a-form-item v-if="activeData.required !== undefined" label="是否必填">
 							<a-switch v-model="activeData.required" />
 						</a-form-item>
 						<a-form-item v-if="activeData.readOnly !== undefined" label="是否只读">
 							<a-switch v-model="activeData.readOnly" />
+						</a-form-item>
+						<a-form-item v-if="activeData.inputReadOnly !== undefined" label="是否只读">
+							<a-switch v-model="activeData.inputReadOnly" />
 						</a-form-item>
 						<a-form-item v-if="activeData.disabled !== undefined" label="是否禁用">
 							<a-switch v-model="activeData.disabled" />
@@ -134,13 +131,6 @@
 						<a-form-item v-if="activeData['unCheckedChildren'] !== undefined" label="关闭提示">
 							<a-input v-model="activeData['unCheckedChildren']" placeholder="请输入关闭提示" />
 						</a-form-item>
-						<a-form-item label="时间类型" v-if="activeData.type !== undefined && 'el-date-picker' === activeData.tag">
-							<a-select v-model="activeData.type" placeholder="请选择时间类型"
-									  :style="{ width: '100%' }" @change="dateTypeChange">
-								<a-option v-for="(item, index) in dateOptions" :key="index"
-										  :label="item.label" :value="item.value"/>
-							</a-select>
-						</a-form-item>
 						<a-form-item v-if="activeData.name !== undefined" label="文件字段名">
 							<a-input v-model="activeData.name" placeholder="请输入上传文件字段名" />
 						</a-form-item>
@@ -178,14 +168,19 @@
 									 v-show="'picture-card' !== activeData['list-type']" label="按钮文字">
 							<a-input v-model="activeData.buttonText" placeholder="请输入按钮文字" />
 						</a-form-item>
-						<a-form-item v-if="activeData['range-separator'] !== undefined" label="分隔符">
-							<a-input v-model="activeData['range-separator']" placeholder="请输入分隔符" />
+						<a-form-item v-if="activeData['separator'] !== undefined" label="分隔符">
+							<a-input v-model="activeData['separator']" placeholder="请输入分隔符" />
 						</a-form-item>
 						<a-form-item v-if="activeData['picker-options'] !== undefined" label="时间段">
 							<a-input v-model="activeData['picker-options'].selectableRange" placeholder="请输入时间段"/>
 						</a-form-item>
-						<a-form-item v-if="activeData.format !== undefined" label="时间格式">
-							<a-input :value="activeData.format" placeholder="请输入时间格式" @input="setTimeValue($event)"/>
+						<a-form-item label="时间类型" v-if="activeData.mode !== undefined && activeData.tag != 'a-range-picker'">
+							<a-select v-model="activeData.mode" placeholder="请选择时间类型" :style="{ width: '100%' }"
+									  :options="dateTypeOptions" @change="dateType1Change"/>
+						</a-form-item>
+						<a-form-item label="时间类型" v-if="activeData.rangeMode !== undefined && activeData.tag == 'a-range-picker'">
+							<a-select v-model="activeData.rangeMode" placeholder="请选择时间类型" :style="{ width: '100%' }"
+									  :options="dateTypeOptions" @change="dateType2Change"/>
 						</a-form-item>
 
 						<a-form-item v-if="activeData['allow-half'] !== undefined" label="允许半选">
@@ -201,7 +196,7 @@
 							<a-switch v-model="activeData.range" @change="rangeChange" />
 						</a-form-item>
 						<a-form-item v-if="activeData.size !== undefined" label="选项尺寸">
-							<a-radio-group v-model="activeData.size">
+							<a-radio-group v-model="activeData.size" size="small">
 								<a-radio-button value="large">较大</a-radio-button>
 								<a-radio-button value="default">默认</a-radio-button>
 								<a-radio-button value="small">较你</a-radio-button>
@@ -309,15 +304,18 @@
 					</a-collapse-panel>
 					<a-collapse-panel header="布局" key="布局">
 						<a-form-item v-if="activeData.span!==undefined" label="表单栅格">
-							<a-slider v-model="activeData.span" :max="24" :min="1" :marks="{12:''}" @change="spanChange" />
+							<a-slider v-model="activeData.span" :max="24" :min="1" :marks="{12:''}" />
+						</a-form-item>
+						<a-form-item v-if="activeData.labelWidth!==undefined" label="标签宽度">
+							<a-slider v-model="activeData.labelWidth" :max="24" :min="1" :marks="{12:''}" />
 						</a-form-item>
 						<a-form-item v-if="activeData.layout==='rowFormItem'" label="栅格间隔">
 							<a-input-number v-model="activeData.gutter" :min="0" placeholder="栅格间隔" />
 						</a-form-item>
 						<a-form-item v-if="activeData.layout==='rowFormItem'" label="布局模式">
 							<a-radio-group v-model="activeData.type">
-								<a-radio-button label="default" />
-								<a-radio-button label="flex" />
+								<a-radio-button value="default" />
+								<a-radio-button value="flex" />
 							</a-radio-group>
 						</a-form-item>
 						<a-form-item v-if="activeData.justify!==undefined&&activeData.type==='flex'" label="水平排列">
@@ -328,21 +326,18 @@
 						</a-form-item>
 						<a-form-item v-if="activeData.align!==undefined&&activeData.type==='flex'" label="垂直排列">
 							<a-radio-group v-model="activeData.align">
-								<a-radio-button label="top" />
-								<a-radio-button label="middle" />
-								<a-radio-button label="bottom" />
+								<a-radio-button value="top" />
+								<a-radio-button value="middle" />
+								<a-radio-button value="bottom" />
 							</a-radio-group>
-						</a-form-item>
-						<a-form-item v-if="activeData.labelWidth!==undefined" label="标签宽度">
-							<a-slider v-model="activeData.labelWidth" :max="24" :min="1" :marks="{12:''}" @change="v=>{formConf.span = v}" />
 						</a-form-item>
 						<a-form-item v-if="activeData.style&&activeData.style.width!==undefined" label="组件宽度">
 							<a-input v-model="activeData.style.width" placeholder="请输入组件宽度"/>
 						</a-form-item>
 						<a-form-item v-if="activeData.optionType !== undefined" label="选项样式">
 							<a-radio-group v-model="activeData.optionType">
-								<a-radio-button label="default">默认</a-radio-button>
-								<a-radio-button label="button">按钮</a-radio-button>
+								<a-radio-button value="default">默认</a-radio-button>
+								<a-radio-button value="button">按钮</a-radio-button>
 							</a-radio-group>
 						</a-form-item>
 						<a-form-item v-if="activeData.border !== undefined && activeData.optionType === 'default'" label="是否带边框">
@@ -353,10 +348,7 @@
 									  placeholder="请选择颜色格式"
 									  :style="{ width: '100%' }"
 									  @change="colorFormatChange">
-								<a-option v-for="(item, index) in colorFormatOptions"
-										  :key="index"
-										  :label="item.label"
-										  :value="item.value"/>
+								<a-option v-for="(item, index) in colorFormatOptions" :key="index" :label="item.label" :value="item.value"/>
 							</a-select>
 						</a-form-item>
 					</a-collapse-panel>
@@ -374,36 +366,35 @@
 						<a-input v-model="formConf.formRules" placeholder="请输入校验模型" />
 					</a-form-item>
 					<a-form-item label="表单尺寸">
-						<a-radio-group v-model="formConf.size">
-							<a-radio-button label="medium">
+						<a-radio-group v-model="formConf.size" size="small">
+							<a-radio-button value="medium">
 								中等
 							</a-radio-button>
-							<a-radio-button label="small">
+							<a-radio-button value="small">
 								较小
 							</a-radio-button>
-							<a-radio-button label="mini">
+							<a-radio-button value="mini">
 								迷你
 							</a-radio-button>
 						</a-radio-group>
 					</a-form-item>
 					<a-form-item label="标签对齐">
-						<a-radio-group v-model="formConf.labelPosition">
-							<a-radio-button label="left">
-								左对齐
-							</a-radio-button>
-							<a-radio-button label="right">
-								右对齐
-							</a-radio-button>
-							<a-radio-button label="top">
-								顶部对齐
-							</a-radio-button>
+						<a-radio-group v-model="formConf.labelAlign" size="small">
+							<a-radio-button value="left">居左</a-radio-button>
+							<a-radio-button value="right">居右</a-radio-button>
 						</a-radio-group>
 					</a-form-item>
 					<a-form-item label="标签宽度">
-						<a-input-number v-model="formConf.labelWidth" placeholder="标签宽度" />
+						<a-slider v-model="formConf.labelWidth" :max="24" :min="1" :marks="{12:''}" />
 					</a-form-item>
+					<!--<a-form-item label="标签宽度">
+						<a-slider v-model="formConf.span" :max="24" :min="1" :marks="{12:''}" />
+					</a-form-item>-->
 					<a-form-item label="栅格间隔">
 						<a-input-number v-model="formConf.gutter" :min="0" placeholder="栅格间隔" />
+					</a-form-item>
+					<a-form-item label="隐藏必选标记">
+						<a-switch v-model="formConf.hideRequiredMark" />
 					</a-form-item>
 					<a-form-item label="禁用表单">
 						<a-switch v-model="formConf.disabled" />
@@ -431,14 +422,10 @@ import iconModal from "@/component/modal/iconModal";
 import customQueryModal from "@/component/modal/customQueryModal";
 
 const dateTimeFormat = {
-	date: 'yyyy-MM-dd',
-	week: 'yyyy 第 WW 周',
-	month: 'yyyy-MM',
-	year: 'yyyy',
-	datetime: 'yyyy-MM-dd HH:mm:ss',
-	daterange: 'yyyy-MM-dd',
-	monthrange: 'yyyy-MM',
-	datetimerange: 'yyyy-MM-dd HH:mm:ss'
+	date: 'YYYY-MM-DD',
+	month: 'YYYY-MM',
+	year: 'YYYY',
+	time: 'YYYY-MM-DD HH:mm:ss',
 }
 
 export default {
@@ -461,10 +448,6 @@ export default {
 					value: 'date'
 				},
 				{
-					label: '周(week)',
-					value: 'week'
-				},
-				{
 					label: '月(month)',
 					value: 'month'
 				},
@@ -473,22 +456,8 @@ export default {
 					value: 'year'
 				},
 				{
-					label: '日期时间(datetime)',
-					value: 'datetime'
-				}
-			],
-			dateRangeTypeOptions: [
-				{
-					label: '日期范围(daterange)',
-					value: 'daterange'
-				},
-				{
-					label: '月范围(monthrange)',
-					value: 'monthrange'
-				},
-				{
-					label: '日期时间范围(datetimerange)',
-					value: 'datetimerange'
+					label: '时间(time)',
+					value: 'time'
 				}
 			],
 			colorFormatOptions: [
@@ -543,18 +512,6 @@ export default {
 		}
 	},
 	computed: {
-		dateOptions() {
-			if (
-				this.activeData.type !== undefined
-				&& this.activeData.tag === 'el-date-picker'
-			) {
-				if (this.activeData['start-placeholder'] === undefined) {
-					return this.dateTypeOptions
-				}
-				return this.dateRangeTypeOptions
-			}
-			return []
-		},
 		tagList() {
 			return [
 				{
@@ -589,19 +546,13 @@ export default {
 		renderContent(h, { node, data, store }) {
 			return (
 				<div class="custom-tree-node">
-				<span>{node.label}</span>
-				<span class="node-operation">
-				<i on-click={() => this.append(data)}
-		class="el-icon-plus"
-			title="添加"
-				></i>
-				<i on-click={() => this.remove(node, data)}
-		class="el-icon-delete"
-			title="删除"
-				></i>
-				</span>
+					<span>{node.label}</span>
+					<span class="node-operation">
+						<i on-click={() => this.append(data)} class="el-icon-plus" title="添加"></i>
+						<i on-click={() => this.remove(node, data)} class="el-icon-delete" title="删除"></i>
+					</span>
 				</div>
-		)
+			)
 		},
 		append(data) {
 			if (!data.children) {
@@ -628,27 +579,18 @@ export default {
 			}
 			return val
 		},
-		onSwitchValueInput(val, name) {
-			if (['true', 'false'].indexOf(val) > -1) {
-				this.$set(this.activeData, name, JSON.parse(val))
-			} else {
-				this.$set(this.activeData, name, isNumberStr(val) ? +val : val)
-			}
-		},
-		setTimeValue(val, type) {
-			const valueFormat = type === 'week' ? dateTimeFormat.date : val
-			this.$set(this.activeData, 'defaultValue', null)
-			this.$set(this.activeData, 'value-format', valueFormat)
-			this.$set(this.activeData, 'format', val)
-		},
-		spanChange(val) {
-			this.formConf.span = val
-		},
 		multipleChange(val) {
 			this.$set(this.activeData, 'defaultValue', val ? [] : '')
 		},
-		dateTypeChange(val) {
+		dateType1Change(val) {
 			this.setTimeValue(dateTimeFormat[val], val)
+		},
+		dateType2Change(val) {
+			Object.assign(this.activeData, {mode: [val, val]})
+			this.setTimeValue(dateTimeFormat[val], val)
+		},
+		setTimeValue(val, type) {
+			Object.assign(this.activeData, {defaultValue:null,valueFormat:val,format:val})
 		},
 		rangeChange(val) {
 			this.$set(

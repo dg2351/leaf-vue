@@ -25,7 +25,7 @@ const layouts = {
 			<a-col span={element.span} class={className} nativeOnClick={event => { activeItem(element); event.stopPropagation() }}>
 				<a-tooltip placement="bottomRight">
 					<a-form-item label-col={{span:element.labelWidth??4}} label={element.label} required={element.required}>
-							<render key={element.renderKey} conf={element}/>
+						<render key={element.renderKey} conf={element}/>
 					</a-form-item>
 					<template slot="title">{components.itemBtns.apply(this, arguments)}</template>
 				</a-tooltip>

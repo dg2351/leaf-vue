@@ -34,15 +34,15 @@ export function cssStyle(cssStr) {
 }
 
 function buildFormTemplate(conf, child, type) {
-	let labelPosition = ''
-	if (conf.labelPosition !== 'right') {
-		labelPosition = `label-position="${conf.labelPosition}"`
+	let labelAlign = ''
+	if (conf.labelAlign !== 'right') {
+		labelAlign = `labelAlign="${conf.labelAlign}"`
 	}
 	const disabled = conf.disabled ? `:disabled="${conf.disabled}"` : ''
-	let str = `<el-form ref="${conf.formRef}" :model="${conf.formModel}" :rules="${conf.formRules}" size="${conf.size}" ${disabled} label-width="${conf.labelWidth}px" ${labelPosition}>
+	let str = `<a-form ref="${conf.formRef}" :model="${conf.formModel}" :rules="${conf.formRules}" size="${conf.size}" ${disabled} label-width="${conf.labelWidth}px" ${labelAlign}>
       ${child}
       ${buildFromBtns(conf, type)}
-    </el-form>`
+    </a-form>`
 	if (someSpanIsNot24) {
 		str = `<el-row :gutter="${conf.gutter}">
         ${str}
@@ -207,29 +207,26 @@ const tags = {
 		const {
 			disabled, vModel, allowClear, placeholder, width
 		} = attrBuilder(el)
-		const startPlaceholder = el['start-placeholder'] ? `start-placeholder="${el['start-placeholder']}"` : ''
-		const endPlaceholder = el['end-placeholder'] ? `end-placeholder="${el['end-placeholder']}"` : ''
 		const rangeSeparator = el['range-separator'] ? `range-separator="${el['range-separator']}"` : ''
 		const isRange = el['is-range'] ? 'is-range' : ''
 		const format = el.format ? `format="${el.format}"` : ''
-		const valueFormat = el['value-format'] ? `value-format="${el['value-format']}"` : ''
+		const valueFormat = el['valueFormat'] ? `valueFormat="${el['valueFormat']}"` : ''
 		const pickerOptions = el['picker-options'] ? `:picker-options='${JSON.stringify(el['picker-options'])}'` : ''
+		const inputReadOnly = el.inputReadOnly ? 'inputReadOnly' : ''
 
-		return `<${el.tag} ${vModel} ${isRange} ${format} ${valueFormat} ${pickerOptions} ${width} ${placeholder} ${startPlaceholder} ${endPlaceholder} ${rangeSeparator} ${allowClear} ${disabled}></${el.tag}>`
+		return `<${el.tag} ${vModel} ${isRange} ${format} ${valueFormat} ${pickerOptions} ${width} ${placeholder} ${rangeSeparator} ${allowClear} ${inputReadOnly} ${disabled}></${el.tag}>`
 	},
 	'a-date-picker': el => {
 		const {
 			disabled, vModel, allowClear, placeholder, width
 		} = attrBuilder(el)
-		const startPlaceholder = el['start-placeholder'] ? `start-placeholder="${el['start-placeholder']}"` : ''
-		const endPlaceholder = el['end-placeholder'] ? `end-placeholder="${el['end-placeholder']}"` : ''
-		const rangeSeparator = el['range-separator'] ? `range-separator="${el['range-separator']}"` : ''
+		const rangeSeparator = el['separator'] ? `separator="${el['separator']}"` : ''
 		const format = el.format ? `format="${el.format}"` : ''
-		const valueFormat = el['value-format'] ? `value-format="${el['value-format']}"` : ''
-		const type = el.type === 'date' ? '' : `type="${el.type}"`
-		const readonly = el.readonly ? 'readonly' : ''
+		const valueFormat = el['valueFormat'] ? `valueFormat="${el['valueFormat']}"` : ''
+		const mode = el.mode === 'date' ? '' : `mode="${el.mode}"`
+		const inputReadOnly = el.inputReadOnly ? 'inputReadOnly' : ''
 
-		return `<${el.tag} ${type} ${vModel} ${format} ${valueFormat} ${width} ${placeholder} ${startPlaceholder} ${endPlaceholder} ${rangeSeparator} ${allowClear} ${readonly} ${disabled}></${el.tag}>`
+		return `<${el.tag} ${mode} ${vModel} ${format} ${valueFormat} ${width} ${placeholder} ${rangeSeparator} ${allowClear} ${inputReadOnly} ${disabled}></${el.tag}>`
 	},
 	'a-rate': el => {
 		const { disabled, vModel } = attrBuilder(el)
