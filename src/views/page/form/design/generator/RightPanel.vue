@@ -214,19 +214,19 @@
 						</template>
 					</a-collapse-panel>
 					<a-collapse-panel header="数据" key="数据">
-						<a-form-item v-if="activeData.vModel!==undefined" label="默认值">
+						<a-form-item v-if="activeData.setValue" label="默认值">
 							<a-input :value="setDefaultValue(activeData.defaultValue)"
 									 placeholder="请输入默认值"
 									 v-model="activeData.defaultValue"/>
 						</a-form-item>
-						<template v-if="['a-select','a-cascader','a-radio-group'].indexOf(activeData.tag) > -1">
+						<template v-if="['a-select','a-checkbox-group','a-radio-group','a-cascader'].indexOf(activeData.tag) > -1">
 							<a-divider>数据来源</a-divider>
 							<a-form-item>
 								<a-select v-model="activeData.dataType" showSearch :options="[
 										{label:'手工录入',value:'static'},
 										{label:'接口查询',value:'customQuery'},
 										{label:'脚本查询',value:'script'},
-									]"/>
+									]" @change="activeData.options = []"/>
 							</a-form-item>
 
 							<template v-if="activeData.dataType === 'static'">
@@ -416,7 +416,6 @@
 
 <script>
 import draggable from 'vuedraggable'
-import { isNumberStr } from './index'
 import { inputComponents, selectComponents } from './config'
 import iconModal from "@/component/modal/iconModal";
 import customQueryModal from "@/component/modal/customQueryModal";

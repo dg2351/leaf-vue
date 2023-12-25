@@ -60,6 +60,7 @@ const componentChild = {
 	'a-select': {
 		options(h, conf, key) {
 			const list = []
+			console.log(conf)
 			conf.options.forEach(item => {
 				list.push(`<a-option label={item.label} value={item.value} disabled={item.disabled}></a-option>`)
 			})
@@ -139,8 +140,10 @@ export default {
 						options = res.map(m=>{return {label: m[confClone.data.label], value:m[confClone.data.value]}})
 					}
 					dataObject.props[key] = options
+					console.log(dataObject.props[key], options)
 				} else{
 					dataObject.props[key] = val
+					console.log(dataObject.props[key], val)
 				}
 			} else if (dataObject[key]) {
 				dataObject[key] = val
@@ -154,6 +157,7 @@ export default {
 				}
 			}
 		})
+		console.log(dataObject)
 		return h(this.conf.tag, dataObject, children)
 	},
 }

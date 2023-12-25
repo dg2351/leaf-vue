@@ -87,8 +87,5 @@ export default {
 		}
 		return layoutIsNotFound()
 	},
-	created(){
-		console.log(this.drawingList,"987")
-	}
 }
 </script>

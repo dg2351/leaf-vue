@@ -2,7 +2,7 @@
 	<a-modal title="表单设计" dialogClass="modal_a" width="100%" centered :maskClosable="false"
 			 :visible="visible" @cancel="closeModal" :footer="null">
 		<div class="main">
-			<div class="left">
+			<div class="divleft">
 				<div class="components-list">
 					<div class="components-title">输入型组件</div>
 					<draggable class="components-draggable"
@@ -62,10 +62,10 @@
 					</draggable>
 				</div>
 			</div>
-			<div class="center">
+			<div class="divcenter">
 				<div class="options">
-					<span @click="copy">复制代码</span>
-					<span @click="empty">清空</span>
+					<span @click="emptyData">清空</span>
+					<span @click="onSubmit">保存</span>
 				</div>
 				<div class="centerMain">
 					<a-row class="center-board-row" :gutter="formConf.gutter">
@@ -97,7 +97,7 @@
 					</a-row>
 				</div>
 			</div>
-			<div class="right">
+			<div class="divright">
 				<right-panel v-if="activeData" :active-data="activeData" :form-conf="formConf"
 							 :show-field="!!drawingList.length" @tag-change="tagChange" />
 			</div>
@@ -126,6 +126,7 @@ import {
 	formConf,
 	drawingList,
 } from "./generator/config";
+import rxAjax from "@/assets/js/ajax";
 
 let tempActiveData;
 let svgData={
@@ -171,6 +172,8 @@ export default {
 			visible: false,
 			loading: false,
 			//
+			sourceData: {},
+			//
 			svgData,
 			//
 			idGlobal: 100,
@@ -181,12 +184,7 @@ export default {
 			drawingList,
 			activeId: null,
 			activeData: null,
-			dialogVisible:false,
-			showFileName:false,
-			generateConf: null,
-
 			labelWidth: 100,
-			formData: {},
 		}
 	},
 	methods:{
@@ -201,13 +199,43 @@ export default {
 			}
 		},
 		loadData(id){
-			let that = this;
+			let self_ = this
 			if(id){
+				let api = "/form/design/info";
+				let params = Object.assign({id:id});
+				rxAjax.get(api, params).then(({success,data})=>{
+					self_.sourceData.id = data;
+					let template = data.template;
+					self_.drawingList = JSON.parse(template ?? '[]');
+				});
+				self_.sourceData.id = id;
 			} else{
+				self_.sourceData.id = null;
+				self_.drawingList = [];
 			}
 		},
 		// 提交
 		onSubmit(validate){
+			let self_ = this;
+			if(self_.loading)return;
+			self_.loading = true;
+			//
+			let {sourceData, drawingList} = this;
+			let formData = {
+				id: sourceData.id,
+				template: JSON.stringify(drawingList),
+			}
+			// 调用保存表单
+			let api = "/form/design/save";
+			rxAjax.postJson(api, formData).then(({success,data})=>{
+				self_.loading = false;
+				if(success && data){
+					self_.$message.success("保存成功");
+				}
+			}).catch(err=>{
+				self_.loading = false;
+				self_.$message.error("网络错误");
+			});
 		},
 		// 组件
 		activeFormItem(element) {
@@ -257,7 +285,6 @@ export default {
 			return item;
 		},
 		cloneComponent(origin) {
-			console.log(origin);
 			const clone = JSON.parse(JSON.stringify(origin));
 			clone.formId = ++this.idGlobal;
 			clone.span = formConf.span;
@@ -275,7 +302,7 @@ export default {
 			}
 			return tempActiveData;
 		},
-		empty(){
+		emptyData(){
 			let self_ = this;
 			this.$util.modal(this).confirm('操作提示', '确定要清空所有组件吗？', function () {
 				self_.drawingList = []
@@ -308,20 +335,6 @@ export default {
 				})
 			}
 		},
-		AssembleFormData() {
-			this.formData = {
-				fields: JSON.parse(JSON.stringify(this.drawingList)),
-				...this.formConf
-			}
-		},
-		copy() {
-			this.dialogVisible = true
-			this.showFileName = false
-			this.operationType = 'copy'
-		},
-		titleCase(str) {
-			return str.replace(/( |^)[a-z]/g, L => L.toUpperCase())
-		},
 	}
 }
 </script>
@@ -333,7 +346,7 @@ export default {
 }
 .main {
 	display: flex;
-	.left {
+	.divleft {
 		border: 1px solid #ccc;
 		width: 20%;
 		height: 90vh;
@@ -376,7 +389,7 @@ export default {
 			}
 		}
 	}
-	.center {
+	.divcenter {
 		width: 56%;
 		margin: 0 2%;
 		border: 1px solid #ccc;
@@ -454,7 +467,7 @@ export default {
 			}
 		}
 	}
-	.right {
+	.divright {
 		width: 20%;
 	}
 	.center-board-row {

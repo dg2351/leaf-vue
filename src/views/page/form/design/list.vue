@@ -17,8 +17,8 @@
 				</table_model>
 			</a-col>
 		</a-row>
-
-		<editModal ref="editModal"/>
+		<!---->
+		<editModal ref="editModal" v-if="visible" :key="visible"/>
     </div>
 </template>
 
@@ -48,6 +48,8 @@ export default {
 				{title:"标识",dataIndex:"alias"},
 				{title:"操作列",dataIndex:"action",width:"220px",align:"center",scopedSlots: { customRender: 'action' }}
 			],
+			//
+			visible: null,
         }
     },
 	methods:{
@@ -60,7 +62,10 @@ export default {
             let method = {};
             method.edit = (record)=>{
                 let params = {id:record?record.id:null}
-                self_.$refs.editModal.openModal(params);
+				self_.visible = new Date().getTime();
+				self_.$nextTick(()=> {
+					self_.$refs.editModal.openModal(params);
+				});
             }
             method.del = (record)=>{
                 self_.$util.modal(self_).confirm(null, '彻底删除后，数据不可恢复！请谨慎操作', function () {

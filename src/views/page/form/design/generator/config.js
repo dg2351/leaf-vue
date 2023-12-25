@@ -19,6 +19,7 @@ export const inputComponents = [
 		tagIcon: 'input',
 		placeholder: '请输入',
 		defaultValue: undefined,
+		setValue: true,
 		span: 24,
 		labelWidth: 4,
 		style: { width: '100%' },
@@ -41,6 +42,7 @@ export const inputComponents = [
 		type: 'textarea',
 		placeholder: '请输入',
 		defaultValue: undefined,
+		setValue: true,
 		span: 24,
 		labelWidth: 4,
 		autoSize: {
@@ -62,6 +64,7 @@ export const inputComponents = [
 		type: "password",
 		placeholder: '请输入',
 		defaultValue: undefined,
+		setValue: true,
 		span: 24,
 		labelWidth: 4,
 		style: { width: '100%' },
@@ -83,6 +86,7 @@ export const inputComponents = [
 		tagIcon: 'number',
 		placeholder: '',
 		defaultValue: undefined,
+		setValue: true,
 		span: 24,
 		labelWidth: 4,
 		min: undefined,
@@ -104,6 +108,7 @@ export const selectComponents = [
 		tagIcon: 'select',
 		placeholder: '请选择',
 		defaultValue: undefined,
+		setValue: true,
 		span: 24,
 		labelWidth: 4,
 		style: { width: '100%' },
@@ -164,6 +169,7 @@ export const selectComponents = [
 		tag: 'a-radio-group',
 		tagIcon: 'radio',
 		defaultValue: undefined,
+		setValue: true,
 		span: 24,
 		labelWidth: 4,
 		style: {},
@@ -192,15 +198,14 @@ export const selectComponents = [
 		size: 'medium',
 		disabled: false,
 		required: true,
-		options: [{
-			label: '选项一',
-			value: 1
-		}, {
-			label: '选项二',
-			value: 2
-		}],
+		options: [],
 		regList: [],
 		changeTag: true,
+		dataType:"static",
+		dataUrl:"",
+		data:{
+			label:"",value:""
+		}
 	},
 	{
 		label: '开关',
@@ -222,6 +227,7 @@ export const selectComponents = [
 		tag: 'a-slider',
 		tagIcon: 'slider',
 		defaultValue: 0,
+		setValue: true,
 		span: 24,
 		labelWidth: 4,
 		disabled: false,
