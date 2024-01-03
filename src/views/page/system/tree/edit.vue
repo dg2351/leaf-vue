@@ -43,7 +43,7 @@ export default {
 						span:24, labelCol:4,
                         label: "名称",
                         type: "input",
-                        model: "name",
+                        vModel: "name",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -53,7 +53,7 @@ export default {
 						span:24, labelCol:4,
 						label: "别名",
 						type: "input",
-						model: "code",
+						vModel: "code",
 						maxLength: 20,
 						rule: [
 							{required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -63,9 +63,9 @@ export default {
 						span:24, labelCol:4,
                         label: "分类",
                         type: "select",
-                        model: "alias",
+                        vModel: "alias",
                         maxLength: 20,
-						data: [
+						options: [
 							{label:'系统分类', value:'system'},
 						],
                         rule: [
@@ -76,7 +76,7 @@ export default {
 						span:24, labelCol:4,
 						label: "序号",
 						type: "input",
-						model: "sort",
+						vModel: "sort",
 						maxLength: 20,
 						rule: [
 							{required: true, message: '该输入项不能为空', trigger: 'change'},

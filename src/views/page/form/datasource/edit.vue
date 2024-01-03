@@ -87,7 +87,7 @@ export default {
                     {
                         label: "数据源名称",
                         type: "input",
-                        model: "name",
+                        vModel: "name",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -96,7 +96,7 @@ export default {
                     {
                         label: "别名",
                         type: "input",
-                        model: "alias",
+                        vModel: "alias",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -105,11 +105,11 @@ export default {
                     {
                         label: "数据库类型",
                         type: "select",
-                        model: "dbType",
+                        vModel: "dbType",
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
                         ],
-                        data:[
+						options:[
                             {label: 'MySQL', value: 'MySQL'},
 							{label: 'SQLServer', value: 'SQLServer'},
                             {label: 'Oracle', value: 'Oracle'},
@@ -119,7 +119,7 @@ export default {
                     // {
                     //     label: "库名",
                     //     type: "input",
-                    //     model: "schema",
+                    //     vModel: "schema",
                     //     maxLength: 12,
                     //     rule: [
                     //         {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -128,7 +128,7 @@ export default {
                     // {
                     //     label: "地址",
                     //     type: "input",
-                    //     model: "host",
+                    //     vModel: "host",
                     //     maxLength: 20,
                     //     rule: [
                     //         {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -137,7 +137,7 @@ export default {
                     // {
                     //     label: "端口",
                     //     type: "input",
-                    //     model: "port",
+                    //     vModel: "port",
                     //     maxLength: 6,
                     //     rule: [
                     //         {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -146,7 +146,7 @@ export default {
                     // {
                     //     label: "用户",
                     //     type: "input",
-                    //     model: "username",
+                    //     vModel: "username",
                     //     maxLength: 12,
                     //     rule: [
                     //         {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -155,7 +155,7 @@ export default {
                     // {
                     //     label: "密码",
                     //     type: "input",
-                    //     model: "password",
+                    //     vModel: "password",
                     //     maxLength: 12,
                     //     rule: [
                     //         {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -164,7 +164,7 @@ export default {
                     // {
                     //     label: "编码",
                     //     type: "select",
-                    //     model: "encoding",
+                    //     vModel: "encoding",
                     //     initFunction: function (item) {
                     //         item.data = [
                     //             {label: 'utf8', value: 'utf8'},

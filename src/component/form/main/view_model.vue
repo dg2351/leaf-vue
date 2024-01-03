@@ -80,9 +80,9 @@ export default {
 			}
 		},
 		getValue: function (item) {
-			let value = this.sourceData[item.model];
+			let value = this.sourceData[item.vModel];
 			if(["radio","select"].includes(item.type)){
-				let select = item.data.filter(p=>p.value==value);
+				let select = item.options.filter(p=>p.value==value);
 				value = select.length > 0 ? select[0].label : value;
 			} else if(["file","fileImg"].includes(item.type)){
 				value = value ? JSON.parse(value) : []

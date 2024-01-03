@@ -306,8 +306,8 @@
 						<a-form-item v-if="activeData.span!==undefined" label="表单栅格">
 							<a-slider v-model="activeData.span" :max="24" :min="1" :marks="{12:''}" />
 						</a-form-item>
-						<a-form-item v-if="activeData.labelWidth!==undefined" label="标签宽度">
-							<a-slider v-model="activeData.labelWidth" :max="24" :min="1" :marks="{12:''}" />
+						<a-form-item v-if="activeData.labelCol!==undefined" label="标签宽度">
+							<a-slider v-model="activeData.labelCol" :max="24" :min="1" :marks="{12:''}" />
 						</a-form-item>
 						<a-form-item v-if="activeData.layout==='rowFormItem'" label="栅格间隔">
 							<a-input-number v-model="activeData.gutter" :min="0" placeholder="栅格间隔" />

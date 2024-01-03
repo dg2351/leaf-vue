@@ -17,7 +17,7 @@
 			</template>
 		</table_model>
 
-		<editModal ref="editModal"/>
+		<editModal :key="editModalKey" ref="editModal"/>
     </div>
 </template>
 
@@ -41,9 +41,10 @@ export default {
 	},
     data() {
         return {
-        	alias: "wechat_user",
+        	alias: "",
         	loading: true,
 			sourceData: {},
+			editModalKey: null,
         }
     },
 	mounted() {
@@ -103,12 +104,18 @@ export default {
             let self_ = this;
             let method = {};
             method.add = (record)=>{
-                let params = {id:record?record.ID_:null}
-                self_.$refs.editModal.openModal(params);
+                self_.editModalKey = new Date().getTime();
+				self_.$nextTick(() => {
+					let params = {id:record?record.ID_:null}
+					self_.$refs.editModal.openModal(params);
+				})
             }
 			method.edit = (record)=>{
-				let params = {id:record?record.ID_:null}
-				self_.$util.component(self_).event('edit', params);
+				self_.editModalKey = new Date().getTime();
+				self_.$nextTick(() => {
+					let params = {id:record?record.ID_:null}
+					self_.$util.component(self_).event('edit', params);
+				})
 			}
             return method;
         }

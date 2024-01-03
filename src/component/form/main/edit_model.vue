@@ -9,15 +9,15 @@
 				<a-collapse v-model="formConfig.collapseKey">
 					<a-collapse-panel :key="collapse.label" :header="collapse.label">
 						<a-row>
-							<a-col v-if="!item.hidden && collapse.data.includes(item.model)"
+							<a-col v-if="!item.hidden && collapse.data.includes(item.vModel)"
 								   v-for="item in formConfig.data"
 								   :span="item.span?item.span:wrapperCol">
-								<a-form-model-item :label="item.label" :prop="item.model"
+								<a-form-model-item :label="item.label" :prop="item.vModel"
 												   :label-col="{span:item.labelCol?item.labelCol:labelCol}"
 												   :wrapper-col="{span:item.wrapperCol?item.wrapperCol:wrapperCol}">
 									<subMain :item="item" :form-config="formConfig" :source-data="sourceData">
-										<template :slot="val.model" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
-											<slot :name="val.model"/>
+										<template :slot="val.vModel" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+											<slot :name="val.vModel"/>
 										</template>
 									</subMain>
 								</a-form-model-item>
@@ -30,12 +30,12 @@
 		<a-row v-else>
 			<a-col v-for="item in formConfig.data" v-if="!item.hidden"
 				   :span="item.span?item.span:wrapperCol">
-				<a-form-model-item :label="item.label" :prop="item.model"
+				<a-form-model-item :label="item.label" :prop="item.vModel"
 								   :label-col="{span:item.labelCol?item.labelCol:labelCol}"
 								   :wrapper-col="{span:item.wrapperCol?item.wrapperCol:wrapperCol}">
 					<subMain :item="item" :form-config="formConfig" :source-data="sourceData">
-						<template :slot="val.model" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
-							<slot :name="val.model"/>
+						<template :slot="val.vModel" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+							<slot :name="val.vModel"/>
 						</template>
 					</subMain>
 				</a-form-model-item>
@@ -94,7 +94,7 @@ export default {
 	},
 	created() {
 		this.formConfig.data.forEach(item => {
-			this.rules[item.model] = item.rule;
+			this.rules[item.vModel] = item.rule;
 		});
 	},
 	methods:{
@@ -116,23 +116,23 @@ export default {
 				let formData = JSON.parse(JSON.stringify(that.sourceData));// 表单数据
 				// 多选格式化
 				that.formConfig.data.filter(p=>['selectTags'].includes(p.type)).forEach(item=>{
-					let value = formData[item.model];
-					formData[item.model] = value && value.length>0 ? value.join(',') : '';
+					let value = formData[item.vModel];
+					formData[item.vModel] = value && value.length>0 ? value.join(',') : '';
 				})
 				// 日期格式化
 				that.formConfig.data.filter(p=>['date','datetime'].includes(p.type)).forEach(item=>{
-					let value = formData[item.model];
-					formData[item.model] = value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : null;
+					let value = formData[item.vModel];
+					formData[item.vModel] = value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : null;
 				})
 				// 富文本格式化
 				that.formConfig.data.filter(p=>p.type=='richtext').forEach(item=>{
-					let value = formData[item.model];
-					formData[item.model] = '<div class="ql-editor">'+value+'</div>';
+					let value = formData[item.vModel];
+					formData[item.vModel] = '<div class="ql-editor">'+value+'</div>';
 				});
 				// 文件格式化
 				that.formConfig.data.filter(p=>['file'].includes(p.type)).forEach(item=>{
-					let value = formData[item.model];
-					formData[item.model] = value ? value : '[]';
+					let value = formData[item.vModel];
+					formData[item.vModel] = value ? value : '[]';
 				})
 				return Object.assign({validate:validate,formData:formData});
 			}

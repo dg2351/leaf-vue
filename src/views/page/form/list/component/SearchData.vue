@@ -41,10 +41,10 @@ export default {
 					{
 						label: "值来源",
 						type: "radio",
-						model: "datasource",
-						data:[],
+						vModel: "datasource",
+						options:[],
 						initFunction: async function (item) {
-							item.data = [
+							item.options = [
 								{label:'自定义',value:'config'},
 								{label:'自定义查询',value:'customQuery'},
 							]
@@ -77,24 +77,24 @@ export default {
 						span:24, labelCol:4,
 						label: "自定义查询",
 						type: "select",
-						model: "url",
-						data:[],
+						vModel: "url",
+						options:[],
 						initFunction: async function (item) {
-							item.data = [];
+							item.options = [];
 							let api = "/form/custom/query/list";
 							let {success, data} = await rxAjax.postJson(api, {})
 							if(!success || data.length == 0){
 								self_.$message.error("网络错误");
 								return;
 							}
-							item.data = data.map(map=>{return {label:map.name, value:map.alias, field:map.resultField}});
+							item.options = data.map(map=>{return {label:map.name, value:map.alias, field:map.resultField}});
 							if(self_.sourceData.url){
-								let $data = item.data.filter(p=>p.value == self_.sourceData.url);
+								let $data = item.options.filter(p=>p.value == self_.sourceData.url);
 								self_.changeEvent($data);
 							}
 						},
 						changeFunction: function (v, e) {
-							let $data = e.data.filter(p=>p.value == v);
+							let $data = e.options.filter(p=>p.value == v);
 							self_.changeEvent($data);
 						}
 					},
@@ -102,15 +102,15 @@ export default {
 						span:12, labelCol:8,
 						label: "文本",
 						type: "select",
-						model: "dataLabel",
-						data:[],
+						vModel: "dataLabel",
+						options:[],
 					},
 					{
 						span:12, labelCol:8,
 						label: "值",
 						type: "select",
-						model: "dataValue",
-						data:[],
+						vModel: "dataValue",
+						options:[],
 					},
 				]
 			},
@@ -140,8 +140,8 @@ export default {
 		},
 		changeEvent($data){
 			let self_ = this;
-			let $label = self_.queryConfig.data.filter(p=>p.model == 'dataLabel')[0];
-			let $value = self_.queryConfig.data.filter(p=>p.model == 'dataValue')[0];
+			let $label = self_.queryConfig.data.filter(p=>p.vModel == 'dataLabel')[0];
+			let $value = self_.queryConfig.data.filter(p=>p.vModel == 'dataValue')[0];
 			let selectData = [];
 			if($data.length > 0){
 				let field = JSON.parse($data[0].field);
@@ -149,7 +149,7 @@ export default {
 					return {label:m.comment, value:m.fieldName}
 				})
 			}
-			$label.data = $value.data = selectData;
+			$label.options = $value.options = selectData;
 		}
 	}
 }

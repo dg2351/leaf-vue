@@ -1,8 +1,8 @@
 <template>
     <div>
 		<a-input :style="item.style" readOnly
-				 v-model="sourceData[item.model]"
-				 @click="baiduMapEvent().baiduMapOnModal(item.model)"/>
+				 v-model="sourceData[item.vModel]"
+				 @click="baiduMapEvent().baiduMapOnModal(item.vModel)"/>
 
 		<a-modal :visible="baiduMapConfig.visible" width="630px"
 				 @ok="baiduMapEvent().baiduMapOnOk"

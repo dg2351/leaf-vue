@@ -121,7 +121,7 @@ export default {
                     {
                         label: "名称",
                         type: "input",
-                        model: "name",
+                        vModel: "name",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -130,7 +130,7 @@ export default {
                     {
                         label: "标识名",
                         type: "input",
-                        model: "alias",
+                        vModel: "alias",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -140,32 +140,32 @@ export default {
 						span:12, labelCol:8,
 						label: "分类",
 						type: "selectTree",
-						model: "treeId",
-						data:[],
+						vModel: "treeId",
+						options:[],
 						initFunction: async function (item) {
 							let {data} = await rxAjax.postJson("/system/tree/list", {});
 							let sourceData = data.map(m=>{return {id:m.id, pid:m.parentId, label:m.name, value:m.id }})
-							item.data = self_.$util.buildTree(sourceData, "id", "pid");
+							item.options = self_.$util.buildTree(sourceData, "id", "pid");
 						},
 					},
 					{
 						span: 24, labelCol: 4,wrapperCol:19,
 						label: "参数定义",
 						type: "slot",
-						model: "config",
+						vModel: "config",
 					},
                     {
                         span:24, labelCol:4,
                         label: "Groovy脚本",
                         type: "codemirror",
-                        model: "content",
+                        vModel: "content",
                         language: "java"
                     },
 					{
 						span:24, labelCol:4,
 						label: "说明",
 						type: "textarea",
-						model: "descp",
+						vModel: "descp",
 						maxLength: 200,
 					},
                 ],

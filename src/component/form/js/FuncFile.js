@@ -15,14 +15,14 @@ const FuncFile = {
 			}
 			let value = [];
 			if(max > 1){
-				let obj = JSON.parse(this.formConfig.form[key]);
+				let obj = JSON.parse(this.sourceData[key]);
 				let newFileList = obj.filter(p=>p.uid != file.uid).map(m=>{return m});
 				value = newFileList;
 			}
 			if(value.length == 0){
-				this.formConfig.form[key] = ""; // 赋值为空，用于校验input值是否上传了文件
+				this.sourceData[key] = ""; // 赋值为空，用于校验input值是否上传了文件
 			} else{
-				this.formConfig.form[key] = JSON.stringify(value)
+				this.sourceData[key] = JSON.stringify(value)
 			}
 		},
 		/**
@@ -33,7 +33,7 @@ const FuncFile = {
 		 */
 		uploadFile(file, key, config) {
 			let that = this;
-			let obj = that.formConfig.form[key]?JSON.parse(that.formConfig.form[key]):[];
+			let obj = that.sourceData[key]?JSON.parse(that.sourceData[key]):[];
 			// 获取配置
 			let max = 1;
 			let suffixs = [];
@@ -67,7 +67,7 @@ const FuncFile = {
 						} else {
 							value = [file];
 						}
-						that.formConfig.form[key] = JSON.stringify(value);
+						that.sourceData[key] = JSON.stringify(value);
 					}
 				})
 			});

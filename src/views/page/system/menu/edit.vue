@@ -56,7 +56,7 @@ export default {
 						span:24, labelCol:6,
                         label: "菜单名称",
                         type: "input",
-                        model: "name",
+						vModel: "name",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -66,7 +66,7 @@ export default {
 						span:24, labelCol:6,
 						label: "标识键",
 						type: "input",
-						model: "key",
+						vModel: "key",
 						maxLength: 20,
 						rule: [
 							{required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -76,8 +76,8 @@ export default {
 						span:24, labelCol:6,
 						label: "菜单展示",
 						type: "radio",
-						model: "showType",
-						data: [
+						vModel: "showType",
+						options: [
 							{label:'是', value:1},
 							{label:'否', value:0},
 						],
@@ -86,8 +86,8 @@ export default {
 						span:24, labelCol:6,
 						label: "配置类型",
 						type: "radio",
-						model: "settingType",
-						data: [
+						vModel: "settingType",
+						options: [
 							{label:'Vue组件', value:'custom'},
 							{label:'IFrame', value:'iframe'},
 						],
@@ -96,7 +96,7 @@ export default {
 						span:24, labelCol:6,
                         label: "组件路径",
                         type: "input",
-                        model: "component",
+						vModel: "component",
                         maxLength: 60,
 						remark: "组件路径是src/views 目录下的组件。<br>列表组件路径：page/form/list/core/index"
                     },
@@ -104,14 +104,14 @@ export default {
 						span:24, labelCol:6,
 						label: "组件参数",
 						type: "input",
-						model: "params",
+						vModel: "params",
 						maxLength: 60,
 					},
 					{
 						span:24, labelCol:6,
 						label: "图标",
 						type: "slot",
-						model: "icon",
+						vModel: "icon",
 						rule: [
 							{required: true, message: '该输入项不能为空', trigger: 'change'},
 						],
@@ -121,7 +121,7 @@ export default {
 						label: "显示顺序",
 						type: "input",
 						inputType: "number",
-						model: "sort",
+						vModel: "sort",
 						min:1,
 						max:100,
 						rule: [
@@ -132,8 +132,8 @@ export default {
 						span:24, labelCol:6,
 						label: "菜单状态",
 						type: "radio",
-						model: "status",
-						data: [
+						vModel: "status",
+						options: [
 							{label:'启用', value:1},
 							{label:'禁用', value:0},
 						],
@@ -145,8 +145,8 @@ export default {
 						span:24, labelCol:6,
 						label: "系统值",
 						type: "radio",
-						model: "sys",
-						data: [
+						vModel: "sys",
+						options: [
 							{label:'Y', value:1},
 							{label:'N', value:0},
 						],
@@ -184,7 +184,7 @@ export default {
             } else{
             	let sourceData = {};
             	this.formConfig.data.forEach(item=>{
-            		sourceData[item.model] = null;
+            		sourceData[item.vModel] = null;
 				})
 				that.sourceData = Object.assign(sourceData, {
 					pid,

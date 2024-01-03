@@ -14,13 +14,13 @@
             <a-form-model>
                 <a-row>
                     <a-col :span="8" v-for="item in formTab1">
-                        <template v-if="item.model == 'dsName'">
+                        <template v-if="item.vModel == 'dsName'">
                             <a-form-model-item :label="item.label" :label-col="{span: 5 }" :required="true">
                                 <a-input-search v-model="sourceData.dsName" enter-button :readOnly="true"
                                                 @search="$refs['dbModal'].openModal(getValue(sourceData,'dsAlias'))"/>
                             </a-form-model-item>
                         </template>
-                        <template v-if="item.model == 'tableName'">
+                        <template v-if="item.vModel == 'tableName'">
                             <a-form-model-item :label="item.label" :label-col="{span: 5 }">
                                 <button type="button" class="ant-btn ant-btn-icon-only"
                                         @click="$refs['tableModal'].openModal(getValue(sourceData,'dsAlias'))">
@@ -184,7 +184,7 @@ export default {
 						span:8, labelCol:5,
                         label: "名称",
                         type: "input",
-                        model: "name",
+                        vModel: "name",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -194,7 +194,7 @@ export default {
 						span:8, labelCol:5,
                         label: "标识",
                         type: "input",
-                        model: "alias",
+                        vModel: "alias",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -204,13 +204,13 @@ export default {
 						span:8, labelCol:5,
 						label: "分类",
 						type: "selectTree",
-						model: "treeId",
+						vModel: "treeId",
 						maxLength: 20,
-						data:[],
+						options:[],
 						initFunction: async function (item) {
 							let {data} = await rxAjax.postJson("/system/tree/list", {});
 							let sourceData = data.map(m=>{return {id:m.id, pid:m.parentId, label:m.name, value:m.id }})
-							item.data = self_.$util.buildTree(sourceData, "id", "pid");
+							item.options = self_.$util.buildTree(sourceData, "id", "pid");
 						},
 						rule: [
 							{required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -220,8 +220,8 @@ export default {
             },
             //
             formTab1: [
-                {label:'数据源',model:'dsName'},
-                {label:'库表',model:'tableName'},
+                {label:'数据源',vModel:'dsName'},
+                {label:'库表',vModel:'tableName'},
             ],
 			//
 			columns:[

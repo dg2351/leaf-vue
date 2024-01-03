@@ -1,24 +1,24 @@
 <template>
     <div>
-		<a-input v-model="sourceData[item.model]" hidden/>
+		<a-input v-model="sourceData[item.vModel]" hidden/>
 		<template v-if="!(item.readonly || formConfig.readonly)">
-			<template v-for="imgFile in sourceData[item.model]?JSON.parse(sourceData[item.model]):[]">
+			<template v-for="imgFile in sourceData[item.vModel]?JSON.parse(sourceData[item.vModel]):[]">
 				<div class="imgList">
 					<img :src="imgFile.url" class="imgCard"
 						 :width="item.imgWidth?item.imgWidth:'79px'"
 						 :height="item.imgHeight?item.imgHeight:'79px'"/>
 					<a class="close">
 						<img class="pa" style="height: 18px;width: 18px;" src="../img/close.png"
-							 @click="removeFile(imgFile, item.model, item.file)">
+							 @click="removeFile(imgFile, item.vModel, item.file)">
 					</a>
 				</div>
 			</template>
 			<a-upload :showUploadList="false" :multiple="true" style="float: left;margin-right: 5px;"
 					  :disabled="item.disabled || formConfig.disabled"
-					  :remove="value=>removeFile(value, item.model, item.file)"
-					  :before-upload="value => uploadFile(value, item.model, item.file)">
+					  :remove="value=>removeFile(value, item.vModel, item.file)"
+					  :before-upload="value => uploadFile(value, item.vModel, item.file)">
 				<a size="small" type="primary"
-				   v-if="!formConfig.disabled && (sourceData[item.model]?JSON.parse(sourceData[item.model]):[]).length < item.file.max">
+				   v-if="!formConfig.disabled && (sourceData[item.vModel]?JSON.parse(sourceData[item.vModel]):[]).length < item.file.max">
 					<img src="../img/add.png">
 				</a>
 			</a-upload>
@@ -38,7 +38,7 @@ export default {
 	props:['sourceData','formConfig', 'item'],
 	methods:{
 		getValue: function (item) {
-			let value = this.sourceData[item.model];
+			let value = this.sourceData[item.vModel];
 			if(["file","fileImg"].includes(item.type)){
 				value = value ? JSON.parse(value) : []
 			}

@@ -1,5 +1,5 @@
 <template>
-	<a-modal title="编辑" dialogClass="modal_a" width="600px"
+	<a-modal title="编辑" dialogClass="modal_a" width="800px"
 			 :visible="visible" @cancel="closeModal" :footer="null">
 		<a-spin :spinning="loading">
 			<div class="p10 bor_a" v-if="!formConfig.loading">
@@ -32,20 +32,22 @@ export default {
 		return {
 			visible: false,
 			loading:false,
+			//
+			alias: "",
 			// base
 			sourceData:{},
 			formConfig: {
 				visible: false,
 				loading: true,
 				disabled: false,
-				data: [
-				]
+				data: []
 			}
 		}
 	},
 	methods:{
 		openModal(params){
 			this.visible = true;
+			this.initData()
 			this.loadData(params.id, params.parentId);
 		},
 		closeModal(refresh = false){
@@ -54,7 +56,21 @@ export default {
 				this.$emit("callback", {refresh})
 			}
 		},
-		loadData(id, parentId='0'){
+		initData(){
+			let api = "/form/design/alias";
+			let params = Object.assign({alias:'testDesign'});
+			rxAjax.get(api, params).then(({success,data})=>{
+				let template = data.template;
+				let drawingList = JSON.parse(template ?? '[]');
+				this.alias = data.boAlias;
+				this.formConfig.data = drawingList.map(m=>{
+					return Object.assign(m,{
+						type:m.tagIcon,
+					})
+				});
+			});
+		},
+		loadData(id){
 			let that = this;
 			if(id){
 				let api = "/system/tree/info";
@@ -64,7 +80,7 @@ export default {
 					that.formConfig.loading = false
 				})
 			} else{
-				that.sourceData = {parentId}
+				that.sourceData = {}
 				that.formConfig.loading = false
 			}
 		},

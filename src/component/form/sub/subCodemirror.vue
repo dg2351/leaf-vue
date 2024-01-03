@@ -1,9 +1,9 @@
 <template>
     <div>
         <codemirror v-if="!(item.readonly || formConfig.readonly)"
-                    :value="sourceData[item.model]" :language="item.language"
-                    @editorChange="value=>editorChange(item.model,value)"/>
-        <p v-else class="content_wrap">{{sourceData[item.model]}}</p>
+                    :value="sourceData[item.vModel]" :language="item.language"
+                    @editorChange="value=>editorChange(item.vModel,value)"/>
+        <p v-else class="content_wrap">{{sourceData[item.vModel]}}</p>
     </div>
 </template>
 

@@ -184,7 +184,6 @@ export default {
 			drawingList,
 			activeId: null,
 			activeData: null,
-			labelWidth: 100,
 		}
 	},
 	methods:{
@@ -204,7 +203,6 @@ export default {
 				let api = "/form/design/info";
 				let params = Object.assign({id:id});
 				rxAjax.get(api, params).then(({success,data})=>{
-					self_.sourceData.id = data;
 					let template = data.template;
 					self_.drawingList = JSON.parse(template ?? '[]');
 				});

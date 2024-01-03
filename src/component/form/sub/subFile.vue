@@ -1,12 +1,12 @@
 <template>
     <div>
-		<a-input v-model="sourceData[item.model]" hidden/>
+		<a-input v-model="sourceData[item.vModel]" hidden/>
 		<a-upload :showUploadList="true" :multiple="true"
 				  v-if="!(item.readonly || formConfig.readonly)"
 				  :disabled="item.disabled || formConfig.disabled"
-				  :remove="value=>removeFile(value, item.model, item.file)"
-				  :before-upload="value => uploadFile(value, item.model, item.file)"
-				  :file-list="sourceData[item.model]?JSON.parse(sourceData[item.model]):[]">
+				  :remove="value=>removeFile(value, item.vModel, item.file)"
+				  :before-upload="value => uploadFile(value, item.vModel, item.file)"
+				  :file-list="sourceData[item.vModel]?JSON.parse(sourceData[item.vModel]):[]">
 			<a-button type="primary" v-if="!formConfig.disabled">
 				<a-icon type="upload"/>{{item.file.text?item.file.text:'上传附件'}}
 			</a-button>
@@ -24,7 +24,7 @@ export default {
 	props:['sourceData', 'formConfig', 'item'],
 	methods:{
 		getValue: function (item) {
-			let value = this.sourceData[item.model];
+			let value = this.sourceData[item.vModel];
 			if(["file","fileImg"].includes(item.type)){
 				value = value ? JSON.parse(value) : []
 			}

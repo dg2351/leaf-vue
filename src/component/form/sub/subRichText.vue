@@ -1,8 +1,8 @@
 <template>
     <div>
-		<RichText class="" :text="sourceData[item.model]"
-				  v-if="!(item.readonly || formConfig.readonly)" @editorChange="value=>editorChange(item.model,value)"></RichText>
-		<p v-else class="content_wrap">{{sourceData[item.model]}}</p>
+		<RichText class="" :text="sourceData[item.vModel]"
+				  v-if="!(item.readonly || formConfig.readonly)" @editorChange="value=>editorChange(item.vModel,value)"></RichText>
+		<p v-else class="content_wrap">{{sourceData[item.vModel]}}</p>
 		<!--<slot name="extraFormItem"></slot>-->
 	</div>
 </template>

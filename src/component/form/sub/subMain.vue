@@ -4,7 +4,7 @@
 		<template v-if="item.type==='input'">
 			<template v-if="!(item.readonly || formConfig.readonly)">
 				<a-input-number :style="item.style" v-if="item.inputType=='number'"
-								v-model="sourceData[item.model]"
+								v-model="sourceData[item.vModel]"
 								:min="item.min" :max="item.max"
 								:disabled="item.disabled || formConfig.disabled"
 								:suffix="item.suffix ?? ''"
@@ -12,15 +12,15 @@
 								:parser="value => value.replace(item.suffix??'', '')"
 								@change="value=>item.changeFunction(value, item)"/>
 				<a-input-password :style="item.style" v-else-if="item.inputType=='password'"
-								  v-model="sourceData[item.model]"
+								  v-model="sourceData[item.vModel]"
 								  :addon-before="item.addonBefore"
 								  :allowClear="item.allowClear"
 								  :disabled="item.disabled || formConfig.disabled"
 								  :suffix="item.suffix"
 								  :maxLength="item.maxLength?item.maxLength:100"/>
 				<a-input :style="item.style" v-else
-						 @input="sourceData[item.model] = sensitiveFormat(sourceData[item.model])"
-						 v-model="sourceData[item.model]"
+						 @input="sourceData[item.vModel] = sensitiveFormat(sourceData[item.vModel])"
+						 v-model="sourceData[item.vModel]"
 						 :addon-before="item.addonBefore"
 						 :allowClear="item.allowClear"
 						 :disabled="item.disabled || formConfig.disabled"
@@ -33,8 +33,8 @@
 		<!--输入框-->
 		<template v-if="item.type==='between'">
 			<a-input style="width:calc(50% - 15px); text-align: center" :style="item.config[0].style"
-					 @input="sourceData[item.config[0].model] = sensitiveFormat(sourceData[item.config[0].model])"
-					 v-model="sourceData[item.config[0].model]"
+					 @input="sourceData[item.config[0].vModel] = sensitiveFormat(sourceData[item.config[0].vModel])"
+					 v-model="sourceData[item.config[0].vModel]"
 					 :addon-before="item.config[0].addonBefore"
 					 :disabled="item.config[0].disabled || formConfig.disabled"
 					 :suffix="item.config[0].suffix"
@@ -44,8 +44,8 @@
 			<a-input style="width: 30px; border-left: 0; pointer-events: none; backgroundColor: #fff"
 					 placeholder="~"disabled/>
 			<a-input style="width:calc(50% - 15px); text-align: center" :style="item.config[1].style"
-					 @input="sourceData[item.config[1].model] = sensitiveFormat(sourceData[item.config[1].model])"
-					 v-model="sourceData[item.config[1].model]"
+					 @input="sourceData[item.config[1].vModel] = sensitiveFormat(sourceData[item.config[1].vModel])"
+					 v-model="sourceData[item.config[1].vModel]"
 					 :addon-before="item.config[1].addonBefore"
 					 :disabled="item.config[1].disabled || formConfig.disabled"
 					 :suffix="item.config[1].suffix"
@@ -56,8 +56,8 @@
 		<!--文本框-->
 		<template v-else-if="item.type==='textarea'">
 			<a-textarea :style="item.style" v-if="!(item.readonly || formConfig.readonly)"
-						@input="sourceData[item.model] = sensitiveFormat(sourceData[item.model])"
-						v-model="sourceData[item.model]"
+						@input="sourceData[item.vModel] = sensitiveFormat(sourceData[item.vModel])"
+						v-model="sourceData[item.vModel]"
 						:readOnly="item.readonly || formConfig.readonly"
 						:disabled="item.disabled || formConfig.disabled"
 						:maxLength="item.maxLength?item.maxLength:100"
@@ -70,9 +70,9 @@
 		</template>
 		<!--选择-->
 		<template v-else-if="item.type==='radio'">
-			<a-radio-group v-model="sourceData[item.model]"
+			<a-radio-group v-model="sourceData[item.vModel]"
 						   v-if="!(item.readonly || formConfig.readonly)"
-						   :options="item.data"
+						   :options="item.options"
 						   :readOnly="item.readonly || formConfig.readonly"
 						   :disabled="formConfig.disabled"
 						   @change="e=>item.changeFunction(e.target.value, item)">
@@ -83,13 +83,13 @@
 		<!--选择-->
 		<template v-else-if="item.type==='select'">
 			<template v-if="!(item.readonly || formConfig.readonly)">
-				<a-select v-model="sourceData[item.model]"
+				<a-select v-model="sourceData[item.vModel]"
 						  :style="item.style"
 						  :show-search="item.showSearch"
 						  :allowClear="item.allowClear"
 						  :filter-option="false"
 						  :not-found-content="item.fetching ? undefined : null"
-						  :options="item.data"
+						  :options="item.options"
 						  option-filter-prop="children"
 						  @search="value=>item.searchFunction(value, item)"
 						  @change="value=>item.changeFunction(value, item)"
@@ -107,11 +107,11 @@
 		</template>
 		<!--多选择-->
 		<template v-else-if="item.type==='selectTags'">
-			<a-select mode="multiple" v-model="sourceData[item.model]"
+			<a-select mode="multiple" v-model="sourceData[item.vModel]"
 					  v-if="!(item.readonly || formConfig.readonly)"
 					  :style="item.style"
 					  :show-search="item.showSearch"
-					  :options="item.data"
+					  :options="item.options"
 					  option-filter-prop="children"
 					  @change="value=>item.changeFunction(value, item.data)"
 					  :readOnly="item.readonly || formConfig.readonly"
@@ -126,26 +126,26 @@
 		<template v-else-if="item.type==='selectTree'">
 			<a-tree-select :style="item.style"
 						   v-if="!(item.readonly || formConfig.readonly)"
-						   v-model="sourceData[item.model]"
+						   v-model="sourceData[item.vModel]"
 						   :tree-checkable="item.treeCheckable??false"
-						   :tree-data="item.data" :maxTagCount="item.maxTagCount??1"
+						   :tree-data="item.options" :maxTagCount="item.maxTagCount??1"
 						   :search-placeholder="item.placeholder?item.placeholder:('请选择'+item.label)"
 						   :readOnly="item.readonly || formConfig.readonly"
 						   :disabled="item.disabled || formConfig.disabled"
 						   :getPopupContainer="triggerNode => {return triggerNode.parentNode || document.body;}"
-						   @change="value=>item.changeFunction(value, item.data)"/>
+						   @change="value=>item.changeFunction(value, item.options)"/>
 			<p v-else class="content_wrap">{{getValue(item)}}</p>
 		</template>
 		<!--滑块-->
 		<template v-else-if="item.type==='switch'">
-			<a-switch :default-checked="sourceData[item.model]"
-					  @change="value=>{sourceData[item.model]=value}"/>
+			<a-switch :default-checked="sourceData[item.vModel]"
+					  @change="value=>{sourceData[item.vModel]=value}"/>
 		</template>
 		<!--日期-->
 		<template v-if="item.type==='date'">
 			<a-date-picker style="width: 100%;"
 						   v-if="!(item.readonly || formConfig.readonly)"
-						   v-model="sourceData[item.model]"
+						   v-model="sourceData[item.vModel]"
 						   :placeholder="item.placeholder"
 						   :inputReadOnly="item.readonly || formConfig.readonly"
 						   :disabled="item.disabled || formConfig.disabled"
@@ -158,7 +158,7 @@
 						   format="YYYY-MM-DD HH:mm:ss"
 						   :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }"
 						   v-if="!(item.readonly || formConfig.readonly)"
-						   v-model="sourceData[item.model]"
+						   v-model="sourceData[item.vModel]"
 						   :placeholder="item.placeholder"
 						   :inputReadOnly="item.readonly || formConfig.readonly"
 						   :disabled="item.disabled || formConfig.disabled"
@@ -168,12 +168,12 @@
 		<!--级联-->
 		<template v-else-if="item.type==='cascader'">
 			<a-cascader :style="item.style"
-						v-model="sourceData[item.model]"
+						v-model="sourceData[item.vModel]"
 						v-if="!(item.readonly || formConfig.readonly)"
 						:placeholder="item.placeholder"
 						:readOnly="item.readonly || formConfig.readonly"
 						:disabled="item.disabled || formConfig.disabled"
-						:options="item.data"
+						:options="item.options"
 						change-on-select
 						:field-names="{ label: 'label', value: 'label', children: 'children' }"
 						:default-value="[]"
@@ -193,7 +193,7 @@
 		<!-- 对话弹框 -->
 		<subDialogbox v-else-if="item.type==='dialogbox'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 		<!-- 自定义插槽 -->
-		<slot :name="item.model" v-else-if="item.type==='slot'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
+		<slot :name="item.vModel" v-else-if="item.type==='slot'" :sourceData="sourceData" :formConfig="formConfig" :item="item"/>
 		<!-- 备注说明 -->
 		<a-tooltip v-if="!(item.readonly || formConfig.readonly) && item.remark">
 			<template slot="title">
@@ -252,9 +252,9 @@ export default {
 			}
 		},
 		getValue: function (item) {
-			let value = this.sourceData[item.model];
+			let value = this.sourceData[item.vModel];
 			if(["radio","select"].includes(item.type)){
-				let select = item.data.filter(p=>p.value==value);
+				let select = item.options.filter(p=>p.value==value);
 				value = select.length > 0 ? select[0].label : value;
 			} else if(["file","fileImg"].includes(item.type)){
 				value = value ? JSON.parse(value) : []

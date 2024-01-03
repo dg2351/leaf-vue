@@ -5,8 +5,8 @@
 					:alias="alias" :className="className"
 					:sourceData="sourceData"
 					:formConfig="formConfig">
-			<template :slot="val.model" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
-				<slot :name="val.model"/>
+			<template :slot="val.vModel" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+				<slot :name="val.vModel"/>
 			</template>
 		</view_model>
 		<edit_model v-if="!formConfig.disabled"
@@ -14,8 +14,8 @@
 					:alias="alias" :className="className"
 					:sourceData="sourceData"
 					:formConfig="formConfig">
-			<template :slot="val.model" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
-				<slot :name="val.model"/>
+			<template :slot="val.vModel" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+				<slot :name="val.vModel"/>
 			</template>
 		</edit_model>
 	</a-spin>
@@ -141,8 +141,8 @@ export default {
 						});
 					}
 					that.formConfig.data.filter(p=>['file','fileImg','richtext'].includes(p.type)).forEach(m=>{
-						if(!sourceData[m.model]){
-							sourceData[m.model] = "";
+						if(!sourceData[m.vModel]){
+							sourceData[m.vModel] = "";
 						}
 					})
 					if(that.loadFunc){// 获取存在回调时进行回调处理

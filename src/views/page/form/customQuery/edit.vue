@@ -73,7 +73,7 @@ export default {
                     {
                         label: "名称",
                         type: "input",
-                        model: "name",
+						vModel: "name",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -82,7 +82,7 @@ export default {
                     {
                         label: "标识名",
                         type: "input",
-                        model: "alias",
+						vModel: "alias",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -91,39 +91,39 @@ export default {
                     {
                         label: "分类",
                         type: "selectTree",
-                        model: "treeId",
-						data:[],
+						vModel: "treeId",
+						options:[],
 						initFunction: async function (item) {
 							let {data} = await rxAjax.postJson("/system/tree/list", {});
 							let sourceData = data.map(m=>{return {id:m.id, pid:m.parentId, label:m.name, value:m.id }})
-							item.data = self_.$util.buildTree(sourceData, "id", "pid");
+							item.options = self_.$util.buildTree(sourceData, "id", "pid");
 						},
                     },
 					{
 						label: "数据源选择",
 						type: "slot",
-						model: "dsAlias",
+						vModel: "dsAlias",
 					},
 					{
 						span:24, labelCol:4,
 						label: "SQL",
 						type: "codemirror",
-						model: "sql",
+						vModel: "sql",
 						language: "sql"
 					},
 					{
 						label: "是否分页",
 						type: "radio",
-						model: "isPage",
-						data:[],
+						vModel: "isPage",
+						options:[],
 						initFunction: function (item) {
-							item.data = [{label:'是',value:1},{label:'否',value:0}]
+							item.options = [{label:'是',value:1},{label:'否',value:0}]
 						},
 					},
 					{
 						label: "分页大小",
 						type: "input",
-						model: "pageSize",
+						vModel: "pageSize",
 						maxLength: 20,
 						rule: [
 							{required: false, message: '该输入项不能为空', trigger: 'change'},
@@ -133,16 +133,16 @@ export default {
 					{
 						label: "是否缓存",
 						type: "radio",
-						model: "isCache",
-						data:[],
+						vModel: "isCache",
+						options:[],
 						initFunction: function (item) {
-							item.data = [{label:'是',value:1},{label:'否',value:0}]
+							item.options = [{label:'是',value:1},{label:'否',value:0}]
 						},
 					},
 					{
 						label: "缓存时间",
 						type: "input",
-						model: "cacheTime",
+						vModel: "cacheTime",
 						maxLength: 4,
 						rule: [
 							{required: false, message: '该输入项不能为空', trigger: 'change'},

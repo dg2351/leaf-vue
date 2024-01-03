@@ -1,5 +1,5 @@
 <template>
-	<a-input v-model="sourceData[item.model].text"
+	<a-input v-model="sourceData[item.vModel].text"
 			 :readOnly="true"
 			 :style="item.style"
 			 @click="Dialog(item)"/>
@@ -24,10 +24,10 @@ export default {
 			}, function (data) {
 				console.log("回调>>>", data.rows)
 				if (data.rows.length === 0) {
-					that.sourceData[item.model] = "";
+					that.sourceData[item.vModel] = "";
 					return false;
 				}
-				that.sourceData[item.model] = {
+				that.sourceData[item.vModel] = {
 					text:data.rows[0][item.result.text],
 					id:data.rows[0][item.result.id],
 				};

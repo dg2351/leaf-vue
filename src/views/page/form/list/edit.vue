@@ -91,7 +91,7 @@ export default {
                     {
                         label: "名称",
                         type: "input",
-                        model: "name",
+                        vModel: "name",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -100,7 +100,7 @@ export default {
                     {
                         label: "别名",
                         type: "input",
-                        model: "alias",
+                        vModel: "alias",
                         maxLength: 20,
                         rule: [
                             {required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -109,19 +109,19 @@ export default {
 					{
 						label: "分类",
 						type: "selectTree",
-						model: "treeId",
-						data:[],
+						vModel: "treeId",
+						options:[],
 						initFunction: async function (item) {
 							let {data} = await rxAjax.postJson("/system/tree/list", {});
 							let sourceData = data.map(m=>{return {id:m.id, pid:m.parentId, label:m.name, value:m.id }})
-							item.data = self_.$util.buildTree(sourceData, "id", "pid");
+							item.options = self_.$util.buildTree(sourceData, "id", "pid");
 						},
 					},
 					{
 						label: "是否显示序号",
 						type: "radio",
-						model: "isXh",
-						data:[
+						vModel: "isXh",
+						options:[
 							{label:'是',value:1},
 							{label:'否',value:0},
 						],
@@ -133,8 +133,8 @@ export default {
 					{
 						label: "是否分页",
 						type: "radio",
-						model: "isPage",
-						data:[
+						vModel: "isPage",
+						options:[
 							{label:'是',value:1},
 							{label:'否',value:0},
 						],
@@ -146,7 +146,7 @@ export default {
 					{
 						label: "数据来源",
 						type: "input",
-						model: "url",
+						vModel: "url",
 						maxLength: 60,
 						rule: [
 							{required: true, message: '该输入项不能为空', trigger: 'change'},
@@ -155,8 +155,8 @@ export default {
 					{
 						label: "请求方式",
 						type: "radio",
-						model: "urlMethod",
-						data:[
+						vModel: "urlMethod",
+						options:[
 							{label:'postForm',value:'postForm'},
 							// {label:'postJson',value:'postJson'},
 						],
@@ -175,7 +175,7 @@ export default {
 					{
 						label: "主键",
 						type: "input",
-						model: "idField",
+						vModel: "idField",
 						maxLength: 20,
 						rule: [
 							{required: true, message: '该输入项不能为空', trigger: 'change'},

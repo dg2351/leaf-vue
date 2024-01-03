@@ -79,13 +79,9 @@ function colWrapper(element, str) {
 
 const layouts = {
 	colFormItem(element) {
-		let labelWidth = ''
-		if (element.labelWidth && element.labelWidth !== confGlobal.labelWidth) {
-			labelWidth = `label-width="${element.labelWidth}px"`
-		}
 		const required = !trigger[element.tag] && element.required ? 'required' : ''
 		const tagDom = tags[element.tag] ? tags[element.tag](element) : null
-		let str = `<a-form-item ${labelWidth} label="${element.label}" prop="${element.vModel}" ${required}>
+		let str = `<a-form-item label="${element.label}" prop="${element.vModel}" ${required}>
 					${tagDom}
 				  </a-form-item>`
 		str = colWrapper(element, str)
