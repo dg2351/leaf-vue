@@ -40,6 +40,7 @@ export default {
 				data: [
 					{
 						label: "值来源",
+						tag: "a-radio",
 						type: "radio",
 						vModel: "datasource",
 						options:[],
@@ -76,6 +77,7 @@ export default {
 					{
 						span:24, labelCol:4,
 						label: "自定义查询",
+						tag: "a-select",
 						type: "select",
 						vModel: "url",
 						options:[],
@@ -101,6 +103,7 @@ export default {
 					{
 						span:12, labelCol:8,
 						label: "文本",
+						tag: "a-select",
 						type: "select",
 						vModel: "dataLabel",
 						options:[],
@@ -108,6 +111,7 @@ export default {
 					{
 						span:12, labelCol:8,
 						label: "值",
+						tag: "a-select",
 						type: "select",
 						vModel: "dataValue",
 						options:[],

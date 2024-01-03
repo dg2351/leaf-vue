@@ -55,6 +55,7 @@ export default {
                     {
 						span:24, labelCol:6,
                         label: "菜单名称",
+						tag: "a-input",
                         type: "input",
 						vModel: "name",
                         maxLength: 20,
@@ -65,6 +66,7 @@ export default {
 					{
 						span:24, labelCol:6,
 						label: "标识键",
+						tag: "a-input",
 						type: "input",
 						vModel: "key",
 						maxLength: 20,
@@ -75,6 +77,7 @@ export default {
 					{
 						span:24, labelCol:6,
 						label: "菜单展示",
+						tag: "a-radio",
 						type: "radio",
 						vModel: "showType",
 						options: [
@@ -85,6 +88,7 @@ export default {
 					{
 						span:24, labelCol:6,
 						label: "配置类型",
+						tag: "a-radio",
 						type: "radio",
 						vModel: "settingType",
 						options: [
@@ -95,6 +99,7 @@ export default {
                     {
 						span:24, labelCol:6,
                         label: "组件路径",
+						tag: "a-input",
                         type: "input",
 						vModel: "component",
                         maxLength: 60,
@@ -103,6 +108,7 @@ export default {
 					{
 						span:24, labelCol:6,
 						label: "组件参数",
+						tag: "a-input",
 						type: "input",
 						vModel: "params",
 						maxLength: 60,
@@ -110,6 +116,7 @@ export default {
 					{
 						span:24, labelCol:6,
 						label: "图标",
+						tag: "slot",
 						type: "slot",
 						vModel: "icon",
 						rule: [
@@ -119,6 +126,7 @@ export default {
 					{
 						span:24, labelCol:6,
 						label: "显示顺序",
+						tag: "a-input",
 						type: "input",
 						inputType: "number",
 						vModel: "sort",
@@ -131,6 +139,7 @@ export default {
 					{
 						span:24, labelCol:6,
 						label: "菜单状态",
+						tag: "a-radio",
 						type: "radio",
 						vModel: "status",
 						options: [
@@ -144,6 +153,7 @@ export default {
 					{
 						span:24, labelCol:6,
 						label: "系统值",
+						tag: "a-radio",
 						type: "radio",
 						vModel: "sys",
 						options: [

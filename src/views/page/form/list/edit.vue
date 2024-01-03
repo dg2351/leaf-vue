@@ -90,6 +90,7 @@ export default {
                 data: [
                     {
                         label: "名称",
+						tag: "a-input",
                         type: "input",
                         vModel: "name",
                         maxLength: 20,
@@ -99,6 +100,7 @@ export default {
                     },
                     {
                         label: "别名",
+						tag: "a-input",
                         type: "input",
                         vModel: "alias",
                         maxLength: 20,
@@ -108,6 +110,7 @@ export default {
                     },
 					{
 						label: "分类",
+						tag: "a-select-tree",
 						type: "selectTree",
 						vModel: "treeId",
 						options:[],
@@ -119,6 +122,7 @@ export default {
 					},
 					{
 						label: "是否显示序号",
+						tag: "a-radio",
 						type: "radio",
 						vModel: "isXh",
 						options:[
@@ -132,6 +136,7 @@ export default {
 					},
 					{
 						label: "是否分页",
+						tag: "a-radio",
 						type: "radio",
 						vModel: "isPage",
 						options:[
@@ -145,6 +150,7 @@ export default {
 					},
 					{
 						label: "数据来源",
+						tag: "a-input",
 						type: "input",
 						vModel: "url",
 						maxLength: 60,
@@ -154,6 +160,7 @@ export default {
 					},
 					{
 						label: "请求方式",
+						tag: "a-radio",
 						type: "radio",
 						vModel: "urlMethod",
 						options:[

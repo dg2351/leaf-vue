@@ -61,13 +61,9 @@ export default {
 			let params = Object.assign({alias:'testDesign'});
 			rxAjax.get(api, params).then(({success,data})=>{
 				let template = data.template;
-				let drawingList = JSON.parse(template ?? '[]');
 				this.alias = data.boAlias;
-				this.formConfig.data = drawingList.map(m=>{
-					return Object.assign(m,{
-						type:m.tagIcon,
-					})
-				});
+				this.formConfig.render = true
+				this.formConfig.data = JSON.parse(template ?? '[]');
 			});
 		},
 		loadData(id){

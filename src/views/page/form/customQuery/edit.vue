@@ -72,6 +72,7 @@ export default {
                 data: [
                     {
                         label: "名称",
+						tag: "a-input",
                         type: "input",
 						vModel: "name",
                         maxLength: 20,
@@ -81,6 +82,7 @@ export default {
                     },
                     {
                         label: "标识名",
+						tag: "a-input",
                         type: "input",
 						vModel: "alias",
                         maxLength: 20,
@@ -90,6 +92,7 @@ export default {
                     },
                     {
                         label: "分类",
+						tag: "a-select-tree",
                         type: "selectTree",
 						vModel: "treeId",
 						options:[],
@@ -101,18 +104,21 @@ export default {
                     },
 					{
 						label: "数据源选择",
+						tag: "slot",
 						type: "slot",
 						vModel: "dsAlias",
 					},
 					{
 						span:24, labelCol:4,
 						label: "SQL",
+						tag: "codemirror",
 						type: "codemirror",
 						vModel: "sql",
 						language: "sql"
 					},
 					{
 						label: "是否分页",
+						tag: "a-radio",
 						type: "radio",
 						vModel: "isPage",
 						options:[],
@@ -122,6 +128,7 @@ export default {
 					},
 					{
 						label: "分页大小",
+						tag: "a-input",
 						type: "input",
 						vModel: "pageSize",
 						maxLength: 20,
@@ -132,6 +139,7 @@ export default {
 					},
 					{
 						label: "是否缓存",
+						tag: "a-radio",
 						type: "radio",
 						vModel: "isCache",
 						options:[],
@@ -141,6 +149,7 @@ export default {
 					},
 					{
 						label: "缓存时间",
+						tag: "a-input",
 						type: "input",
 						vModel: "cacheTime",
 						maxLength: 4,

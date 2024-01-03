@@ -86,6 +86,7 @@ export default {
                 data: [
                     {
                         label: "数据源名称",
+						tag: "a-input",
                         type: "input",
                         vModel: "name",
                         maxLength: 20,
@@ -95,6 +96,7 @@ export default {
                     },
                     {
                         label: "别名",
+						tag: "a-input",
                         type: "input",
                         vModel: "alias",
                         maxLength: 20,
@@ -104,6 +106,7 @@ export default {
                     },
                     {
                         label: "数据库类型",
+						tag: "a-select",
                         type: "select",
                         vModel: "dbType",
                         rule: [

@@ -49,7 +49,7 @@ export default {
 			}
 		})
 		return h(this.conf.tag, dataObject, children)
-	},
+	}
 }
 
 function makeMap(str, expectsLowerCase) {
@@ -81,6 +81,8 @@ const isAttr = makeMap(
 )
 
 function vModel(self, dataObject, defaultValue) {
+	// 默认值
+	// dataObject.props.value = defaultValue
 	dataObject.on.input = val => {
 		self.$emit('input', val)
 	}

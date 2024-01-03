@@ -1,29 +1,39 @@
 <template>
 	<!-- 加载 -->
 	<a-spin :spinning="formConfig.loading">
-		<view_model v-if="formConfig.disabled"
-					:alias="alias" :className="className"
-					:sourceData="sourceData"
-					:formConfig="formConfig">
-			<template :slot="val.vModel" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
-				<slot :name="val.vModel"/>
-			</template>
-		</view_model>
-		<edit_model v-if="!formConfig.disabled"
-					ref="edit_model"
-					:alias="alias" :className="className"
-					:sourceData="sourceData"
-					:formConfig="formConfig">
-			<template :slot="val.vModel" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
-				<slot :name="val.vModel"/>
-			</template>
-		</edit_model>
+		<template v-if="formConfig.render">
+			<render_model :alias="alias" :className="className" :sourceData="sourceData" :formConfig="formConfig">
+				<template :slot="val.vModel" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+					<slot :name="val.vModel"/>
+				</template>
+			</render_model>
+		</template>
+		<template v-else>
+			<view_model v-if="formConfig.disabled"
+						:alias="alias" :className="className"
+						:sourceData="sourceData"
+						:formConfig="formConfig">
+				<template :slot="val.vModel" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+					<slot :name="val.vModel"/>
+				</template>
+			</view_model>
+			<edit_model v-if="!formConfig.disabled"
+						ref="edit_model"
+						:alias="alias" :className="className"
+						:sourceData="sourceData"
+						:formConfig="formConfig">
+				<template :slot="val.vModel" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
+					<slot :name="val.vModel"/>
+				</template>
+			</edit_model>
+		</template>
 	</a-spin>
 </template>
 
 <script>
 import view_model from "@/component/form/main/view_model";
 import edit_model from "@/component/form/main/edit_model";
+import render_model from "@/component/form/main/render_model";
 import {mapState} from "vuex";
 import FormMethods from "@/plugins/js-comps/FormMethods";
 
@@ -64,7 +74,7 @@ export default {
 		loadFunc: {type: Function}
 	},
 	components: {
-		view_model,edit_model
+		view_model,edit_model,render_model,
 	},
 	computed: {
 		...mapState({

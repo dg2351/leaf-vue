@@ -120,6 +120,7 @@ export default {
                 data: [
                     {
                         label: "名称",
+						tag: "a-input",
                         type: "input",
                         vModel: "name",
                         maxLength: 20,
@@ -129,6 +130,7 @@ export default {
                     },
                     {
                         label: "标识名",
+						tag: "a-input",
                         type: "input",
                         vModel: "alias",
                         maxLength: 20,
@@ -139,6 +141,7 @@ export default {
 					{
 						span:12, labelCol:8,
 						label: "分类",
+						tag: "a-select-tree",
 						type: "selectTree",
 						vModel: "treeId",
 						options:[],
@@ -151,12 +154,14 @@ export default {
 					{
 						span: 24, labelCol: 4,wrapperCol:19,
 						label: "参数定义",
+						tag: "slot",
 						type: "slot",
 						vModel: "config",
 					},
                     {
                         span:24, labelCol:4,
                         label: "Groovy脚本",
+						tag: "codemirror",
                         type: "codemirror",
                         vModel: "content",
                         language: "java"
@@ -164,6 +169,7 @@ export default {
 					{
 						span:24, labelCol:4,
 						label: "说明",
+						tag: "a-textarea",
 						type: "textarea",
 						vModel: "descp",
 						maxLength: 200,

@@ -42,6 +42,7 @@ export default {
                     {
 						span:24, labelCol:4,
                         label: "名称",
+						tag: "a-input",
                         type: "input",
                         vModel: "name",
                         maxLength: 20,
@@ -52,6 +53,7 @@ export default {
 					{
 						span:24, labelCol:4,
 						label: "别名",
+						tag: "a-input",
 						type: "input",
 						vModel: "code",
 						maxLength: 20,
@@ -62,6 +64,7 @@ export default {
                     {
 						span:24, labelCol:4,
                         label: "分类",
+						tag: "a-select",
                         type: "select",
                         vModel: "alias",
                         maxLength: 20,
@@ -75,6 +78,7 @@ export default {
 					{
 						span:24, labelCol:4,
 						label: "序号",
+						tag: "a-input",
 						type: "input",
 						vModel: "sort",
 						maxLength: 20,

@@ -67,11 +67,11 @@ export default {
 					let whereField = data.whereField?JSON.parse(data.whereField) : [];
 					if(whereField.length > 0){
 						whereField.forEach(item=>{
-							self_.formConfig.data.push({type: "input",label: item.comment,vModel: item.fieldName})
+							self_.formConfig.data.push({tag: "a-input",type: "input",label: item.comment,vModel: item.fieldName})
 						})
 					}
 					if(data.isPage==1){
-						self_.formConfig.data.push({type: "input",label: '页码',vModel: "pageIndex"});
+						self_.formConfig.data.push({tag: "a-input",type: "input",label: '页码',vModel: "pageIndex"});
 						self_.sourceData.pageIndex= 1;
 					}
 					self_.formConfig.loading = false
