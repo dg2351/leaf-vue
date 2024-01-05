@@ -1,7 +1,7 @@
 <template>
 	<a-form-model :ref="alias" :class="className" :rules="rules"
 				  :model="sourceData" :label-col="{ span: labelCol }" :wrapper-col="{ span: wrapperCol }">
-		<item v-for="(element,index) in formConfig.data" :index="index" :element="element"/>
+		<item v-if="!loading" v-for="(element,index) in formConfig.data" :index="index" :element="element" :sourceData="sourceData"/>
 	</a-form-model>
 </template>
 
@@ -46,6 +46,7 @@ export default {
 	},
 	data() {
 		return {
+			loading: true,
 			labelCol: 8,
 			wrapperCol: 12,
 			rules:{},
@@ -55,6 +56,8 @@ export default {
 		this.formConfig.data.forEach(item => {
 			this.rules[item.vModel] = item.rule;
 		});
+		// 加载完毕
+		this.loading = false;
 	},
 	methods:{
 		// 表单方法
@@ -72,6 +75,7 @@ export default {
 						validate = !!valid;
 					})
 				}
+				console.log('getData:=', validate, that.sourceData)
 				let formData = JSON.parse(JSON.stringify(that.sourceData));// 表单数据
 				// 多选格式化
 				that.formConfig.data.filter(p=>['selectTags'].includes(p.type)).forEach(item=>{

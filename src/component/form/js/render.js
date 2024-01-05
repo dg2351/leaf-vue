@@ -1,7 +1,18 @@
 import FormMethods from "@/plugins/js-comps/FormMethods";
 
 export default {
-	props: ['conf'],
+	props:{
+		conf: {
+			type: Object,
+		},
+		// 表单参数
+		sourceData: {
+			type: Object,
+			default:function() {
+				return {}
+			}
+		},
+	},
 	render(h) {
 		const dataObject = {
 			attrs: {},
@@ -24,7 +35,7 @@ export default {
 		Object.keys(confClone).forEach(key => {
 			const val = confClone[key]
 			if (key === 'vModel') {
-				vModel(this, dataObject, confClone.defaultValue)
+				vModel(this, dataObject, this.sourceData, confClone.vModel, confClone.defaultValue)
 			} else if (key === 'options') {
 				if(confClone.dataType == 'customQuery' && confClone.dataUrl){// 自定义查询
 					let res = FormMethods.invokeCustomQueryJquery(confClone.dataUrl, {});
@@ -58,9 +69,7 @@ function makeMap(str, expectsLowerCase) {
 	for (let i = 0; i < list.length; i++) {
 		map[list[i]] = true
 	}
-	return expectsLowerCase
-		? val => map[val.toLowerCase()]
-		: val => map[val]
+	return expectsLowerCase ? val => map[val.toLowerCase()] : val => map[val]
 }
 
 const isAttr = makeMap(
@@ -80,11 +89,12 @@ const isAttr = makeMap(
 	+ 'autoSize'
 )
 
-function vModel(self, dataObject, defaultValue) {
-	// 默认值
-	// dataObject.props.value = defaultValue
-	dataObject.on.input = val => {
-		self.$emit('input', val)
+function vModel(self, dataObject, sourceData, vModel) {
+	if(sourceData[vModel])
+		dataObject.props.value = sourceData[vModel];// 默认值
+	dataObject.on.input = function(event){
+		console.log(sourceData[vModel])
+		sourceData[vModel] = event.target.value;
 	}
 }
 

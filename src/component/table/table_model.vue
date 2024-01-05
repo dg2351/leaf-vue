@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import FuncList from "@/plugins/mixin/FuncList";
+import FuncList from "@/component/table/js/FuncList";
 import FormMethods from "@/plugins/js-comps/FormMethods";
 import queryParam from "@/component/query/queryParam";
 import rxAjax from '@/assets/js/ajax.js';

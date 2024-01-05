@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import FuncList from "@/plugins/mixin/FuncList";
+import FuncList from "@/component/table/js/FuncList";
 import rxAjax from '@/assets/js/ajax.js';
 
 export default {

@@ -67,22 +67,24 @@ export default {
 			});
 		},
 		loadData(id){
-			let that = this;
+			let self_ = this;
+			let alias = this.alias;
 			if(id){
-				let api = "/system/tree/info";
+				let api = `/form/bo/entity/${alias}/dataInfo`;
 				let params = Object.assign({id:id});
 				rxAjax.get(api, params).then(({success,data})=>{
-					that.sourceData = data;
-					that.formConfig.loading = false
+					self_.sourceData = data;
+					self_.formConfig.loading = false
 				})
 			} else{
-				that.sourceData = {}
-				that.formConfig.loading = false
+				self_.sourceData = {}
+				self_.formConfig.loading = false
 			}
 		},
 		// 提交
 		onSubmit(validate){
 			let self_ = this;
+			let alias = this.alias;
 			if(self_.loading) return;
 			self_.loading = true;
 			let data = this.$refs['formModel'].formMethods().getData(validate);
@@ -91,7 +93,7 @@ export default {
 			}
 			let formData = data.formData;
 			// 调用保存表单
-			let api = "/system/tree/save";
+			let api = `/form/bo/entity/${alias}/dataSave`;
 			rxAjax.postJson(api, formData).then(({success,data})=>{
 				self_.loading = false;
 				if(success){

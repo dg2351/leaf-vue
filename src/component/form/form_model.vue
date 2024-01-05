@@ -2,7 +2,7 @@
 	<!-- 加载 -->
 	<a-spin :spinning="formConfig.loading">
 		<template v-if="formConfig.render">
-			<render_model :alias="alias" :className="className" :sourceData="sourceData" :formConfig="formConfig">
+			<render_model ref="edit_model" :alias="alias" :className="className" :sourceData="sourceData" :formConfig="formConfig">
 				<template :slot="val.vModel" v-for="val in formConfig.data.filter(p=>p.type == 'slot')">
 					<slot :name="val.vModel"/>
 				</template>
