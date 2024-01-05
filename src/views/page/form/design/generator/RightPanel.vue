@@ -45,7 +45,7 @@
 						<a-form-item v-if="activeData.disabled !== undefined" label="是否禁用">
 							<a-switch v-model="activeData.disabled" />
 						</a-form-item>
-						<a-form-item v-if="activeData.maxLength !== undefined" label="最多输入">
+						<a-form-item v-if="activeData.maxLength !== undefined" label="长度">
 							<a-input-number style="width: 160px" v-model="activeData.maxLength"
 											placeholder="请输入字符长度" :min="1" :max="999"/>
 						</a-form-item>

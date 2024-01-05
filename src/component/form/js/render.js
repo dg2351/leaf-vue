@@ -90,10 +90,8 @@ const isAttr = makeMap(
 )
 
 function vModel(self, dataObject, sourceData, vModel) {
-	if(sourceData[vModel])
-		dataObject.props.value = sourceData[vModel];// 默认值
+	dataObject.props.value = sourceData[vModel];// 赋值
 	dataObject.on.input = function(event){
-		console.log(sourceData[vModel])
 		sourceData[vModel] = event.target.value;
 	}
 }

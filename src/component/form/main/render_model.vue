@@ -55,8 +55,10 @@ export default {
 	created() {
 		this.formConfig.data.forEach(item => {
 			this.rules[item.vModel] = item.rule;
+			if(!this.sourceData[item.vModel]){// 初始化变量
+				this.$set(this.sourceData, item.vModel, null);
+			}
 		});
-		// 加载完毕
 		this.loading = false;
 	},
 	methods:{

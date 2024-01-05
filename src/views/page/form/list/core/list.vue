@@ -6,18 +6,18 @@
 					 :alias="sourceData.url"
 					 :rowKey="sourceData.idField ?? 'id'"
 					 :xh="sourceData.isXh == 1"
-					 :is-page="sourceData.isPage == 1"
-					 :action="false"
 					 :params="{}"
 					 :query-config="sourceData.searchJson"
 					 :columns="sourceData.fieldsJson"
+					 :is-page="sourceData.isPage == 1"
+					 :action="false"
 					 @eventView="v=>event().edit(v)">
 			<template v-slot:headSlot>
 				<a-button type="primary" class="floatR mT10" @click="event().add()">新增</a-button>
 			</template>
 		</table_model>
 
-		<editModal :key="editModalKey" ref="editModal"/>
+		<editModal :key="editModalKey" ref="editModal" @callback="callback"/>
     </div>
 </template>
 
@@ -48,10 +48,10 @@ export default {
         }
     },
 	mounted() {
-    	this.loadData();
+    	this.initData();
 	},
 	methods:{
-    	loadData(){
+    	initData(){
     		let {alias} = this.routerQuery;
     		if(!alias){
     			this.$util.message().error('操作提示', 'alias参数缺失')
@@ -96,6 +96,12 @@ export default {
 				this.loading = false;
 			})
 		},
+		callback(e){
+			console.log(e);
+			if(e.refresh){
+				this.$refs.table_model.loadData(1);
+			}
+		},
         /**
          * 修改
          * @param record
@@ -106,14 +112,14 @@ export default {
             method.add = (record)=>{
                 self_.editModalKey = new Date().getTime();
 				self_.$nextTick(() => {
-					let params = {id:record?record.ID_:null}
+					let params = {pkId:null}
 					self_.$refs.editModal.openModal(params);
 				})
             }
 			method.edit = (record)=>{
 				self_.editModalKey = new Date().getTime();
 				self_.$nextTick(() => {
-					let params = {id:record?record.ID_:null}
+					let params = {pkId:record?record.ID_:null}
 					self_.$util.component(self_).event('edit', params);
 				})
 			}

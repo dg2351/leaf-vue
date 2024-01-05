@@ -45,10 +45,10 @@ export default {
 		}
 	},
 	methods:{
-		openModal(params){
+		async openModal(params){
 			this.visible = true;
-			this.initData()
-			this.loadData(params.id, params.parentId);
+			await this.initData();
+			this.loadData(params.pkId);
 		},
 		closeModal(refresh = false){
 			this.visible = false;
@@ -56,28 +56,25 @@ export default {
 				this.$emit("callback", {refresh})
 			}
 		},
-		initData(){
+		async initData(){
 			let api = "/form/design/alias";
 			let params = Object.assign({alias:'testDesign'});
-			rxAjax.get(api, params).then(({success,data})=>{
-				let template = data.template;
-				this.alias = data.boAlias;
-				this.formConfig.render = true
-				this.formConfig.data = JSON.parse(template ?? '[]');
-			});
+			let {success,data} = await rxAjax.get(api, params)
+			let template = JSON.parse(data.template ?? '[]');
+			this.alias = data.boAlias;
+			this.formConfig.render = true
+			this.formConfig.data = template;
 		},
-		loadData(id){
+		loadData(pkId){
 			let self_ = this;
 			let alias = this.alias;
-			if(id){
+			if(pkId){
 				let api = `/form/bo/entity/${alias}/dataInfo`;
-				let params = Object.assign({id:id});
+				let params = Object.assign({pkId:pkId});
 				rxAjax.get(api, params).then(({success,data})=>{
-					self_.sourceData = data;
 					self_.formConfig.loading = false
 				})
 			} else{
-				self_.sourceData = {}
 				self_.formConfig.loading = false
 			}
 		},
