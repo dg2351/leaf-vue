@@ -27,6 +27,12 @@
 			<template :slot="val.slots.title" v-for="val in columns.filter(p=>p.slots && p.slots.title)">
 				<slot :name="val.slots.title"/>
 			</template>
+			<!--内容自定义插槽-->
+			<template :slot="val.scopedSlots.title"
+					  v-for="val in columns.filter(p=>p.scopedSlots && p.scopedSlots.title && p.scopedSlots.title!='action')"
+					  slot-scope="text, record">
+				<slot :name="val.scopedSlots.title" :data="record"/>
+			</template>
 			<!--列插槽-->
 			<span slot="xh" slot-scope="text, record, index"><i class="xh">{{record.xh}}</i></span>
 			<template slot="img" slot-scope="text, record, index">

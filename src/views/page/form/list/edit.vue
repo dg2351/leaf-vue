@@ -22,6 +22,9 @@
 									<template slot="buttonBefore">
 										<a-button type="primary" @click="getFields">重新加载表头</a-button>
 									</template>
+									<template v-slot:buttonAfter="v">
+										<a-button type="primary" @click="setFieldsData().open(v)">字段渲染</a-button>
+									</template>
 								</edit_list>
 							</a-tab-pane>
 							<a-tab-pane key="search" tab="条件配置">
@@ -42,7 +45,8 @@
 			</a-spin>
 		</a-modal>
 		<!--弹窗-->
-		<SearchData :key="modalTimer" ref="SearchData" @callback="v=>setSearchData().callback(v)"/>
+		<SearchData :key="modalTimer+'SearchData'" ref="SearchData" @callback="v=>setSearchData().callback(v)"/>
+		<FieldsData :key="modalTimer+'FieldsData'" ref="FieldsData" @callback="v=>setFieldsData().callback(v)"/>
 	</div>
 </template>
 
@@ -51,6 +55,7 @@ import rxAjax from "@/assets/js/ajax";
 import form_model from "@/component/form/form_model";
 import edit_list from "@/component/table/edit_list";
 import SearchData from "@/views/page/form/list/component/SearchData";
+import FieldsData from "@/views/page/form/list/component/FieldsData";
 
 const dataKey = ['select','selectTree','checkbox','radio','cascader'];
 export default {
@@ -62,6 +67,7 @@ export default {
     	form_model,
 		edit_list,
 		SearchData,
+		FieldsData,
 	},
     computed: {
         routerParams() {
@@ -218,6 +224,7 @@ export default {
 						{label:"无",value:""},
 						{label:"图片",value:"img"},
 						{label:"日期",value:"date"},
+						{label:"操作列",value:"action"},
 					]},
 			],
 			searchColumns:[
@@ -419,6 +426,41 @@ export default {
 				self_.sourceData.fieldsJson = fieldsJson;
 				self_.fieldsTimer = new Date().getTime();
 			})
+		},
+		// 设置列表渲染
+		setFieldsData(){
+			let self_ = this;
+			let dataIndex = 0;
+			let $data = {};
+			let method = {};
+			method.open = function(v){
+				if(v.row.length == 0){
+					self_.$util.message().warning('操作提示', '请选择渲染项');
+					return;
+				} else if(v.row.length > 1){
+					self_.$util.message().warning('操作提示', '不能同时选择多项进行渲染');
+					return;
+				}
+				dataIndex = v.row[0];
+				$data = v.data.filter(p=>p.id == dataIndex)[0];
+				if(!['action'].includes($data.slots)){
+					self_.$util.message().warning('操作提示', '该渲染方式无须配置');
+					return;
+				}
+				if(!$data.data){
+					$data.data = [];
+				}
+				self_.modalTimer = new Date().getTime();
+				self_.$nextTick(() => {
+					self_.$refs.FieldsData.openModal($data);
+				})
+			}
+			method.callback = function(v){
+				if(v.validate){// 赋值
+					self_.$refs.fieldsEdit.setListData(v.data);
+				}
+			}
+			return method;
 		},
 		// 设置查询数据
 		setSearchData(){

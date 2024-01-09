@@ -10,11 +10,18 @@
 					 :query-config="sourceData.searchJson"
 					 :columns="sourceData.fieldsJson"
 					 :is-page="sourceData.isPage == 1"
-					 :action="false"
+					 :action="false" :isView="true" :isVSlot="true"
 					 @eventView="v=>event().edit(v)">
 			<template v-slot:headSlot>
 				<a-button type="primary" class="floatR mT10" @click="event().add()">新增</a-button>
 			</template>
+			<span :slot="val.scopedSlots.title" slot-scope="v"
+				  v-for="val in sourceData.fieldsJson.filter(p=>p.scopedSlots && p.scopedSlots.title && p.scopedSlots.title!='action')">
+				<template v-for="data in val.data">
+					<a-button v-if="data.value=='edit'" type="primary" size="small" @click="event().edit(v.data)">{{data.label}}</a-button>
+					<a-button v-if="data.value=='del'" type="danger" size="small" @click="event().del(v.data)">{{data.label}}</a-button>
+				</template>
+			</span>
 		</table_model>
 
 		<editModal :key="editModalKey" ref="editModal" @callback="callback"/>
@@ -66,6 +73,15 @@ export default {
 				fieldsJson = fieldsJson.filter(p=>p.show == 1).map(map=>{
 					if(map.slots){
 						switch (map.slots) {
+							case "action":
+								console.log(map)
+								Object.assign(map, {
+									scopedSlots: {
+										customRender: 'v-'+map.dataIndex,
+										title: 'v-'+map.dataIndex
+									},
+								})
+								break;
 							case "img":
 								Object.assign(map, {
 									scopedSlots: { customRender: 'img' }
@@ -119,9 +135,11 @@ export default {
 			method.edit = (record)=>{
 				self_.editModalKey = new Date().getTime();
 				self_.$nextTick(() => {
-					let params = {pkId:record?record.ID_:null}
-					self_.$util.component(self_).event('edit', params);
+					let params = {pkId:record[self_.sourceData.idField]}
+					self_.$refs.editModal.openModal(params);
 				})
+			}
+			method.del = (record)=>{
 			}
             return method;
         }

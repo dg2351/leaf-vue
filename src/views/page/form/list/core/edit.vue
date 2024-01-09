@@ -72,6 +72,11 @@ export default {
 				let api = `/form/bo/entity/${alias}/dataInfo`;
 				let params = Object.assign({pkId:pkId});
 				rxAjax.get(api, params).then(({success,data})=>{
+					if(!success){
+						self_.$util.message().error("操作提示", "网络异常")
+						return;
+					}
+					self_.sourceData = data;
 					self_.formConfig.loading = false
 				})
 			} else{
