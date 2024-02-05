@@ -94,6 +94,10 @@ function vModel(self, dataObject, sourceData, vModel) {
 	dataObject.on.input = function(event){
 		sourceData[vModel] = event.target.value;
 	}
+	dataObject.on.change = function(event){
+		if(!event.inputType)
+			sourceData[vModel] = event;
+	}
 }
 
 const componentChild = {

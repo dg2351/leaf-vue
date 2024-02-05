@@ -140,6 +140,17 @@ export default {
 				})
 			}
 			method.del = (record)=>{
+				self_.$confirm({
+					title: '操作提示',
+					content: '彻底删除后，数据不可恢复！请谨慎操作',
+					okText: '确认',
+					cancelText: '取消',
+					// zIndex:2000,
+					onOk() {
+						console.log('删除操作')
+					},
+					onCancel() {}
+				})
 			}
             return method;
         }
