@@ -115,14 +115,6 @@ export default {
 			queryParam: null,
 		}
 	},
-	watch:{
-		queryParam(){
-			console.log('watch', this.queryParam)
-		},
-	},
-	mounted() {
-		// this.$refs['queryParam'].initQueryParamConfig();
-	},
 	methods:{
 		//控制展开隐藏
 		checkShow(item){
@@ -135,32 +127,26 @@ export default {
 			let params = {}
 			this.queryConfig.forEach(item=>{
 				// 初始化方法
-				if(item.initFunction)
-					item.initFunction(item);
-				if(['select','selectTree','radio','cascader'].includes(item.type)){
-					if(!item.changeFunction)
-						item.changeFunction = function () {}
-				}
-				if(item.type == 'other'){
+				if(item.type == 'other'){// 子集
 					item.children.forEach(children=>{
 						if(children.initFunction) children.initFunction(children);
-						params[children.key] = children.value;
-
 						if(['select','selectTree','radio','cascader'].includes(children.type)){// 初始化方法
 							if(!children.changeFunction)
 								children.changeFunction = function () {}
 						}
+						params[children.key] = children.value;
 					})
 				} else{
+					if(item.initFunction) item.initFunction(item);
+					if(['select','selectTree','radio','cascader'].includes(item.type)){
+						if(!item.changeFunction)
+							item.changeFunction = function () {}
+					}
 					params[item.key] = item.value;
 				}
 				// 初始化宽度
-				if(!item.span){
-					item.span = 24
-				}
-				if(!item.labelCol){
-					item.labelCol = 4
-				}
+				if(!item.span) item.span = 24
+				if(!item.labelCol) item.labelCol = 4
 			})
 			if(callback)
 				callback(params);

@@ -3,7 +3,7 @@
 			 :visible="visible" @cancel="closeModal" :footer="null">
 
 		<table_model ref="table_model" alias="/form/custom/query/list" rowKey="alias"
-					 rowSelectType="radio" :rowSelectChange="onSelectChange"
+					 :defaultRowSelect="defaultRowSelect" rowSelectType="radio" :rowSelectChange="onSelectChange"
 					 :query-config="queryConfig" :params="queryParam" :columns="columns" :action="false">
 		</table_model>
 		<div class="textCenter">
@@ -34,6 +34,7 @@ export default {
 				{title:"查询名称",dataIndex:"name"},
 				{title:"标识名",dataIndex:"alias"},
 			],
+			defaultRowSelect:[],
 			selectedRow: null,
 		}
 	},
@@ -42,6 +43,8 @@ export default {
 			this.selectedRow = v;
 		},
 		openModal(val, key){
+			if(val)
+				this.defaultRowSelect.push(val);
 			this.selectedRow = null;
 			this.modalKey = key;
 			this.visible = true;

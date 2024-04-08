@@ -13,13 +13,16 @@
 					 :action="false" :isView="true" :isVSlot="true"
 					 @eventView="v=>event().edit(v)">
 			<template v-slot:headSlot>
-				<a-button type="primary" class="floatR mT10" @click="event().add()">新增</a-button>
+				<a-button type="primary" class="floatR mT10" v-if="formAlias"
+						  @click="event().add()">新增</a-button>
 			</template>
 			<span :slot="val.scopedSlots.title" slot-scope="v"
 				  v-for="val in sourceData.fieldsJson.filter(p=>p.scopedSlots && p.scopedSlots.title && p.scopedSlots.title!='action')">
 				<template v-for="data in val.data">
-					<a-button v-if="data.value=='edit'" type="primary" size="small" @click="event().edit(v.data)">{{data.label}}</a-button>
-					<a-button v-if="data.value=='del'" type="danger" size="small" @click="event().del(v.data)">{{data.label}}</a-button>
+					<a-button v-if="formAlias && data.value=='edit'" type="primary" size="small"
+							  @click="event().edit(v.data)">{{data.label}}</a-button>
+					<a-button v-if="data.value=='del'" type="danger" size="small"
+							  @click="event().del(v.data)">{{data.label}}</a-button>
 				</template>
 			</span>
 		</table_model>
@@ -50,6 +53,7 @@ export default {
         return {
         	alias: "",
         	loading: true,
+			formAlias: null,// 表单方案
 			sourceData: {},
 			editModalKey: null,
         }
@@ -74,7 +78,6 @@ export default {
 					if(map.slots){
 						switch (map.slots) {
 							case "action":
-								console.log(map)
 								Object.assign(map, {
 									scopedSlots: {
 										customRender: 'v-'+map.dataIndex,
@@ -108,12 +111,13 @@ export default {
 						});
 					}
 				})
+				//
+				this.formAlias = sourceData.formAlias;
 				this.sourceData = sourceData;
 				this.loading = false;
 			})
 		},
 		callback(e){
-			console.log(e);
 			if(e.refresh){
 				this.$refs.table_model.loadData(1);
 			}
@@ -124,18 +128,19 @@ export default {
          */
         event(){
             let self_ = this;
+            let {formAlias} = this;
             let method = {};
             method.add = (record)=>{
                 self_.editModalKey = new Date().getTime();
 				self_.$nextTick(() => {
-					let params = {pkId:null}
+					let params = {pkId:null, formAlias:formAlias}
 					self_.$refs.editModal.openModal(params);
 				})
             }
 			method.edit = (record)=>{
 				self_.editModalKey = new Date().getTime();
 				self_.$nextTick(() => {
-					let params = {pkId:record[self_.sourceData.idField]}
+					let params = {pkId:record[self_.sourceData.idField], formAlias:formAlias}
 					self_.$refs.editModal.openModal(params);
 				})
 			}

@@ -46,6 +46,7 @@ export default {
 	},
 	methods:{
 		async openModal(params){
+			this.alias = params.formAlias
 			this.visible = true;
 			await this.initData();
 			this.loadData(params.pkId);
@@ -57,8 +58,9 @@ export default {
 			}
 		},
 		async initData(){
+			let {alias} = this;
 			let api = "/form/design/alias";
-			let params = Object.assign({alias:'testDesign'});
+			let params = Object.assign({alias:alias});
 			let {success,data} = await rxAjax.get(api, params)
 			let template = JSON.parse(data.template ?? '[]');
 			this.alias = data.boAlias;
@@ -67,7 +69,7 @@ export default {
 		},
 		loadData(pkId){
 			let self_ = this;
-			let alias = this.alias;
+			let {alias} = this;
 			if(pkId){
 				let api = `/form/bo/entity/${alias}/dataInfo`;
 				let params = Object.assign({pkId:pkId});
@@ -86,7 +88,7 @@ export default {
 		// 提交
 		onSubmit(validate){
 			let self_ = this;
-			let alias = this.alias;
+			let {alias} = this;
 			if(self_.loading) return;
 			self_.loading = true;
 			let data = this.$refs['formModel'].formMethods().getData(validate);

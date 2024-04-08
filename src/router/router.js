@@ -1,4 +1,10 @@
 export const constantRouterMap = [
+	{
+		path:"/login",
+		name:"login",
+		props:true,
+		component: ()=> import('@/views/login')
+	}
 	// BUG:刷新场合页面无法加载
 	// {
 	// 	path: '/:appKey',

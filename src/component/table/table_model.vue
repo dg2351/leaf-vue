@@ -21,7 +21,9 @@
 		</div>
 		<a-table class="table_a mT10 mB20" :loading="loading" :rowKey="rowKey?rowKey:'xh'"
 				 :columns="columns" :data-source="sourceData" :expandIconColumnIndex="expandIconColumnIndex??0"
-				 :rowSelection="rowSelectChange ? { onChange: rowSelectChange, type: rowSelectType} : null"
+				 :rowSelection="rowSelectChange ? {
+				 	selectedRowKeys:selectedRowKeys, onChange: onSelectChange, type: rowSelectType
+				 } : null"
 				 :pagination="isPage ? pagination : false" :locale="{emptyText: '暂无数据'}">
 			<!--列头自定义插槽-->
 			<template :slot="val.slots.title" v-for="val in columns.filter(p=>p.slots && p.slots.title)">
@@ -125,6 +127,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		// 选择项
+		defaultRowSelect:{
+			type: Array,
+			default: ()=>{return []},
+		},
 		rowSelectType:{
 			type: String,
 			default: 'checkbox',
@@ -142,6 +149,7 @@ export default {
 			loading:true,
 			queryParam: {},		// 查询条件
 			sourceData:[],
+			selectedRowKeys:[],
 		}
 	},
 	created() {
@@ -152,6 +160,9 @@ export default {
 		if(this.queryConfig.length > 0)
 			this.$refs['queryParam'].initQueryParamConfig();
 		this.loadData(1);
+		if(this.defaultRowSelect && this.defaultRowSelect .length > 0){
+			this.selectedRowKeys = this.defaultRowSelect;
+		}
 	},
 	methods:{
 		// 初始化列头
@@ -251,6 +262,13 @@ export default {
 		// 查看
 		eventView(record){
 			this.$emit("eventView", record)
+		},
+		// 选择项事件
+		onSelectChange(k, v) {
+			this.selectedRowKeys = k;
+			if(this.rowSelectChange){
+				this.rowSelectChange(k, v)
+			}
 		},
 	},
 }

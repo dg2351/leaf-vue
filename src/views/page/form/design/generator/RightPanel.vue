@@ -624,7 +624,8 @@ export default {
 				this.$refs.customQueryModal.openModal(this.activeData[model], model)
 			})
 		},
-		setCustomQuery(v) {
+		setCustomQuery(v, e) {
+			console.log(v, e)
 			if(v.alias){
 				Object.assign(this.activeData, {
 					[v.modalKey]: v.alias, data:{label:"",value:""}

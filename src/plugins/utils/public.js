@@ -412,6 +412,10 @@ util.cookieEvent = ()=>{
 	return method;
 }
 
+util.getValue = (data, key)=>{
+	return data ? (data[key] ?? '') : '';
+}
+
 export  default util;
 
 let api = {

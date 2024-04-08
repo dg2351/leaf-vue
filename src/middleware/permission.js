@@ -10,7 +10,6 @@ router.beforeEach((to, from, next) => {
 		if (to.name === 'login') {
 			next()
 		}else {
-			console.log('permission:=', to, from)
 			if (from.path !== '/') {
 				next()
 			}
