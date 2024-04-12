@@ -2,10 +2,10 @@
     <div style="display: block">
         <div style="width: calc(100% - 300px);">
         </div>
-        <div class="header" style="width: 300px">
+        <div class="header">
             <slot></slot>
-            <span class="mL20">服务平台</span>
-			<div class="message">
+            <span class="inline-block mL20">服务平台</span>
+			<div class="inline-block message floatRight">
 				<a-dropdown>
 					<div class="flex alignC ">
 						<span class="names">用户<a-icon type="down" class="mL10" style="font-size:12px;" /></span>
@@ -34,7 +34,10 @@ export default {
 
 <style scoped>
 .header {
-	display: flex;
+	color: #3A94EF;
+}
+.inline-block{
+	display: inline-block;
 }
 .names{
 	padding-left: 6px;
@@ -55,5 +58,8 @@ export default {
 }
 .alignC {
 	align-items: center;
+}
+.floatRight{
+	float:right;
 }
 </style>
