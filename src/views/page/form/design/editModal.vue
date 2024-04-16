@@ -1,107 +1,135 @@
 <template>
 	<a-modal title="表单设计" dialogClass="modal_a" width="100%" centered :maskClosable="false"
 			 :visible="visible" @cancel="closeModal" :footer="null">
-		<div class="main">
-			<div class="divleft">
-				<div class="components-list">
-					<div class="components-title">输入型组件</div>
-					<draggable class="components-draggable"
-							   :list="inputComponents"
-							   :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
-							   :sort="false"
-							   draggable=".components-item"
-							   :clone="cloneComponent"
-							   @end="onEnd">
-						<div class="components-item" v-for="(element, index) in inputComponents" :key="index"
-							  @click="addComponent(element)">
-							<div class="components-body">
-								<svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-									<path :d="svgData[element.tagIcon]" fill="#32373B"></path>
-								</svg>
-								{{ element.label }}
-							</div>
-						</div>
-					</draggable>
+		<!--数据源设置 start-->
+		<dbModal ref="dbModal" :alias="sourceData.dsAlias" @init="v=>{sourceData.dsName = v?.name}"
+				 @callBack="v=>{sourceData.dsName = v.name;sourceData.dsAlias = v.alias}"/>
+		<!--数据源设置 end-->
+		<!--实体设置 start-->
+		<boEntityModal ref="boEntityModal" :pkId="sourceData.boId" @init="v=>{sourceData.boId = v?.id}"
+				 @callBack="v=>{sourceData.boId = v.id;sourceData.boAlias = v.alias}"/>
+		<!--实体设置 end-->
+		<div class="p10 bor_a" style="height: 850px;overflow-y: auto">
+			<a-tabs class="nav_big1">
+				<a-tab-pane key="fields" tab="基本配置">
+					<form_model ref="form_model" :source-data="sourceData" :form-config="formConfig">
+						<!--弹框-->
+						<template #dsAlias>
+							<a-input-search v-model="sourceData.dsAlias" enter-button :readOnly="true"
+											@search="$refs['dbModal'].openModal(getValue(sourceData,'dsAlias'))"/>
+						</template>
+						<template #boId>
+							<a-input-search v-model="sourceData.boAlias" enter-button :readOnly="true"
+											@search="$refs['boEntityModal'].openModal(getValue(sourceData,'boId'))"/>
+						</template>
+					</form_model>
+				</a-tab-pane>
+				<a-tab-pane key="search" tab="表单设计">
+					<div class="main">
+						<div class="divleft">
+							<div class="components-list">
+								<div class="components-title">输入型组件</div>
+								<draggable class="components-draggable"
+										   :list="inputComponents"
+										   :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
+										   :sort="false"
+										   draggable=".components-item"
+										   :clone="cloneComponent"
+										   @end="onEnd">
+									<div class="components-item" v-for="(element, index) in inputComponents" :key="index"
+										  @click="addComponent(element)">
+										<div class="components-body">
+											<svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+												<path :d="svgData[element.tagIcon]" fill="#32373B"></path>
+											</svg>
+											{{ element.label }}
+										</div>
+									</div>
+								</draggable>
 
-					<div class="components-title">选择型组件</div>
-					<draggable class="components-draggable"
-							   :list="selectComponents"
-							   :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
-							   :clone="cloneComponent"
-							   draggable=".components-item"
-							   :sort="false"
-							   @end="onEnd">
-						<div v-for="(element, index) in selectComponents" :key="index"
-							 class="components-item" @click="addComponent(element)">
-							<div class="components-body">
-								<svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-									<path :d="svgData[element.tagIcon]" fill="#32373B"></path>
-								</svg>
-								{{ element.label }}
-							</div>
-						</div>
-					</draggable>
+								<div class="components-title">选择型组件</div>
+								<draggable class="components-draggable"
+										   :list="selectComponents"
+										   :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
+										   :clone="cloneComponent"
+										   draggable=".components-item"
+										   :sort="false"
+										   @end="onEnd">
+									<div v-for="(element, index) in selectComponents" :key="index"
+										 class="components-item" @click="addComponent(element)">
+										<div class="components-body">
+											<svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+												<path :d="svgData[element.tagIcon]" fill="#32373B"></path>
+											</svg>
+											{{ element.label }}
+										</div>
+									</div>
+								</draggable>
 
-					<div class="components-title">布局型组件</div>
-					<draggable class="components-draggable"
-							   :list="layoutComponents"
-							   :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
-							   :clone="cloneComponent"
-							   draggable=".components-item"
-							   :sort="false"
-							   @end="onEnd">
-						<div v-for="(element, index) in layoutComponents" :key="index"
-							 class="components-item" @click="addComponent(element)">
-							<div class="components-body">
-								<svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-									<path :d="svgData[element.tagIcon]" fill="#32373B"></path>
-								</svg>
-								{{ element.label }}
+								<div class="components-title">布局型组件</div>
+								<draggable class="components-draggable"
+										   :list="layoutComponents"
+										   :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
+										   :clone="cloneComponent"
+										   draggable=".components-item"
+										   :sort="false"
+										   @end="onEnd">
+									<div v-for="(element, index) in layoutComponents" :key="index"
+										 class="components-item" @click="addComponent(element)">
+										<div class="components-body">
+											<svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+												<path :d="svgData[element.tagIcon]" fill="#32373B"></path>
+											</svg>
+											{{ element.label }}
+										</div>
+									</div>
+								</draggable>
 							</div>
 						</div>
-					</draggable>
-				</div>
-			</div>
-			<div class="divcenter">
-				<div class="options">
-					<span @click="emptyData">清空</span>
-					<span @click="onSubmit">保存</span>
-				</div>
-				<div class="centerMain">
-					<a-row class="center-board-row" :gutter="formConf.gutter">
-						<a-form :size="formConf.size"
-								:disabled="formConf.disabled"
-								:labelAlign="formConf.labelAlign"
-								:label-width="formConf.labelWidth + 'px'">
-							<div v-show="!drawingList.length" class="empty-info">
-								从左侧拖入或点选组件进行表单设计
+						<div class="divcenter">
+							<div class="options">
+								<span @click="emptyData">清空</span>
+								<span @click="onSubmit">保存</span>
 							</div>
-							<draggable class="drawing-board"
-									   :list="drawingList"
-									   :animation="340"
-									   group="componentsGroup">
-								<draggable-item
-									v-for="(element, index) in drawingList"
-									:key="element.renderKey"
-									:drawing-list="drawingList"
-									:element="element"
-									:index="index"
-									:active-id="activeId"
-									:form-conf="formConf"
-									@activeItem="activeFormItem"
-									@copyItem="drawingItemCopy"
-									@deleteItem="drawingItemDelete"
-								/>
-							</draggable>
-						</a-form>
-					</a-row>
-				</div>
-			</div>
-			<div class="divright">
-				<right-panel v-if="activeData" :active-data="activeData" :form-conf="formConf"
-							 :show-field="!!drawingList.length" @tag-change="tagChange" />
-			</div>
-			<input id="copyNode" type="hidden">
+							<div class="centerMain">
+								<a-row class="center-board-row" :gutter="formConf.gutter">
+									<a-form :size="formConf.size"
+											:disabled="formConf.disabled"
+											:labelAlign="formConf.labelAlign"
+											:label-width="formConf.labelWidth + 'px'">
+										<div v-show="!drawingList.length" class="empty-info">
+											从左侧拖入或点选组件进行表单设计
+										</div>
+										<draggable class="drawing-board"
+												   :list="drawingList"
+												   :animation="340"
+												   group="componentsGroup">
+											<draggable-item
+												v-for="(element, index) in drawingList"
+												:key="element.renderKey"
+												:drawing-list="drawingList"
+												:element="element"
+												:index="index"
+												:active-id="activeId"
+												:form-conf="formConf"
+												@activeItem="activeFormItem"
+												@copyItem="drawingItemCopy"
+												@deleteItem="drawingItemDelete"
+											/>
+										</draggable>
+									</a-form>
+								</a-row>
+							</div>
+						</div>
+						<div class="divright">
+							<right-panel v-if="activeData" :active-data="activeData" :form-conf="formConf"
+										 :show-field="!!drawingList.length" @tag-change="tagChange" />
+						</div>
+						<input id="copyNode" type="hidden">
+					</div>
+				</a-tab-pane>
+				<a-button slot="tabBarExtraContent" type="primary" @click="onSubmit(true)">保存</a-button>
+			</a-tabs>
 		</div>
 	</a-modal>
 </template>
@@ -122,6 +150,8 @@ import {
 	svgData,
 } from "./generator/config";
 import rxAjax from "@/assets/js/ajax";
+import dbModal from "@/component/modal/dbModal";
+import boEntityModal from "@/component/modal/boEntityModal";
 
 let tempActiveData;
 export default {
@@ -131,6 +161,7 @@ export default {
 	},
 	components: {
 		form_model,
+		dbModal,boEntityModal,
 		draggable,
 		DraggableItem,
 		RightPanel,
@@ -142,11 +173,80 @@ export default {
 		},
 	},
 	data() {
+		let self_ = this;
 		return {
 			visible: false,
 			loading: false,
 			//
-			sourceData: {},
+			sourceData: {dsAlias:'',dsName:'',boId:'',boAlias:''},
+			formConfig:{
+				visible: false,
+				loading: true,
+				disabled: false,
+				collapseKey: ["基本信息","其它配置"],
+				collapse: [
+					{label:"基本信息", data: ["name","alias","treeId","dsAlias"]},
+					{label:"其它配置", data: ["boId"]},
+				],
+				data: [
+					{
+						label: "名称",
+						tag: "a-input",
+						type: "input",
+						vModel: "name",
+						maxLength: 20,
+						rule: [
+							{required: true, message: '该输入项不能为空', trigger: 'change'},
+						],
+					},
+					{
+						label: "标识",
+						tag: "a-input",
+						type: "input",
+						vModel: "alias",
+						maxLength: 20,
+						rule: [
+							{required: true, message: '该输入项不能为空', trigger: 'change'},
+						],
+					},
+					{
+						label: "分类",
+						tag: "a-select-tree",
+						type: "selectTree",
+						vModel: "treeId",
+						maxLength: 20,
+						options:[],
+						initFunction: async function (item) {
+							let {data} = await rxAjax.postJson("/system/tree/list", {});
+							let sourceData = data.map(m=>{return {id:m.id, pid:m.parentId, label:m.name, value:m.id }})
+							item.options = self_.$util.buildTree(sourceData, "id", "pid");
+						},
+						rule: [
+							{required: true, message: '该输入项不能为空', trigger: 'change'},
+						],
+					},
+					{
+						label: "数据源",
+						tag: "slot",
+						type: "slot",
+						vModel: "dsAlias",
+						maxLength: 20,
+						rule: [
+							{required: true, message: '该输入项不能为空', trigger: 'change'},
+						],
+					},
+					{
+						label: "业务实体",
+						tag: "slot",
+						type: "slot",
+						vModel: "boId",
+						maxLength: 20,
+						rule: [
+							{required: true, message: '该输入项不能为空', trigger: 'change'},
+						],
+					},
+				]
+			},
 			//
 			idGlobal: 100,
 			inputComponents,
@@ -159,6 +259,7 @@ export default {
 			//
 			activeId: null,
 			activeData: null,
+			//
 		}
 	},
 	methods:{
@@ -172,6 +273,9 @@ export default {
 				this.$emit("callback", {refresh})
 			}
 		},
+		getValue(data, key){
+			return data ? (data[key] ?? '') : '';
+		},
 		loadData(id){
 			let self_ = this
 			if(id){
@@ -179,6 +283,8 @@ export default {
 				let params = Object.assign({id:id});
 				rxAjax.get(api, params).then(({success,data})=>{
 					let template = data.template;
+					console.log(data)
+					self_.sourceData = data;
 					self_.drawingList = JSON.parse(template ?? '[]');
 				});
 				self_.sourceData.id = id;
@@ -194,10 +300,9 @@ export default {
 			self_.loading = true;
 			//
 			let {sourceData, drawingList} = this;
-			let formData = {
-				id: sourceData.id,
+			let formData = Object.assign(sourceData, {
 				template: JSON.stringify(drawingList),
-			}
+			})
 			// 调用保存表单
 			let api = "/form/design/save";
 			rxAjax.postJson(api, formData).then(({success,data})=>{
@@ -322,7 +427,7 @@ export default {
 	.divleft {
 		border: 1px solid #ccc;
 		width: 20%;
-		height: 90vh;
+		height: 80vh;
 		overflow-y: auto;
 		padding: 10px;
 		box-sizing: border-box;
@@ -379,7 +484,7 @@ export default {
 
 		.centerMain {
 			/*overflow-x: auto;*/
-			height: calc(90vh - 42px);
+			height: calc(80vh - 42px);
 			.center-scrollbar {
 				height: calc(100vh - 42px);
 				overflow: hidden;

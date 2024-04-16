@@ -54,6 +54,10 @@ export default {
 		},
 		submitModal(){
 			let {selectedRow, modalKey} = this;
+			if(!selectedRow){// 未选择
+				this.visible = false;
+				return;
+			}
 			let params = {modalKey};
 			if(selectedRow && selectedRow.length > 0){
 				params['name']=selectedRow[0].name;
