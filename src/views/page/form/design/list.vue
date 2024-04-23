@@ -18,7 +18,7 @@
 			</a-col>
 		</a-row>
 		<!---->
-		<editModal ref="editModal" v-if="visible" :key="visible"/>
+		<editModal ref="editModal" v-if="visible" :key="visible" @callback="editModalCallback"/>
     </div>
 </template>
 
@@ -88,6 +88,9 @@ export default {
 			this.queryParam.treeId = e;
 			this.$refs.table_model.loadData(1);
 		},
+		editModalCallback(){
+			this.$refs.table_model.loadData(1);
+		}
     },
 }
 </script>

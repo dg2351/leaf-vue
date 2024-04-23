@@ -100,10 +100,8 @@
 										<div v-show="!drawingList.length" class="empty-info">
 											从左侧拖入或点选组件进行表单设计
 										</div>
-										<draggable class="drawing-board"
-												   :list="drawingList"
-												   :animation="340"
-												   group="componentsGroup">
+										<draggable class="drawing-board" group="componentsGroup"
+												   :list="drawingList" :animation="340">
 											<draggable-item
 												v-for="(element, index) in drawingList"
 												:key="element.renderKey"
@@ -309,6 +307,9 @@ export default {
 				self_.loading = false;
 				if(success && data){
 					self_.$message.success("保存成功");
+				}
+				if(validate){
+					this.closeModal(true);
 				}
 			}).catch(err=>{
 				self_.loading = false;
