@@ -41,7 +41,19 @@ export default {
 					let res = FormMethods.invokeCustomQueryJquery(confClone.dataUrl, {});
 					let options = [];
 					if(confClone.data.label && confClone.data.value && res && res.length > 0){
-						options = res.map(m=>{return {label: m[confClone.data.label], value:m[confClone.data.value]}})
+						options = res.map(m=>{
+							let data = { label: m[confClone.data.label],value: m[confClone.data.value] }
+							if(confClone.data.parent){
+								Object.assign(data, {parent:m[confClone.data.parent]})
+							}
+							return data
+						})
+					}
+					// 级联构造树级
+					if(confClone.tag == "a-cascader"){
+						if(confClone.data.label && confClone.data.value && confClone.data.parent && options.length > 0) {
+							options = this.$util.buildTree(options, "parent", "value");
+						}
 					}
 					dataObject.props[key] = options
 				} else{
@@ -50,7 +62,7 @@ export default {
 			} else if (dataObject[key]) {
 				dataObject[key] = val
 			} else if (!isAttr(key)) {
-				dataObject.props[key] = val
+				dataObject.props[key] = val;
 			} else {
 				if(['maxLength'].includes(key)){
 					dataObject.attrs[key] = val != null && val != '' ? parseInt(val) : null;
@@ -59,6 +71,9 @@ export default {
 				}
 			}
 		})
+		if(this.conf.tag == 'a-slider'){
+			delete dataObject.props['value'];
+		}
 		return h(this.conf.tag, dataObject, children)
 	}
 }
@@ -156,12 +171,12 @@ const componentChild = {
 		'list-type': (h, conf, key) => {
 			const list = []
 			if (conf['list-type'] === 'picture-card') {
-				list.push(`<i class="a-icon-plus"></i>`)
+				list.push(<i class="a-icon-plus"></i>)
 			} else {
-				list.push(`<a-button size="small" type="primary" icon="el-icon-upload">{conf.buttonText}</a-button>`)
+				list.push(<a-button size="small" type="primary" icon="cloud-upload">{conf.buttonText}</a-button>)
 			}
 			if (conf.showTip) {
-				list.push(`<div slot="tip" class="el-upload__tip">只能上传不超过 {conf.fileSize}{conf.sizeUnit} 的{conf.accept}文件</div>`)
+				list.push(<div class="el-upload_tip">只能上传不超过 {conf.fileSize}{conf.sizeUnit} 的{conf.accept}文件</div>)
 			}
 			return list
 		}

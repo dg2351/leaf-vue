@@ -136,13 +136,13 @@
 						</a-form-item>
 						<a-form-item v-if="activeData.accept !== undefined" label="文件类型">
 							<a-select v-model="activeData.accept" placeholder="请选择文件类型" :style="{ width: '100%' }" allowClear>
-								<a-option label="图片" value="image/*" />
-								<a-option label="视频" value="video/*" />
-								<a-option label="音频" value="audio/*" />
-								<a-option label="excel" value=".xls,.xlsx" />
-								<a-option label="word" value=".doc,.docx" />
-								<a-option label="pdf" value=".pdf" />
-								<a-option label="txt" value=".txt" />
+								<a-select-option value="image/*" >图片</a-select-option>
+								<a-select-option value="video/*" >视频</a-select-option>
+								<a-select-option value="audio/*" >音频</a-select-option>
+								<a-select-option value=".xls,.xlsx" >excel</a-select-option>
+								<a-select-option value=".doc,.docx" >word</a-select-option>
+								<a-select-option value=".pdf" >pdf</a-select-option>
+								<a-select-option value=".txt" >txt</a-select-option>
 							</a-select>
 						</a-form-item>
 						<a-form-item v-if="activeData.fileSize !== undefined" label="文件大小">
@@ -224,6 +224,7 @@
 							<a-form-item>
 								<a-select v-model="activeData.dataType" showSearch :options="[
 										{label:'手工录入',value:'static'},
+										// {label:'动态数据',value:'dynamic'},
 										{label:'接口查询',value:'customQuery'},
 										{label:'脚本查询',value:'script'},
 									]" @change="activeData.options = []"/>
@@ -262,25 +263,17 @@
 										<a slot="addonAfter" @click="openCustomQueryDialog('dataUrl')">选择</a>
 									</a-input>
 								</a-form-item>
-								<template v-if="dataField.length > 0">
+								<template v-if="activeData.dataUrl && dataField.length > 0">
 									<a-form-item label="文本">
 										<a-select v-model="activeData.data.label" showSearch :options="dataField"/>
 									</a-form-item>
 									<a-form-item label="数值">
 										<a-select v-model="activeData.data.value" showSearch :options="dataField"/>
 									</a-form-item>
+									<a-form-item label="父级" v-if="activeData.tag == 'a-cascader'">
+										<a-select v-model="activeData.data.parent" showSearch :options="dataField"/>
+									</a-form-item>
 								</template>
-							</template>
-							<template v-if="activeData.dataType === 'dynamic'">
-								<a-form-item label="标签键名">
-									<a-input v-model="activeData.labelKey" placeholder="请输入标签键名" />
-								</a-form-item>
-								<a-form-item label="值键名">
-									<a-input v-model="activeData.valueKey" placeholder="请输入值键名" />
-								</a-form-item>
-								<a-form-item label="子级键名">
-									<a-input v-model="activeData.childrenKey" placeholder="请输入子级键名" />
-								</a-form-item>
 							</template>
 						</template>
 

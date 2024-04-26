@@ -9,6 +9,9 @@
 		<boEntityModal ref="boEntityModal" :pkId="sourceData.boId" @init="v=>{sourceData.boId = v?.id}"
 				 @callBack="v=>{sourceData.boId = v.id;sourceData.boAlias = v.alias}"/>
 		<!--实体设置 end-->
+		<!--表单预览 start-->
+		<editPreview ref="editPreview" v-if="editPreviewTimer" :key="editPreviewTimer"/>
+		<!--表单预览 end-->
 		<div class="p10 bor_a" style="height: 850px;overflow-y: auto">
 			<a-tabs class="nav_big1">
 				<a-tab-pane key="fields" tab="基本配置">
@@ -90,6 +93,7 @@
 							<div class="options">
 								<span @click="emptyData">清空</span>
 								<span @click="onSubmit">保存</span>
+								<span @click="onPreview">预览</span>
 							</div>
 							<div class="centerMain">
 								<a-row class="center-board-row" :gutter="formConf.gutter">
@@ -138,6 +142,7 @@ import draggable from "vuedraggable";
 import CodeTypeDialog from "./generator/CodeTypeDialog"
 import DraggableItem from "./generator/DraggableItem.vue";
 import RightPanel from "./generator/RightPanel.vue"
+import editPreview from "./editPreview.vue"
 
 import {
 	inputComponents,
@@ -164,6 +169,7 @@ export default {
 		DraggableItem,
 		RightPanel,
 		CodeTypeDialog,
+		editPreview,
 	},
 	computed: {
 		routerParams() {
@@ -258,6 +264,7 @@ export default {
 			activeId: null,
 			activeData: null,
 			//
+			editPreviewTimer: null,
 		}
 	},
 	methods:{
@@ -338,7 +345,6 @@ export default {
 		},
 		addComponent(item) {
 			const clone = this.cloneComponent(item);
-			console.log(clone,88)
 			this.drawingList.push(clone);
 			this.activeFormItem(clone);
 		},
@@ -413,6 +419,12 @@ export default {
 					if (Array.isArray(item.children)) this.updateDrawingList(newTag, item.children)
 				})
 			}
+		},
+		onPreview(){
+			this.editPreviewTimer = new Date().getTime();
+			this.$nextTick(() => {
+				this.$refs.editPreview.openModal(this.formConf, this.drawingList)
+			});
 		},
 	}
 }

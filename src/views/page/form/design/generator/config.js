@@ -155,7 +155,7 @@ export const selectComponents = [
 				label: '选项1-1'
 			}]
 		}],
-		dataType: 'dynamic',
+		dataType:'static',
 		dataUrl:"",
 		labelKey: 'label',
 		valueKey: 'value',
@@ -163,6 +163,9 @@ export const selectComponents = [
 		separator: '/',
 		regList: [],
 		changeTag: true,
+		data:{
+			label:"",value:"",parent:""
+		}
 	},
 	{
 		label: '单选框组',
@@ -240,24 +243,6 @@ export const selectComponents = [
 		changeTag: true,
 	},
 	{
-		label: '时间选择',
-		tag: 'a-time-picker',
-		tagIcon: 'time',
-		placeholder: '请选择',
-		defaultValue: null,
-		span: 24,
-		labelCol: 4,
-		style: { width: '100%' },
-		disabled: false,
-		inputReadOnly: true,
-		allowClear: true,
-		required: true,
-		format: 'HH:mm:ss',
-		valueFormat: 'HH:mm:ss',
-		regList: [],
-		changeTag: true,
-	},
-	{
 		label: '日期选择',
 		tag: 'a-date-picker',
 		tagIcon: 'date',
@@ -273,6 +258,24 @@ export const selectComponents = [
 		required: true,
 		format: 'YYYY-MM-DD',
 		valueFormat: 'YYYY-MM-DD',
+		regList: [],
+		changeTag: true,
+	},
+	{
+		label: '时间选择',
+		tag: 'a-time-picker',
+		tagIcon: 'time',
+		placeholder: '请选择',
+		defaultValue: null,
+		span: 24,
+		labelCol: 4,
+		style: { width: '100%' },
+		disabled: false,
+		inputReadOnly: true,
+		allowClear: true,
+		required: true,
+		format: 'HH:mm:ss',
+		valueFormat: 'HH:mm:ss',
 		regList: [],
 		changeTag: true,
 	},
