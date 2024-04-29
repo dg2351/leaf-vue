@@ -24,10 +24,14 @@
 					<a-button v-if="data.value=='del'" type="danger" size="small"
 							  @click="event().del(v.data)">{{data.label}}</a-button>
 				</template>
+				<!-- 正则 -->
+				<a-button v-if="formAlias=='rule_regular'" type="primary" size="small" @click="regExp(v.data)">正则</a-button>
 			</span>
 		</table_model>
 
 		<editModal :key="editModalKey" ref="editModal" @callback="callback"/>
+		<!-- 正则 -->
+		<regExpModal ref="regExpModal"/>
     </div>
 </template>
 
@@ -37,10 +41,15 @@ import FormMethods from "@/plugins/js-comps/FormMethods";
 import moment from "moment";
 import rxAjax from "@/assets/js/ajax";
 import editModal from "./edit"
+// 正则测试
+import regExpModal from "@/component/modal/regExpModal";
 
 export default {
     name: "list",
-    components: {table_model,editModal},
+    components: {
+    	table_model,editModal,
+		regExpModal,
+	},
 	computed: {
 		routerParams() {
 			return this.$route.params;
@@ -51,7 +60,6 @@ export default {
 	},
     data() {
         return {
-        	alias: "",
         	loading: true,
 			formAlias: null,// 表单方案
 			sourceData: {},
@@ -152,13 +160,20 @@ export default {
 					cancelText: '取消',
 					// zIndex:2000,
 					onOk() {
-						console.log('删除操作')
+						let api = `/form/bo/entity/${formAlias}/dataDelete?pkId=${record[self_.sourceData.idField]}`;
+						rxAjax.get(api, {}).then(({success,data})=>{
+							self_.$refs.table_model.refreshData();
+						});
 					},
 					onCancel() {}
 				})
 			}
             return method;
-        }
+        },
+        //
+		regExp(record){
+			this.$refs.regExpModal.openModal(record);
+		},
     },
 }
 </script>
