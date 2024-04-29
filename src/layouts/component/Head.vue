@@ -4,7 +4,7 @@
         </div>
         <div class="header">
             <slot></slot>
-            <span class="inline-block mL20">服务平台</span>
+            <span class="inline-block mL20">{{TITLE}}</span>
 			<div class="inline-block message floatRight">
 				<a-dropdown>
 					<div class="flex alignC ">
@@ -22,8 +22,15 @@
 </template>
 
 <script>
+import {TITLE} from "@/plugins/mutation-types";
+
 export default {
     name: "Head",
+	data(){
+    	return{
+			TITLE,
+		}
+	},
     methods:{
 		confirm(){
 			this.$util.link(this).get("login");

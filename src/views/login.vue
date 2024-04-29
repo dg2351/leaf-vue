@@ -47,12 +47,13 @@
 <script>
 import uuid from "@/plugins/utils/uuid";
 import {encode64} from "@/plugins/utils/util";
+import {TITLE} from "@/plugins/mutation-types";
 
 export default {
 	name: "login",
 	data(){
 		return{
-			ctxTitle: "服务平台",
+			ctxTitle: TITLE,
 			redirectUrl: "",
 			//
 			deviceId: null,
