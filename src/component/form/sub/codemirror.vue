@@ -182,7 +182,6 @@ export default {
             })
             this.coder.setSize("100%","200px");
             // 编辑器赋值
-			console.log(this.value, this.coder)
             if (this.value || this.code) {
                 this.setCodeContent(this.value || this.code)
             }else{

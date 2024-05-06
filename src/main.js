@@ -39,7 +39,8 @@ Vue.use(AntDesign);
 import '@/plugins/filters/index';
 // 通用方法
 import "@/plugins/utils/util";
-
+import {TITLE} from "@/plugins/mutation-types";
+document.title = TITLE;
 // 子应用单独运行
 new Vue({
     router,

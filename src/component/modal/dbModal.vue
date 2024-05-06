@@ -1,5 +1,5 @@
 <template>
-    <a-modal title="数据源选择" dialogClass="modal_a" width="600px"
+    <a-modal title="数据源选择" dialogClass="modal_a" width="900px"
              :visible="visible" @cancel="closeModal" :footer="null">
         <a-table class="table_a mB20" :customRow="rowClick"
                  :row-selection="{ selectedRowKeys: selectedRowKeys, type:'radio', onChange: onSelectChange }"
