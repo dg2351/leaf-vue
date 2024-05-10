@@ -9,7 +9,7 @@
 import FormMethods from "@/plugins/js-comps/FormMethods";
 import moment from "moment";
 import rxAjax from "@/assets/js/ajax";
-import boList from "@/views/module/form/list/core/boList";
+import boList from "@/views/module/form/list/core/listPreview";
 
 export default {
     name: "list",
