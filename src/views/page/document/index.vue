@@ -30,7 +30,7 @@
 import VueOfficeDocx from '@vue-office/docx'
 import '@vue-office/docx/lib/index.css'
 import {PATH} from "@/plugins/mutation-types";
-import Html2Word from "@/views/module/document/utils/public";
+import Html2Word from "@/views/page/document/utils/public";
 import moment from 'moment'
 import rxAjax from "@/assets/js/ajax";
 
