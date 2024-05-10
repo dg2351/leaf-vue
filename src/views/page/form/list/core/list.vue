@@ -1,54 +1,20 @@
 <template>
     <div class="textLeft">
-		<table_model v-if="!loading"
-					 ref="table_model"
-					 :method="sourceData.urlMethod"
-					 :alias="sourceData.url"
-					 :rowKey="sourceData.idField ?? 'id'"
-					 :xh="sourceData.isXh == 1"
-					 :params="{}"
-					 :query-config="sourceData.searchJson"
-					 :columns="sourceData.fieldsJson"
-					 :is-page="sourceData.isPage == 1"
-					 :action="false" :isView="true" :isVSlot="true"
-					 @eventView="v=>event().edit(v)">
-			<template v-slot:headSlot>
-				<a-button type="primary" class="floatR mT10" v-if="formAlias"
-						  @click="event().add()">新增</a-button>
-			</template>
-			<span :slot="val.scopedSlots.title" slot-scope="v"
-				  v-for="val in sourceData.fieldsJson.filter(p=>p.scopedSlots && p.scopedSlots.title && p.scopedSlots.title!='action')">
-				<template v-for="data in val.data">
-					<a-button v-if="formAlias && data.value=='edit'" type="primary" size="small"
-							  @click="event().edit(v.data)">{{data.label}}</a-button>
-					<a-button v-if="data.value=='del'" type="danger" size="small"
-							  @click="event().del(v.data)">{{data.label}}</a-button>
-				</template>
-				<!-- 正则 -->
-				<a-button v-if="formAlias=='rule_regular'" type="primary" size="small" @click="regExp(v.data)">正则</a-button>
-			</span>
-		</table_model>
-
-		<editModal :key="editModalKey" ref="editModal" @callback="callback"/>
-		<!-- 正则 -->
-		<regExpModal ref="regExpModal"/>
-    </div>
+		<comment ref="current" is="boList" v-if="sourceData.alias"
+				 :data="sourceData" :formdata="{}" class="commentBoxs"/>
+	</div>
 </template>
 
 <script>
-import table_model from "@/component/table/table_model";
 import FormMethods from "@/plugins/js-comps/FormMethods";
 import moment from "moment";
 import rxAjax from "@/assets/js/ajax";
-import editModal from "./edit"
-// 正则测试
-import regExpModal from "@/component/modal/regExpModal";
+import boList from "@/views/page/form/list/core/boList";
 
 export default {
     name: "list",
     components: {
-    	table_model,editModal,
-		regExpModal,
+		boList,
 	},
 	computed: {
 		routerParams() {
@@ -60,10 +26,7 @@ export default {
 	},
     data() {
         return {
-        	loading: true,
-			formAlias: null,// 表单方案
 			sourceData: {},
-			editModalKey: null,
         }
     },
 	mounted() {
@@ -120,59 +83,9 @@ export default {
 					}
 				})
 				//
-				this.formAlias = sourceData.formAlias;
-				this.sourceData = sourceData;
-				this.loading = false;
+				let script = "<script>export default {methods:{"+(data.bodyScript??'') + "}}<\/script>"
+				this.sourceData = Object.assign(sourceData, {script});
 			})
-		},
-		callback(e){
-			if(e.refresh){
-				this.$refs.table_model.loadData(1);
-			}
-		},
-        /**
-         * 修改
-         * @param record
-         */
-        event(){
-            let self_ = this;
-            let {formAlias} = this;
-            let method = {};
-            method.add = (record)=>{
-                self_.editModalKey = new Date().getTime();
-				self_.$nextTick(() => {
-					let params = {pkId:null, formAlias:formAlias}
-					self_.$refs.editModal.openModal(params);
-				})
-            }
-			method.edit = (record)=>{
-				self_.editModalKey = new Date().getTime();
-				self_.$nextTick(() => {
-					let params = {pkId:record[self_.sourceData.idField], formAlias:formAlias}
-					self_.$refs.editModal.openModal(params);
-				})
-			}
-			method.del = (record)=>{
-				self_.$confirm({
-					title: '操作提示',
-					content: '彻底删除后，数据不可恢复！请谨慎操作',
-					okText: '确认',
-					cancelText: '取消',
-					// zIndex:2000,
-					onOk() {
-						let api = `/form/bo/entity/${formAlias}/dataDelete?pkId=${record[self_.sourceData.idField]}`;
-						rxAjax.get(api, {}).then(({success,data})=>{
-							self_.$refs.table_model.refreshData();
-						});
-					},
-					onCancel() {}
-				})
-			}
-            return method;
-        },
-        //
-		regExp(record){
-			this.$refs.regExpModal.openModal(record);
 		},
     },
 }

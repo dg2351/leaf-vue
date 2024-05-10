@@ -15,6 +15,9 @@
 							<a-tab-pane key="search" tab="条件配置">
 								<editSearch ref="searchJson" :source-data="sourceData"/>
 							</a-tab-pane>
+							<a-tab-pane key="script" tab="脚本函数">
+								<editScript ref="bodyScript" :source-data="sourceData"/>
+							</a-tab-pane>
 						</a-tabs>
 					</div>
 					<div class="textCenter mB20">
@@ -33,6 +36,7 @@ import rxAjax from "@/assets/js/ajax";
 import editForm from "@/views/page/form/list/step/editForm";
 import editFields from "@/views/page/form/list/step/editFields";
 import editSearch from "@/views/page/form/list/step/editSearch";
+import editScript from "@/views/page/form/list/step/editScript";
 
 export default {
     name: "edit",
@@ -43,6 +47,7 @@ export default {
 		editForm,
 		editFields,
 		editSearch,
+		editScript,
 	},
     computed: {
         routerParams() {
@@ -105,12 +110,15 @@ export default {
 				id: sourceData.id,
 				idField: sourceData.idField,
 			}
-			let keyList = ['fieldsJson','searchJson'];
+			let keyList = ['fieldsJson','searchJson','bodyScript'];
 			keyList.forEach(key=>{
 				if(!this.$refs[key])
 					return;
 				let data = this.$refs[key].getData();
-				Object.assign(formData, {[key]:JSON.stringify(data)})
+				if(['fieldsJson','searchJson'].includes(key))
+					Object.assign(formData, {[key]:JSON.stringify(data)})
+				else
+					Object.assign(formData, {[key]:data})
 			})
 			// 调用保存表单
 			let api = "/form/bo/list/save";

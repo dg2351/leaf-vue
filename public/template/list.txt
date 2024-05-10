@@ -1,0 +1,29 @@
+<div class="textLeft">
+	<table_model v-if="!loading"
+				 ref="table_model"
+				 :method="sourceData.urlMethod"
+				 :alias="sourceData.url"
+				 :rowKey="sourceData.idField ?? 'id'"
+				 :xh="sourceData.isXh == 1"
+				 :params="{}"
+				 :query-config="sourceData.searchJson"
+				 :columns="sourceData.fieldsJson"
+				 :is-page="sourceData.isPage == 1"
+				 :action="false" :isView="true" :isVSlot="true"
+				 @eventView="v=>event().edit(v)">
+		<template v-slot:headSlot>
+			<a-button type="primary" class="floatR mT10" v-if="formAlias"
+					  @click="event().add()">新增</a-button>
+		</template>
+		<span :slot="val.scopedSlots.title" slot-scope="v"
+			  v-for="val in sourceData.fieldsJson.filter(p=>p.scopedSlots && p.scopedSlots.title && p.scopedSlots.title!='action')">
+			<template v-for="data in val.data">
+				<a-button v-if="formAlias && data.value=='edit'" type="primary" size="small" @click="event().edit(v.data)">{{data.label}}</a-button>
+				<a-button v-else-if="data.value=='del'" type="danger" size="small" @click="event().del(v.data)">{{data.label}}</a-button>
+				<a-button v-else type="primary" size="small" @click="event().func(data,v.data)">{{data.label}}</a-button>
+			</template>
+		</span>
+	</table_model>
+
+	<editModal v-if="editModalKey" :key="editModalKey" ref="editModal" @callback="e=>event().load(e)"/>
+</div>
