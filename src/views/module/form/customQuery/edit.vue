@@ -45,7 +45,7 @@ import rxAjax from "@/assets/js/ajax";
 import form_model from "@/component/form/form_model";
 import edit_list from "@/component/table/edit_list";
 import dbModal from "@/component/modal/dbModal";
-import ColumnList from "@/views/page/form/customQuery/component/ColumnList";
+import ColumnList from "@/views/module/form/customQuery/component/ColumnList";
 
 export default {
     name: "edit",

@@ -24,7 +24,7 @@
 
 <script>
 import table_model from "@/component/table/table_model";
-import test_model from "@/views/page/form/customQuery/test";
+import test_model from "@/views/module/form/customQuery/test";
 import tree_model from "@/component/tree/tree_model";
 import rxAjax from '@/assets/js/ajax.js';
 import moment from "moment"

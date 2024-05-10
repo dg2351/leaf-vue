@@ -13,7 +13,7 @@
 <script>
 import form_model from "@/component/form/form_model";
 import edit_list from "@/component/table/edit_list";
-import SearchData from "@/views/page/form/list/component/SearchData";
+import SearchData from "@/views/module/form/list/component/SearchData";
 
 const dataKey = ['select','selectTree','checkbox','radio','cascader'];
 export default {

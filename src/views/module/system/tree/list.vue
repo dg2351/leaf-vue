@@ -20,7 +20,7 @@
 
 <script>
 import table_model from "@/component/table/table_model";
-import edit_model from "@/views/page/system/tree/edit";
+import edit_model from "@/views/module/system/tree/edit";
 import rxAjax from '@/assets/js/ajax.js';
 import moment from "moment";
 

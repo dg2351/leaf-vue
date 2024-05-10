@@ -23,7 +23,7 @@
 
 <script>
 import table_model from "@/component/table/table_model";
-import edit_model from "@/views/page/form/list/edit"
+import edit_model from "@/views/module/form/list/edit"
 import rxAjax from '@/assets/js/ajax.js';
 import moment from "moment";
 import tree_model from "@/component/tree/tree_model";

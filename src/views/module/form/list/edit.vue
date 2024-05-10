@@ -33,10 +33,10 @@
 
 <script>
 import rxAjax from "@/assets/js/ajax";
-import editForm from "@/views/page/form/list/step/editForm";
-import editFields from "@/views/page/form/list/step/editFields";
-import editSearch from "@/views/page/form/list/step/editSearch";
-import editScript from "@/views/page/form/list/step/editScript";
+import editForm from "@/views/module/form/list/step/editForm";
+import editFields from "@/views/module/form/list/step/editFields";
+import editSearch from "@/views/module/form/list/step/editSearch";
+import editScript from "@/views/module/form/list/step/editScript";
 
 export default {
     name: "edit",

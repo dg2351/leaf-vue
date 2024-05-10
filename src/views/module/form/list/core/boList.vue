@@ -8,7 +8,7 @@
 <script>
 import Vue from 'vue';
 import table_model from "@/component/table/table_model";
-import editModal from "@/views/page/form/list/core/edit";
+import editModal from "@/views/module/form/list/core/edit";
 import rxAjax from "@/assets/js/ajax";
 
 export default {

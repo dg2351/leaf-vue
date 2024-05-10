@@ -16,7 +16,7 @@
 
 <script>
 import form_model from "@/component/form/form_model";
-import FieldsData from "@/views/page/form/list/component/FieldsData";
+import FieldsData from "@/views/module/form/list/component/FieldsData";
 import edit_list from "@/component/table/edit_list";
 import rxAjax from "@/assets/js/ajax";
 
