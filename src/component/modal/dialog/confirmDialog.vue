@@ -110,7 +110,7 @@ export default {
 				this.closeFn(1)
 			}
 		},
-		showDialog(obj) {
+		async showDialog(obj) {
 			Object.assign(this.$data, this.$options.data.call(this))
 			if (obj.class) this.className = obj.class
 			if (obj.title) this.title = obj.title
@@ -129,8 +129,9 @@ export default {
 			this.dialogFn = obj.success || (() => {})
 			// 挂载组件
 			if (obj.components) {
+				let components = (await import(`@/views/${obj.components}`)).default;
 				if (obj.propsData) {
-					const ConfirmDialogCom = Vue.component('ConfirmSolt', obj.components)// 创建组件
+					const ConfirmDialogCom = Vue.component('ConfirmSolt', components)// 创建组件
 
 					const componentsObject = {}
 					// 这样内部的组件可以直接使用this.$router、this.$store、this.$parent及this.$root，否则需要单独引入（获取传入的componentsArray，然后再次挂载到ConfirmSolt组件上）
@@ -150,7 +151,7 @@ export default {
 						this.componentCustomDom = comp
 					})
 				} else {
-					Vue.component('ConfirmSolt', obj.components)
+					Vue.component('ConfirmSolt', components)
 					this.componentName = 'ConfirmSolt'
 					this.$nextTick(() => {
 						this.componentCustomDom = this.$refs.componentCustom

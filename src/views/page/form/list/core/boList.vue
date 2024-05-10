@@ -56,7 +56,7 @@ export default {
 			xhr.send(null)
 
 			let html = xhr.responseText;
-			var template="<div>正在加载...<a-button @click='regExp()'>测试</a-button></div>",script={};
+			var template="<div>正在加载...</div>",script={};
 			var templateMath = html.match(/<template>([\s\S]*)<\/template>/);
 			if (templateMath != null) {
 				template=templateMath[1];
@@ -106,24 +106,7 @@ export default {
 						})
 					}
 					method.func = async (e, record)=>{
-						let com = "@/component/modal/regExpModal";
-						console.log(e, record, com);
-						// self_[e.value](record);
-						self_.$confirmDialog({
-							title: '正则校验',
-							components: (await import('@/views/modules/regular/regularTest')).default,
-							width: '800px',
-							confirmText: '确定',
-							cancelText: '取消',
-							propsData: {record:record},
-							showClose:true,
-							success: (res) => {
-								console.log(res)
-							},
-							cancel(res) {
-								console.log(res)
-							}
-						})
+						self_[e.value](record);
 					}
 					return method;
 				},
