@@ -375,7 +375,7 @@ export default {
 			clone.span = formConf.span;
 			clone.renderKey = +new Date(); // 改变renderKey后可以实现强制更新组件
 			if (!clone.layout) clone.layout = "colFormItem";
-			clone.placeholder !== undefined && (clone.placeholder += clone.label);
+			// clone.placeholder !== undefined && (clone.placeholder += clone.label);
 			if (clone.layout === "colFormItem") {
 				clone.vModel = `field${this.idGlobal}`;
 				tempActiveData = clone;

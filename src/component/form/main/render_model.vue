@@ -1,6 +1,6 @@
 <template>
-	<a-form-model :ref="alias" :class="className" :rules="rules"
-				  :model="sourceData" :label-col="{ span: labelCol }" :wrapper-col="{ span: wrapperCol }">
+	<a-form-model :ref="alias" :class="className" :rules="rules" :model="sourceData"
+				  :label-col="{ span: labelCol }" :wrapper-col="{ span: wrapperCol }">
 		<item v-if="!loading" v-for="(element,index) in formConfig.data" :index="index" :element="element" :sourceData="sourceData"/>
 	</a-form-model>
 </template>
@@ -8,6 +8,7 @@
 <script>
 import item from "@/component/form/main/item";
 import moment from "moment";
+import {buildRules} from "@/component/form/js/make";
 
 export default {
 	name: "render_model",
@@ -53,15 +54,18 @@ export default {
 		};
 	},
 	created() {
-		this.formConfig.data.forEach(item => {
-			this.rules[item.vModel] = item.rule;
-			if(!this.sourceData[item.vModel]){// 初始化变量
-				this.$set(this.sourceData, item.vModel, null);
-			}
-		});
-		this.loading = false;
+		this.initData();
 	},
 	methods:{
+		initData(){
+			this.formConfig.data.forEach(async item => {
+				if(!this.sourceData[item.vModel]){// 初始化变量
+					this.$set(this.sourceData, item.vModel, null);
+				}
+				await buildRules(item, this.rules);
+			});
+			this.loading = false;
+		},
 		// 表单方法
 		formMethods(refs=this.alias){
 			var ajax = {};

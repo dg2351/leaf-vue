@@ -1,9 +1,6 @@
 <template>
-	<a-form-model v-else :ref="alias" :class="className"
-					  :rules="rules"
-					  :model="sourceData"
-					  :label-col="{ span: labelCol }"
-					  :wrapper-col="{ span: wrapperCol }">
+	<a-form-model :ref="alias" :class="className" :rules="rules" :model="sourceData"
+				  :label-col="{ span: labelCol }" :wrapper-col="{ span: wrapperCol }">
 		<template v-if="formConfig.collapse && formConfig.collapse.length > 0">
 			<template v-for="collapse in formConfig.collapse">
 				<a-collapse v-model="formConfig.collapseKey">

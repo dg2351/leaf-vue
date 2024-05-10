@@ -279,19 +279,11 @@
 
 						<template v-if="activeData.layout === 'colFormItem' && activeData.tag !== 'a-button'">
 							<a-divider>正则校验</a-divider>
-							<div v-for="(item, index) in activeData.regList" :key="index" class="reg-item">
-								<span class="close-btn" @click="activeData.regList.splice(index, 1)">
-									<i class="el-icon-close" />
-								</span>
-								<a-form-item label="表达式">
-									<a-input v-model="item.pattern" placeholder="请输入正则" />
-								</a-form-item>
-								<a-form-item label="错误提示" style="margin-bottom:0">
-									<a-input v-model="item.message" placeholder="请输入错误提示" />
-								</a-form-item>
-							</div>
-							<div style="margin-left: 20px">
-								<a-button icon="el-icon-circle-plus-outline" type="text" @click="addReg">添加规则</a-button>
+							<div>
+								<a-tag @click="addReg">+<a-icon type="add"/></a-tag>
+								<a-tag v-for="(item, index) in activeData.regList">
+									{{item.message}}<a-icon type="delete" @click="delReg(item)"/>
+								</a-tag>
 							</div>
 						</template>
 					</a-collapse-panel>
@@ -519,10 +511,18 @@ export default {
 	},
 	methods: {
 		addReg() {
-			this.activeData.regList.push({
-				pattern: '',
-				message: ''
-			})
+			let pattern = "3";
+			console.log(this.activeData.regList)
+			if(this.activeData.regList.filter(p=>p.pattern == pattern).length == 0){
+				this.activeData.regList.push({
+					pattern: '3',
+					message: '整数'
+				})
+			}
+		},
+		delReg(item) {
+			console.log(item)
+			this.activeData.regList = this.activeData.regList.filter(p=>p.pattern != item.pattern)
 		},
 		addSelectItem() {
 			this.activeData.options.push({

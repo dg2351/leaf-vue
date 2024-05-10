@@ -75,8 +75,7 @@ export default {
 				let params = Object.assign({pkId:pkId});
 				rxAjax.get(api, params).then(({success,data})=>{
 					if(!success){
-						self_.$util.message().error("操作提示", "网络异常")
-						return;
+						return self_.$util.message().error("操作提示", "网络异常")
 					}
 					self_.sourceData = data;
 					self_.formConfig.loading = false

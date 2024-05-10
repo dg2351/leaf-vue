@@ -2,7 +2,7 @@
 	<div>
 		<a-form-model :label-col="{span:4}" :wrapper-col="{ span: 8 }">
 			<a-form-model-item label="正则表达式">
-				<span>{{content}}</span>
+				<span>{{pattern}}</span>
 			</a-form-model-item>
 			<a-form-model-item label="待校验字符">
 				<a-textarea v-model="input" :auto-size="{minRows: 3,maxRows:6}"/>
@@ -25,19 +25,19 @@ export default {
 	},
 	data(){
 		return{
-			content: "",
+			pattern: "",
 			input: "",
 			temp: "",
 		}
 	},
 	mounted() {
-		let {content} = this.record;
-		this.content = content;
+		let {pattern} = this.record;
+		this.pattern = pattern;
 	},
 	methods: {
 		test(){
-			let {content, input} = this;
-			this.temp = eval(content).test(input)
+			let {pattern, input} = this;
+			this.temp = eval(pattern).test(input)
 		}
 	}
 }

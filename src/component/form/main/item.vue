@@ -21,9 +21,9 @@ const layouts = {
 	colFormItem(h, element, index, sourceData) {
 		return (
 			<a-col span={element.span}>
-				<a-form-item label-col={{span:element.labelCol??4}} label={element.label} required={element.required}>
+				<a-form-model-item label-col={{span:element.labelCol??4}} label={element.label} prop={element.vModel} required={element.required}>
 					<render key={element.renderKey} conf={element} sourceData={sourceData}/>
-				</a-form-item>
+				</a-form-model-item>
 			</a-col>
 		)
 	},
