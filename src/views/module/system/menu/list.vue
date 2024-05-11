@@ -55,7 +55,7 @@ export default {
 			],
         }
     },
-    methods:{
+	methods:{
         /**
          * 修改
          * @param record

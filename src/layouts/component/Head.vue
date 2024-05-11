@@ -22,7 +22,8 @@
 </template>
 
 <script>
-import {TITLE} from "@/plugins/mutation-types";
+import LoginApi from "@/plugins/utils/login";
+import {LOGIN_URL, TITLE} from "@/plugins/mutation-types";
 
 export default {
     name: "Head",
@@ -33,7 +34,9 @@ export default {
 	},
     methods:{
 		confirm(){
-			this.$util.link(this).get("login");
+			LoginApi.logout().then(res=>{
+				window.open(LOGIN_URL, '_self');
+			})
 		}
     }
 }

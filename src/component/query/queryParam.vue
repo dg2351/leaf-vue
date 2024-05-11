@@ -54,10 +54,13 @@ import subLabel from "@/component/query/sub/subLabel";
 import subDatetime from "@/component/query/sub/subDatetime";
 import subNumber from "@/component/query/sub/subNumber";
 import moment from "moment";
+import FormMethods from "@/plugins/js-comps/FormMethods";
 
 export default {
 	name: "queryParam",
 	props: {
+		defaultParams: String,
+		//
 		queryConfig: {
 			type: Array,
 			default:()=>{
@@ -123,7 +126,17 @@ export default {
 			return !item.hidden && (item.show || this.sxShow);
 		},
 		//初始化查询条件
-		initQueryParamConfig(callback){
+		async initQueryParamConfig(callback){
+			let {defaultParams} = this;
+			let temp = {};
+			if(defaultParams) {
+				let {success, data} = await FormMethods.invokeCustomQueryPromise('getUserParams', {alias:defaultParams})
+				console.log(data)
+				if (success && data.length > 0) {
+					let $d = data[0].params_;
+					temp = JSON.parse($d ?? {});
+				}
+			}
 			let params = {}
 			this.queryConfig.forEach(item=>{
 				// 初始化方法
@@ -134,7 +147,12 @@ export default {
 							if(!children.changeFunction)
 								children.changeFunction = function () {}
 						}
-						params[children.key] = children.value;
+						let value = temp[children.key] ? temp[children.key]:children.value;
+						params[children.key] = value;// 第一次赋值
+						if(['select','selectTree','radio','cascader'].includes(children.type) && params[children.key]){
+							children.changeFunction(value, children, params)
+						}
+						params[children.key] = value;// 第一次赋值
 					})
 				} else{
 					if(item.initFunction) item.initFunction(item);
@@ -142,7 +160,12 @@ export default {
 						if(!item.changeFunction)
 							item.changeFunction = function () {}
 					}
-					params[item.key] = item.value;
+					let value = temp[item.key] ? temp[item.key]:item.value;
+					params[item.key] = value;// 第一次赋值
+					if(['select','selectTree','radio','cascader'].includes(item.type) && params[item.key]){
+						item.changeFunction(value, item, params)
+					}
+					params[item.key] = value;// 第一次赋值
 				}
 				// 初始化宽度
 				if(!item.span) item.span = 24
@@ -187,6 +210,7 @@ export default {
 					queryParam[key] = this.queryParam[key]
 				}
 			})
+			this.saveDefaultParam(queryParam)
 			this.formBack(queryParam);
 		},
 		resetParams(){
@@ -205,7 +229,16 @@ export default {
 				}
 				this.queryParam[key] = defaultValue
 			})
+			this.saveDefaultParam(this.queryParam)
 			this.formBack(this.queryParam);
+		},
+		saveDefaultParam(params){
+			let {defaultParams} = this;
+			if(defaultParams){
+				FormMethods.invokeScriptPromise("addUserParams", {
+					alias:defaultParams, params:JSON.stringify(params)
+				})
+			}
 		},
 	},
 }

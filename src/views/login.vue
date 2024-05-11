@@ -2,7 +2,7 @@
 	<div class="login_bg">
 		<div class="main">
 			<div class="login_form">
-				<a-form id="formLogin" ref="formLogin" :form="form" @submit="handleSubmit">
+				<a-form id="formLogin" ref="formLogin" :form="form">
 					<div class="login_logo">
 						<h1>{{ctxTitle}}</h1>
 					</div>
@@ -35,7 +35,8 @@
 						</div>
 						<a-form-item style="margin-top:24px">
 							<a-button class="login_btn" size="large" type="primary" htmlType="submit"
-									  :loading="state.loginBtn" :disabled="state.loginBtn">登录</a-button>
+									  :loading="state.loginBtn" :disabled="state.loginBtn"
+									  @click="handleSubmit">登录</a-button>
 						</a-form-item>
 					</div>
 				</a-form>
@@ -45,20 +46,20 @@
 </template>
 
 <script>
+import Vue from "vue";
 import uuid from "@/plugins/utils/uuid";
 import {encode64} from "@/plugins/utils/util";
-import {TITLE} from "@/plugins/mutation-types";
+import {ACCESS_TOKEN, ACCESS_USER, TITLE} from "@/plugins/mutation-types";
+import {LoginApi} from "@/plugins/utils/login";
 
 export default {
 	name: "login",
 	data(){
 		return{
 			ctxTitle: TITLE,
-			redirectUrl: "",
+			redirectUrl: "index",
 			//
 			deviceId: null,
-			isLoginError: false,
-			errorMsg: '',
 			form: this.$form.createForm(this),
 			codesrc: null,
 			state: {
@@ -92,13 +93,26 @@ export default {
 				loginParams.upe = encode64(`usernamegae${values.username}cendpasswordceq${values.password}cecjxeq${deviceId}`);
 				delete loginParams.username;
 				delete loginParams.password;
-				console.log(loginParams)
-				this.handRedirect();
+				LoginApi.login(loginParams).then(({success, message, data}) => {
+					if (!success) {
+						state.loginBtn = false;
+						this.requestFailed(message)
+						return;
+					}
+					this.handRedirect(data);
+				})
 			});
 		},
-		handRedirect(token){
-			this.$util.link(this).get("index");
-		}
+		requestFailed(err) {
+			this.$message.warning(err)
+			this.getImgCode()
+		},
+		handRedirect(data){
+			let {redirectUrl} = this;
+			Vue.ls.set(ACCESS_TOKEN, data.token);
+			Vue.ls.set(ACCESS_USER, data.user);
+			this.$util.link(this).get(redirectUrl);
+		},
 	}
 }
 </script>

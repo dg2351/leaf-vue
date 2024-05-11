@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import {notification} from "ant-design-vue";
-import {BASE_URL, ACCESS_TOKEN, LOGIN_URL, ignoreTokenPath} from '@/plugins/mutation-types';
+import {BASE_URL, ACCESS_TOKEN, LOGIN_URL, ignoreTokenPath, ACCESS_USER} from '@/plugins/mutation-types';
 
 let baseURL = BASE_URL;
 
@@ -9,8 +9,9 @@ const err = (error) => {
 	if (error.response) {
 		//token失效时跳转
 		if (needLogin(error.response)) {
+			console.log(123)
 			Vue.ls.remove(ACCESS_TOKEN);
-			Vue.ls.remove("appUser");
+			Vue.ls.remove(ACCESS_USER);
 			window.eventBus.$emit("loginAct");
 
 			let needAuthPath = true;
@@ -90,17 +91,7 @@ const err = (error) => {
 };
 
 function needLogin(res) {
-	var response = res.data;
-	if (response.status && response.status == 500) {
-		if (response.message == "tokenInvalid" || response.message == "tokenExpried") {
-			return true;
-		}
-	}
-	if (response.code && response.code == 401) {
-		return true;
-	}
-	return false;
-
+	return res.status && res.status == 401;
 };
 
 /**

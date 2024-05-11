@@ -3,7 +3,9 @@
 		<div class="pL10 pR10" v-if="queryConfig.length > 0">
 			<div class="">
 				<slot name="queryParam"/>
-				<queryParam ref="queryParam" :queryConfig="queryConfig" :show="showGd" @queryBack="queryBack">
+				<queryParam ref="queryParam" :show="showGd"
+							:defaultParams="defaultParams" :queryConfig="queryConfig"
+							@queryBack="queryBack">
 					<template slot="queryParamBefore"><slot name="queryParamBefore"/></template>
 					<template slot="queryParamAfter"><slot name="queryParamAfter"/></template>
 				</queryParam>
@@ -76,6 +78,8 @@ export default {
 			type: Number,
 			default: 0
 		},
+		// 历史默认查询值
+		defaultParams: String,
 		// 默认查询值
 		params:{
 			type: Object,
@@ -156,10 +160,15 @@ export default {
 		this.initColumns();
 	},
 	mounted() {
+		let $queryParam = this.$refs['queryParam']
 		// 自定义查询
-		if(this.queryConfig.length > 0)
-			this.$refs['queryParam'].initQueryParamConfig();
-		this.loadData(1);
+		if(this.queryConfig.length > 0){
+			$queryParam.initQueryParamConfig().then(res=>{
+				$queryParam.getParams();
+			});
+		} else {
+			this.loadData(1);
+		}
 		if(this.defaultRowSelect && this.defaultRowSelect .length > 0){
 			this.selectedRowKeys = this.defaultRowSelect;
 		}

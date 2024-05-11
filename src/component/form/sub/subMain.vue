@@ -124,6 +124,7 @@
 		</template>
 		<!--树状选择-->
 		<template v-else-if="item.type==='selectTree'">
+			<!--show-search tree-node-filter-prop="title"-->
 			<a-tree-select :style="item.style"
 						   v-if="!(item.readonly || formConfig.readonly)"
 						   v-model="sourceData[item.vModel]"
