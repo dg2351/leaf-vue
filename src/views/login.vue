@@ -69,6 +69,9 @@ export default {
 			},
 		}
 	},
+	mounted() {
+		this.getImgCode();
+	},
 	methods:{
 		async getImgCode() {
 			this.deviceId = uuid.getUuId(16, 32);
@@ -104,7 +107,7 @@ export default {
 			});
 		},
 		requestFailed(err) {
-			this.$message.warning(err)
+			// this.$message.warning(err)
 			this.getImgCode()
 		},
 		handRedirect(data){
