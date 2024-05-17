@@ -71,9 +71,10 @@ export default {
 		},
 		closeModal(refresh = false){
 			this.visible = false;
-			if(refresh){
-				this.$emit("callback", {refresh})
-			}
+			// if(refresh){
+			// 	this.$emit("callback", {refresh})
+			// }
+			this.$emit("callback", {refresh:true})
 		},
         loadData(id){
             if(id){

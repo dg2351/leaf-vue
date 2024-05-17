@@ -4,6 +4,7 @@
 				 :method="sourceData.urlMethod"
 				 :alias="sourceData.url"
 				 :rowKey="sourceData.idField ?? 'id'"
+				 :defaultParams="sourceData.url"
 				 :xh="sourceData.isXh == 1"
 				 :params="{}"
 				 :query-config="sourceData.searchJson"

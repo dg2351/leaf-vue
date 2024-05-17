@@ -288,7 +288,6 @@ export default {
 				let params = Object.assign({id:id});
 				rxAjax.get(api, params).then(({success,data})=>{
 					let template = data.template;
-					console.log(data)
 					self_.sourceData = data;
 					self_.drawingList = JSON.parse(template ?? '[]');
 				});
@@ -314,9 +313,9 @@ export default {
 				self_.loading = false;
 				if(success && data){
 					self_.$message.success("保存成功");
-				}
-				if(validate){
-					this.closeModal(true);
+					if(validate){
+						this.closeModal(true);
+					}
 				}
 			}).catch(err=>{
 				self_.loading = false;
