@@ -36,6 +36,8 @@ window.eventBus = new Vue();
 Vue.use(AntDesign);
 // 动态弹窗挂在
 import "@/component/modal/dialog/index";
+// 弹窗移动
+import '@/plugins/utils/directives.js'
 // 敏感字符过滤
 import '@/plugins/filters/index';
 // 通用方法

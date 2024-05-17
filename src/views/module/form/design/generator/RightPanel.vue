@@ -279,8 +279,9 @@
 
 						<template v-if="activeData.layout === 'colFormItem' && activeData.tag !== 'a-button'">
 							<a-divider>正则校验</a-divider>
+							<rowDialog ref="rowDialog" alias="rule_regular" modalKey="regList" @callBack="addReg"/>
 							<div>
-								<a-tag @click="addReg">+<a-icon type="add"/></a-tag>
+								<a-tag @click="$refs['rowDialog'].openModal(null)">+<a-icon type="add"/></a-tag>
 								<a-tag v-for="(item, index) in activeData.regList">
 									{{item.message}}<a-icon type="delete" @click="delReg(item)"/>
 								</a-tag>
@@ -404,6 +405,8 @@ import draggable from 'vuedraggable'
 import { inputComponents, selectComponents } from './config'
 import iconModal from "@/component/modal/iconModal";
 import customQueryModal from "@/component/modal/customQueryModal";
+//
+import rowDialog from "@/component/modal/rowDialog";
 
 const dateTimeFormat = {
 	date: 'YYYY-MM-DD',
@@ -414,7 +417,8 @@ const dateTimeFormat = {
 
 export default {
 	components: {
-		draggable,iconModal,customQueryModal
+		draggable,iconModal,customQueryModal,
+		rowDialog,
 	},
 	props: ['showField', 'activeData', 'formConf'],
 	data() {
@@ -510,18 +514,15 @@ export default {
 		}
 	},
 	methods: {
-		addReg() {
-			let pattern = "3";
-			console.log(this.activeData.regList)
-			if(this.activeData.regList.filter(p=>p.pattern == pattern).length == 0){
+		addReg(e) {
+			if(this.activeData.regList.filter(p=>p.pattern == e.value).length == 0){
 				this.activeData.regList.push({
-					pattern: '3',
-					message: '整数'
+					pattern: e.value,
+					message: e.label
 				})
 			}
 		},
 		delReg(item) {
-			console.log(item)
 			this.activeData.regList = this.activeData.regList.filter(p=>p.pattern != item.pattern)
 		},
 		addSelectItem() {
