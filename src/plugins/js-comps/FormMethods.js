@@ -50,4 +50,8 @@ FormMethods.invokeScript=function(alias, params, callback) {
 	})
 }
 
+FormMethods.upload=function(formData,callback) {
+	return rxAjax.upload("/file/upload",formData,callback);
+}
+
 export default FormMethods;

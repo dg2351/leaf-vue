@@ -7,7 +7,6 @@ import {PATH} from "@/plugins/mutation-types";
 const Html2Word = {};
 Html2Word.getWordDoc = (self_, title, dataSource, callback)=>{
 	var ImageModule = require('docxtemplater-image-module-free');
-	console.log(dataSource)
 	// 读取并获得模板文件的二进制内容
 	JSZipUtils.getBinaryContent(`${PATH}/docx/word.docx`, function(error, content) {
 		if (error) throw error // 抛出异常
@@ -16,7 +15,7 @@ Html2Word.getWordDoc = (self_, title, dataSource, callback)=>{
 		let doc = new docxtemplater().loadZip(zip).setOptions({ nullGetter: function() {return ''}})// 设置角度解析器
 
 		// 图片处理
-		if(false){
+		if(true){
 			const opts = {};
 			opts.centered = true; // 图片居中，在word模板中定义方式为{%%image}
 			opts.fileType = "docx";
@@ -24,17 +23,7 @@ Html2Word.getWordDoc = (self_, title, dataSource, callback)=>{
 				return base64DataURLToArrayBuffer(chartId);
 			};
 			opts.getSize = (img, tagValue, tagName) => {
-				console.log(img, tagName)
-				if(tagName.indexOf('Echart') != -1){
-					return [600, 150];
-				} else if(tagName.indexOf('img600_200_') != -1){
-					return [600, 200];
-				}  else if(tagName.indexOf('img600_400_') != -1){
-					return [600, 400];
-				} else{
-					//自定义指定图像大小
-					return [600, 280];
-				}
+				return [600, 600];
 			};
 			const imageModule = new ImageModule(opts);
 			doc.attachModule(imageModule);

@@ -13,7 +13,7 @@
 //npm i quill-image-super-solution-module
 import { quillEditor, Quill } from 'vue-quill-editor'
 import { ImageExtend } from 'quill-image-super-solution-module'
-// import FormApi from "@/views/modules/form/core/js-comps/api/FormApi";
+import FormMethods from "@/plugins/js-comps/FormMethods";
 Quill.register('modules/ImageExtend', ImageExtend)
 // import 'quill/dist/quill.core.css'
 // import 'quill/dist/quill.snow.css'
@@ -110,7 +110,7 @@ export default {
 				// 将文件流转换为formData对象
 				const formData = new FormData()
 				formData.append('file', file)
-				FormApi.upload(formData).then(res=>{
+				FormMethods.upload(formData).then(res=>{
 					if(res.success && res.code===200 && res.data.length !== 0) {
 						const fid = res.data[0].pkId;
 						const url = '/api/api-system/system/core/sysFile/previewFile?fileId='+fid

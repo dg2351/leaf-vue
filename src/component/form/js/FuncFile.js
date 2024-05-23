@@ -1,5 +1,7 @@
 // import FormApi from "@/views/modules/form/core/js-comps/api/FormApi";
 
+import FormMethods from "@/plugins/js-comps/FormMethods";
+
 const FuncFile = {
 	methods: {
 		/**
@@ -57,7 +59,7 @@ const FuncFile = {
 			this.$nextTick(() => {
 				const formData = new FormData();
 				formData.append("file", file)
-				FormApi.upload(formData).then(res=>{
+				FormMethods.upload(formData).then(res=>{
 					if(res.success && res.code===200 && res.data.length !== 0) {
 						const fid = res.data[0].pkId;
 						const file = buildFilePram(fid, name);

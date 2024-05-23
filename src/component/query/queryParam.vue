@@ -131,7 +131,6 @@ export default {
 			let temp = {};
 			if(defaultParams) {
 				let {success, data} = await FormMethods.invokeCustomQueryPromise('getUserParams', {alias:defaultParams})
-				console.log(data)
 				if (success && data.length > 0) {
 					let $d = data[0].params_;
 					temp = JSON.parse($d ?? {});
