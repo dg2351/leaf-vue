@@ -416,7 +416,34 @@ util.getValue = (data, key)=>{
 	return data ? (data[key] ?? '') : '';
 }
 
-export  default util;
+util.downLoadXls = (res)=>{
+	const fileNames = res.headers['content-disposition']
+	if(fileNames) {
+		//解码
+		const fileName = decodeURIComponent(fileNames.match(/=(.*)$/)[1])
+		// 处理返回的文件流
+		const content =res.data
+		const blob = new Blob([content],{
+			type: "application/octet-stream; charset=utf-8"
+		});
+		if('download' in document.createElement('a')) {
+			//非IE下载
+			const a = document.createElement('a') //创建一个a标签
+			a.download = fileName //指定文件名称
+			a.style.display = 'none' //页面隐藏
+			a.href = URL.createObjectURL(blob) // href用于下载地址
+			document.body.appendChild(a) //插到页面上
+			a.click() //通过点击触发
+			URL.revokeObjectURL(a.href) //释放URL 对象
+			document.body.removeChild(a) //删掉a标签
+		}else{
+			//IE10 + 下载
+			navigator.msSaveBlob(blob,fileName)
+		}
+	}
+}
+
+export default util;
 
 let api = {
     install(Vue){

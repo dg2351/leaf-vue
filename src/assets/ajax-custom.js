@@ -9,7 +9,6 @@ const err = (error) => {
 	if (error.response) {
 		//token失效时跳转
 		if (needLogin(error.response)) {
-			console.log(123)
 			Vue.ls.remove(ACCESS_TOKEN);
 			Vue.ls.remove(ACCESS_USER);
 			window.eventBus.$emit("loginAct");
@@ -171,7 +170,6 @@ function getAjax(conf) {
 	 * @returns {AxiosPromise}
 	 */
 	ajax.get = function (url, params, config) {
-
 		var headers = getHeaders(config, "form");
 
 		return $ajax({

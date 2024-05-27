@@ -1,10 +1,18 @@
 import docxtemplater from 'docxtemplater'
 import JSZipUtils from 'jszip-utils'
-import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
 import {PATH} from "@/plugins/mutation-types";
+import { saveAs } from 'file-saver'
 
 const Html2Word = {};
+
+/**
+ * 获取模版word
+ * @param self_
+ * @param title
+ * @param dataSource
+ * @param callback
+ */
 Html2Word.getWordDoc = (self_, title, dataSource, callback)=>{
 	var ImageModule = require('docxtemplater-image-module-free');
 	// 读取并获得模板文件的二进制内容
@@ -15,21 +23,22 @@ Html2Word.getWordDoc = (self_, title, dataSource, callback)=>{
 		let doc = new docxtemplater().loadZip(zip).setOptions({ nullGetter: function() {return ''}})// 设置角度解析器
 
 		// 图片处理
-		if(true){
-			const opts = {};
-			opts.centered = true; // 图片居中，在word模板中定义方式为{%%image}
-			opts.fileType = "docx";
-			opts.getImage = (chartId) => {
-				return base64DataURLToArrayBuffer(chartId);
-			};
-			opts.getSize = (img, tagValue, tagName) => {
-				return [600, 600];
-			};
-			const imageModule = new ImageModule(opts);
-			doc.attachModule(imageModule);
-		}
-
-		doc.setData(dataSource) // 设置模板变量的值
+		const opts = {};
+		opts.centered = true; // 图片居中，在word模板中定义方式为{%%image}
+		opts.fileType = "docx";
+		opts.getImage = (chartId) => {
+			return base64DataURLToArrayBuffer(chartId);
+		};
+		opts.getSize = (img, tagValue, tagName) => {
+			let imgSize = dataSource[`${tagName}_size`];
+			let w = parseFloat((imgSize?.w??'200').replace('px', ''))
+			let h = parseFloat((imgSize?.h??'200').replace('px', ''))
+			return [w, h];
+		};
+		const imageModule = new ImageModule(opts);
+		doc.attachModule(imageModule);
+		// 设置模板变量的值
+		doc.setData(dataSource)
 		try {
 			doc.render() // 用模板变量的值替换所有模板变量
 		} catch (error) {
@@ -49,11 +58,13 @@ Html2Word.getWordDoc = (self_, title, dataSource, callback)=>{
 		})
 		// 将目标文件对象保存为目标类型的文件，并命名
 		// saveAs(out, title)
+		// 回调
 		if(callback){
 			callback(out);
 		}
 	})
 }
+
 export default Html2Word
 
 function base64DataURLToArrayBuffer(dataURL) {

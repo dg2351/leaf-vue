@@ -1,34 +1,20 @@
 <template>
 	<div class="p10">
-		<div class="xqPlace">
-			<h1 class="plTit">文档导出 </h1>
-			<form_model :form-config="formConfig" :source-data="data"/>
-			<a-row>
-				<a-col :span="4">
-					<h2 style="font-weight: bold">word导出
-						<a-button type="primary" icon="caret-right" class="mL15" @click="outWord">导出</a-button>
-						<a id="outWord"/>
-					</h2>
-				</a-col>
-			</a-row>
-			<div id="htmlDom">
-				<div class="imageClass" style="width: 200px;height: 200px">
-					div转画布贴图
-				</div>
-			</div>
+		<div class="xqPlace" id="htmlDom">
+			<h1 class="plTit imageClass">文档导出 </h1>
 			<!---->
-			<a-row>
-				<a-col :span="24">
-					<h2 style="font-weight: bold">模版：</h2>
-					<vue-office-docx :src="url" style="height: 80vh;"/>
-				</a-col>
-			</a-row>
-			<a-row>
-				<a-col :span="24" v-if="src">
-					<h2 style="font-weight: bold">预览：</h2>
-					<vue-office-docx :src="src" style="height: 80vh;"/>
-				</a-col>
-			</a-row>
+			<a-tabs class="nav_big1">
+				<a-tab-pane tab="预览" key="0">
+					<vue-office-docx :src="wordUrl" style="height: 80vh;"/>
+				</a-tab-pane>
+				<a-tab-pane tab="模版" key="1">
+					<vue-office-docx :src="templateUrl" style="height: 80vh;"/>
+				</a-tab-pane>
+				<template slot="tabBarExtraContent">
+					<a-button :loading="loading" type="primary" icon="caret-right" class="mL15" @click="downloadFile('word', 'file.docx')">word导出</a-button>
+					<a-button :loading="loading" type="primary" icon="caret-right" class="mL15" @click="downloadFile('pdf', 'file.pdf')">pdf导出</a-button>
+				</template>
+			</a-tabs>
 		</div>
 	</div>
 </template>
@@ -36,7 +22,7 @@
 <script>
 import VueOfficeDocx from '@vue-office/docx'
 import '@vue-office/docx/lib/index.css'
-import {PATH} from "@/plugins/mutation-types";
+import {BASE_URL, PATH} from "@/plugins/mutation-types";
 import Html2Word from "@/views/page/document/utils/public";
 import moment from 'moment'
 import rxAjax from "@/assets/js/ajax";
@@ -52,10 +38,10 @@ export default {
 	data(){
 		return{
 			loading:false,
-			url: `${PATH}/docx/word.docx`,
-			src: null,
-			blob: null,
-			sourceData:{
+			// 模版路径
+			templateUrl: `${PATH}/docx/word.docx`,
+			// 模版数据
+			templateData:{
 				cover:"这是封面标题",
 				titleList: [
 					{title: `标题1`},
@@ -63,31 +49,10 @@ export default {
 					{title: `标题3`},
 				]
 			},
-
-
-			formConfig: {
-				visible: false,
-				loading: true,
-				disabled: false,
-				data: [
-					{
-						label: "文件",
-						tag: "a-file",
-						type: "file",
-						vModel: "name",
-						disabled: false,
-						max:2,
-						rule: [
-							{required: false, message: '请上传相关附件', trigger: 'change'},
-						],
-						file:{
-							max:1,
-							text:'上传附件',
-						}
-					},
-				]
-			},
-			data:{name:""},
+			// 生成预览文件链接
+			wordUrl: null,
+			// 文件(blob)
+			blob: null,
 		}
 	},
 	mounted() {
@@ -98,56 +63,53 @@ export default {
 			let self_ = this;
 			if(self_.loading) return;
 			self_.loading = true;
-			let dataSource = this.sourceData;
+			let dataSource = this.templateData;
 			// 页面转画布
 			let obj = document.getElementById('htmlDom');
+			let waitMethod = [];
 			if(obj){
 				let canvases = obj.querySelectorAll(".imageClass");
 				let imgTemp = 1;
 				canvases.forEach((canvas, i) => {
 					let style = getComputedStyle(canvas);
 					let width = style.getPropertyValue("width");
-					html2Canvas(canvas).then(function (c) {
-						let url = c.toDataURL("image/jpeg", 1.0);
+					let height = style.getPropertyValue("height");
+					waitMethod.push({api:html2Canvas(canvas), function:(c)=>{
 						Object.assign(dataSource, {
-							["img"+imgTemp]:url
+							[`img${imgTemp}`]: c.toDataURL("image/jpeg", 1.0),
+							[`img${imgTemp}_size`]: {w:width,h:height},
 						})
 						imgTemp++;
-					});
+					}})
 				})
 			}
-
-			setTimeout(() => {
+			Promise.all(waitMethod.map(m=>{return m.api})).then(res=>{
+				waitMethod.forEach((m,i)=>{
+					// 处理异步返回数据
+					m.function((res[i]))
+				})
 				let fileName = moment(new Date()).format("YYYY-MM-DD");
-				console.log(dataSource.img1)
 				Html2Word.getWordDoc(self_, fileName, dataSource, function (data, h, w) {
 					self_.loading = false;
-					console.log(data)
 					self_.blob = data
 					let fileReader = new FileReader()
 					fileReader.readAsArrayBuffer(data)
 					fileReader.onload = () => {
-						self_.src = fileReader.result;
+						self_.wordUrl = fileReader.result;
 					}
 				});
-			}, 3000)
-		},
-		outWord(){
-			let {blob} = this;
-			// let url = window.URL.createObjectURL(blob);
-			// let link = document.getElementById("outWord");
-			// link.style.display = "none";
-			// link.href = url;
-			// link.setAttribute("download", "file.docx");
-			// document.body.appendChild(link);
-			// link.click();
-			// document.body.removeChild(link); //下载完成移除元素
-			// window.URL.revokeObjectURL(url); //释放掉blob对象
+			})
 
+		},
+		downloadFile(alias = "word", fileName = "word.docx"){
+			if(this.loading) return;
+			this.loading = true;
+			let {blob} = this;
 			const formData = new FormData();
 			formData.append("file", blob)
-			rxAjax.upload("/file/upload", formData).then(res=>{
-
+			rxAjax.upload(`/file/aspose/uploadFile/${alias}/${fileName}`, formData).then(res=>{
+				this.loading = false;
+				window.open(`${BASE_URL}/file/aspose/downloadFile/${alias}/${fileName}`);
 			})
 		},
 	}
