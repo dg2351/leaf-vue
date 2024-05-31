@@ -43,6 +43,8 @@ export default {
 					data:[
 						{label:"全部", value: ''},
 						{label:"自定义查询", value: 'queryForJson'},
+						{label:"自定义脚本", value: 'invokeScript'},
+						{label:"图片文字识别", value: 'tess4j'},
 					]
 				},
 				{
