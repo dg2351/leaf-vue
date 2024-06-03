@@ -7,10 +7,8 @@
 
 <script>
 import * as echarts from "echarts";
-// import echarts from '@/components/echarts/echarts.vue';
 
 export default {
-	// 3aa1ff、88d1ea，36cbcb，82dfbe，4ecb73，acdf82，fad336
 	name: "Echart_bar",
 	props: {
 		dataZoom:Number,//显示几个、多余的可滚动
@@ -70,7 +68,7 @@ export default {
 			type: Object,
 			default() {
 				return {
-					xAxis: ["2020", "2021", "2022"],
+					xAxis: [],
 					data: [],
 					dataLine: [],
 				};
@@ -289,7 +287,6 @@ export default {
 							}
 						});
 						return value;
-						// console.log(parmes)
 					},
 					// formatter:'{a}:{c}<br>{a1}:{c1}<br>{a2}:{c2}%<br>{a3}:{c3}%<br>{a4}:{c4}%<br>{a5}:{c5}%<br>{a6}:{c6}<br>{a7}:{c7}',
 					axisPointer: {

@@ -33,7 +33,7 @@ let center = {
 	lng: 113.399158, lat: 22.523294
 }
 export default {
-	name: "zcgl-hydm",
+	name: "baidumap",
 	props:{
 		"zcCenter":{
 			type:Object,
