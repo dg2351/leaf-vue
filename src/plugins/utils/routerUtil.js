@@ -1,4 +1,4 @@
-import {ACCESS_TOKEN} from "@/plugins/mutation-types";
+import {ACCESS_TOKEN, ACCESS_USER} from "@/plugins/mutation-types";
 import rxAjax from "@/assets/js/ajax";
 import Vue from 'vue'
 
@@ -21,9 +21,9 @@ function  getLeftMenus(appKey,callback) {
 	rxAjax.postJson(url, {appKey:appKey}).then(({success, data}) => {
 		if (success) {
 			let allMenus = buildMenu(data) ?? [];
-
+			let user = Vue.ls.get(ACCESS_USER);
 			let obj={
-				user: {},
+				user: user ?? {},
 				menus: allMenus,
 				routers: routers(allMenus),
 			};

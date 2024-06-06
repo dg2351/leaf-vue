@@ -11,6 +11,7 @@
                 </Head>
             </a-layout-header>
             <a-layout-content>
+				<rightNav/>
                 <router-view></router-view>
             </a-layout-content>
         </a-layout>
@@ -19,10 +20,12 @@
 <script>
 import Head from '@/layouts/component/Head.vue';
 import Menu from "@/layouts/component/Menu.vue";
+import rightNav from "@/layouts/component/rightNav";
 
 export default {
     components: {
-        Head,Menu
+        Head,Menu,
+		rightNav,
     },
     data(){
         return{

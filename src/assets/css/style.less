@@ -79,3 +79,57 @@
 		}
 	}
 }
+
+
+// 右侧浮框
+.rightNav{
+	position: fixed;
+	right: 0px;
+	bottom: 20px;
+	z-index: 999;
+	width: 55px;
+	li{
+		text-align: center;
+		font-size: 13px;
+		height: 40px;
+		width: 40px;
+		color: #333;
+		cursor: pointer;
+		background: #fff;
+		box-shadow: 2px 3px 20px 1px rgba(0,0,0,0.1000);
+		border-radius: 50%;
+		position: relative;
+		&:hover{
+			box-shadow: 2px 3px 20px 1px rgba(0,0,0,0.2000);
+			p{
+				display: block;
+			}
+		}
+		margin-top: 10px;
+		p{
+			position: absolute;
+			display: none;
+			white-space: nowrap;
+			background: #fff;
+			line-height: 60px;
+			box-shadow: 2px 3px 20px 1px rgba(0,0,0,0.1000);
+			padding: 0px 10px;
+			left: -10px;
+			transform: translateX(-100%);
+			top: 0px;
+			border-radius: 5px;
+		}
+		i{
+			display: block;
+			height: 40px;
+			&.zd{
+				background: url(../image/right_nav/icon_top.png) no-repeat center;
+				background-size: 20px;
+			}
+			&.back{
+				background: url(../image/right_nav/icon-back.png) no-repeat center;
+				background-size: 20px;
+			}
+		}
+	}
+}

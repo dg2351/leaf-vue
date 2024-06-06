@@ -124,7 +124,7 @@ export default {
 .login_bg {
 	width: 100%;
 	min-height: 100%;
-	background: #f0f2f5 url(~@/assets/login_img/login_bg.png) no-repeat center fixed;
+	background: #f0f2f5 url(~@/assets/image/login_img/login_bg.png) no-repeat center fixed;
 	background-size: cover;
 	position: relative;
 }
@@ -205,7 +205,7 @@ export default {
 }
 
 .login_user {
-	background: url(~@/assets/login_img/user.png) no-repeat 12px center #F4F4F4 !important;
+	background: url(~@/assets/image/login_img/user.png) no-repeat 12px center #F4F4F4 !important;
 	padding-left: 46px;
 	// box-shadow: 0 2px 5px #e2e7f0;
 	border: 1px solid #E8E8E8 !important;
@@ -214,7 +214,7 @@ export default {
 }
 
 .login_password {
-	background: url(~@/assets/login_img/password.png) no-repeat 12px center #F4F4F4 !important;
+	background: url(~@/assets/image/login_img/password.png) no-repeat 12px center #F4F4F4 !important;
 	padding-left: 46px;
 	// box-shadow: 0 2px 5px #e2e7f0;
 	border: 1px solid #E8E8E8 !important;
