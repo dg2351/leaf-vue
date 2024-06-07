@@ -4,21 +4,21 @@
 		<a-row>
 			<a-col :span="4">
 				<div style="width:90%;padding: 5px;border: 1px solid #adc5fd;" class="">
-					<a-button type="primary" size="small" @click="connectSocket">加入</a-button>
+					<a-button type="primary" size="small" @click="reconnect">退出</a-button>
 				</div>
 			</a-col>
 			<a-col :span="20">
 				<div id="msgbox" class="chatbox">
 					<div class="textCenter" style="color: darkgray">——————无更多历史消息——————</div>
 					<template v-for="(item,i) in contents">
-						<div v-if="item.uid == user.userId">
+						<div v-if="item.sender == user.userId">
 							<div class="mT5 mB10">
 								<div class="textRight">
 									<div style="justify-content:end">
 										<span style="color: darkgray">{{item.time}}</span>
 										<span class="mL15 mR5">我</span>
 									</div>
-									<div class="chatboxCont mT5" v-html="item.cont"/>
+									<div class="chatboxCont mT5" v-html="item.body"/>
 								</div>
 								<!--<div class="w-36px h-36px bg-[#fff] rounded-100% ml-12px overflow-hidden">
 									<img :src="imgurl" width="36" height="36">
@@ -29,10 +29,10 @@
 							<div class="mT5 mB10">
 								<div class="textLeft">
 									<div style="justify-content:end">
-										<span class="mL5 mR15">{{item.name}}</span>
+										<span class="mL5 mR15">{{item.senderName}}</span>
 										<span style="color: darkgray">{{item.time}}</span>
 									</div>
-									<div class="chatboxCont mT5" v-html="item.cont"/>
+									<div class="chatboxCont mT5" v-html="item.body"/>
 								</div>
 								<!--<div class="w-36px h-36px bg-[#fff] rounded-100% ml-12px overflow-hidden">
 									<img :src="imgurl" width="36" height="36">
@@ -52,11 +52,9 @@
 </template>
 
 <script>
-import Vue from "vue";
-import {ACCESS_TOKEN} from "@/plugins/mutation-types";
 import {mapState} from "vuex";
-import FuncList from "@/component/table/js/FuncList";
 import moment from 'moment';
+import websocket from "@/plugins/utils/WebSocket";
 
 export default {
 	name: "chat",
@@ -78,46 +76,37 @@ export default {
 	},
 	methods:{
 		openModal(){
+			this.connect();
 			this.visible = true;
 		},
 		closeModal(){
+			this.reconnect();
 			this.visible = false;
 		},
-		//
-		async connectSocket(){
-			var socket = new SockJS('/gs-guide-websocket');
-			stompClient = Stomp.over(socket);
-			stompClient.connect({}, function(frame) {
-				stompClient.subscribe('/topic/greetings', function(greeting){
-					showGreeting(JSON.parse(greeting.body).content);
-				});
+		// 连接
+		async connect(){
+			let self_ = this;
+			let {userId} = this.user;
+			if(!userId){
+				console.log("用户不存在")
+				return;
+			}
+			websocket.Init(userId, function messageHandle(data){
+				let msg = JSON.parse(data)
+				switch (msg.flag) {
+					case 'message':
+						self_.contents.push(msg)
+						break;
+					default:
+						console.log("未知消息类型")
+				}
 			});
-			return;
-
-			let token = Vue.ls.get(ACCESS_TOKEN);
-			let host = window.location.host;
-			let port = window.location.port ?? 80;
-			// const url = `ws://${host}:${port}/leaf/chatbox`
-			const url = "ws://192.168.2.62:18083/leaf/chatbox"
-			console.log(url, token)
-			var socket = new WebSocket(url, token);
-			//创建Socket
-			socket.onopen = function(event) {
-				//向服务器发送数据
-				//socket.send('哈哈哈哈');
-				//接收数据事件
-				socket.onmessage = function(event) {
-					body.innerHTML+="<br/>对方："+event.data;
-				};
-				// socket关闭事件
-				socket.onclose = function(event) {
-					body.innerHTML+="<br/>系统：已和服务器断开连接！！！";
-				};
-				//关闭socket
-				//socket.close()
-			};
 		},
-		//
+		// 断连
+		async reconnect(){
+			websocket.close();
+		},
+		// 发送
 		async submitMessage(e){
 			let self_ = this;
 			if(self_.loading) return;
@@ -129,20 +118,28 @@ export default {
 			}
 			// 构造参数
 			let time = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
-			let data = {uid:userId, name:fullname, time:time, cont: message};
 			// 入列
+			let data = {
+				sender:userId,
+				senderName:fullname,
+				reception:userId,// 接收人
+				time:time,
+				body:message,
+				flag:"message",
+			}
 			self_.contents.push(data)
 			// 置底
 			let msgbox = document.getElementById("msgbox");
 			msgbox.scrollTop = msgbox.scrollHeight;
 			// 构造参数
-			await self_.connectChatbox(data);
+			websocket.Send(data);
 			// 置底
 			msgbox.scrollTop = msgbox.scrollHeight;
 			//
 			self_.message = "";
 			self_.loading = false;
 		},
+		//
 		async connectChatbox(data){
 			let self_ = this;
 			//-----------

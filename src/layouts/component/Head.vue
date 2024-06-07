@@ -8,7 +8,7 @@
 			<div class="inline-block message floatRight">
 				<a-dropdown>
 					<div class="flex alignC ">
-						<span class="names">用户<a-icon type="down" class="mL10" style="font-size:12px;" /></span>
+						<span class="names">{{user.fullname}}<a-icon type="down" class="mL10" style="font-size:12px;" /></span>
 					</div>
 					<a-menu slot="overlay">
 						<a-menu-item key="1" @click="confirm">
@@ -24,6 +24,7 @@
 <script>
 import LoginApi from "@/plugins/utils/login";
 import {LOGIN_URL, TITLE} from "@/plugins/mutation-types";
+import {mapState} from "vuex";
 
 export default {
     name: "Head",
@@ -32,7 +33,12 @@ export default {
 			TITLE,
 		}
 	},
-    methods:{
+	computed: {
+		...mapState({
+			user: state => state.appSetting.user,
+		}),
+	},
+	methods:{
 		confirm(){
 			LoginApi.logout().then(res=>{
 				window.open(LOGIN_URL, '_self');
