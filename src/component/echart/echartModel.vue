@@ -7,7 +7,7 @@
 		</div>
 		<template v-if="hasData">
 			<div v-if="type == 'pie'">
-				<EchartPie v-if="echartData.timer" :key="echartData.timer" height="500rpx"
+				<EchartPie v-if="echartData.timer" :key="echartData.timer" height="500px"
 						   :data="echartData" :full="echartFull" />
 				<view class="zsfbBox" v-if="showBox">
 					<p v-for="(item,index) in echartData.series">

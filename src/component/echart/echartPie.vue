@@ -19,22 +19,13 @@ export default {
 			type: String,
 			default: '250px'
 		},
-		label: {
-			type: Object,
-			default: function () {
-				return {
-					show: false,
-
-					formatter: '{c}%',
-				}
-			}
-		},
 		full: {
 			type: Object,
 			default: function () {
 				return {
 					center:['50%', '45%'],
-					radius: ['41%', '60%'],
+					radius: ['30%', '60%'],
+					radius2: ['30%', '50%'],
 				}
 			}
 		},
@@ -54,7 +45,27 @@ export default {
 					],
 				};
 			},
-		}
+		},
+		//
+		max:{type:Number,default:6},
+		// 浮框
+		tips:{type:Boolean,default:true},
+		// roseType
+		roseType:{type:Boolean,default:false},
+		// label
+		label:{type:Boolean,default:false},
+		labelColor:{type:String,default:'inherit'},
+		labelFormatter:{type:Function,default:null},
+		labelLine:{type:Boolean,default:false},
+		fontSize:{type:Number,default:12},
+		// 是否展示可视化的工具箱
+		toolbox:{type:Boolean,default:false},
+		// 下钻事件
+		restore:{type:Boolean,default:false},
+		// 百分比图层
+		percent:{type:Boolean,default:false},
+		// 过滤空值
+		filter:{type:Boolean,default:true},
 	},
 	data() {
 		return {
@@ -77,20 +88,32 @@ export default {
 		},
 	},
 	methods: {
+		getData(series){
+			let {max} = this;
+			let pid = this.pid;
+			let data = this.filter ? series.filter(p=>p.value != 0) : series;
+			if(pid != null)
+				data = data.filter(p=>!p.pid || String(p.pid)===String(pid)).map(m=>{return m});
+			let result = [];
+			let other = {name:"其它", value:0};
+			data.forEach((map,i)=>{
+				if(i<max)
+					result.push({name:map.label, value:map.value})
+				else
+					other.value += map.value;
+			});
+			if(other.value > 0)
+				result.push(other)
+			return result;
+		},
 		initChart() {
 			this.chart = echarts.init(this.$el)
-
-			let legendArray =[]
-			for(let x in this.data.series){
-				legendArray.push(this.data.series[x].name)
-			}
-
-			this.chart.setOption({
-
+			let series = this.getData(this.data.series)
+			let option = {
 				legend: {
 					icon: 'circle',
 					itemGap: 13,
-					data: legendArray,
+					data: series.map(m=>{return m.name}),
 					left: 'center',
 					bottom: '0',
 					itemWidth: 6,
@@ -107,12 +130,11 @@ export default {
 					borderColor: "#e2e7ec",
 					borderWidth: 1,
 					formatter: (parmes)=> {
-						let title =this.data.name;
 						let marker =parmes.marker;
 						let name =parmes.name;
 						let data =(parmes.data.data!=null?parmes.data.data:'') + (parmes.data.unit??'') + "  ";
 						let value =parmes.value+'%';
-						return `${title}<br>${marker}${name}：${data}${value}`;
+						return `${marker}${name}：${data}${value}`;
 					},
 				},
 				series: [
@@ -126,13 +148,12 @@ export default {
 						startAngle: 90,
 						label: {
 							normal: {
-
-								show: true,
-
-								fontSize: 12,
+								show: !!this.label,
+								fontSize: this.fontSize,
 								fontFamily: 'DIN',
-								color: '#595959',
-								formatter: this.label?this.label.formatter:'{b}\n{c}',
+								color: this.labelColor,
+								formatter: this.label?this.label.formatter:'{b}\n{d}%',
+								lineHeight:20,
 							}
 						},
 						labelLine: {
@@ -142,13 +163,39 @@ export default {
 								length2: 10,
 							}
 						},
-
-						data: this.data.series,
+						data: series,
 						animationEasing: 'cubicInOut',
 						animationDuration: 2600
-					}
+					},
+					{
+						radius: this.full.radius2,
+						center: this.full.center,
+						type: "pie",
+						roseType: this.roseType??'radius',
+						itemStyle: {
+							normal: {
+								color: 'rgba(255,255,255,0.3)',
+							},
+						},
+						labelLine: {
+							normal: {
+								show: false,
+							},
+						},
+						label: {
+							normal: {
+								show: false,
+							},
+						},
+						data: [1],
+						tooltip: {
+							show: false,
+
+						},
+					},
 				]
-			})
+			}
+			this.chart.setOption(option)
 			var index = 0 // 播放所在下标
 			// setInterval(() => {
 			//   this.chart.dispatchAction({
