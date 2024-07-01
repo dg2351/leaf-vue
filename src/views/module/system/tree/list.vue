@@ -37,7 +37,7 @@ export default {
 			// 查询配置
 			columns:[
 				{title:"名称",dataIndex:"name",align:"left"},
-				{title:"节点别名",dataIndex:"code",align:"left",width:"30%"},
+				{title:"节点别名",dataIndex:"alias",align:"left",width:"30%"},
 				{title:"创建时间",dataIndex:"createTime",align:"left",width:"18%",customRender:(text,record)=>{return moment(text).format("YYYY-MM-DD hh:mm")}},
 				{title:"操作列",dataIndex:"action",align:"left",width:"220px",scopedSlots: { customRender: 'action' }}
 			],

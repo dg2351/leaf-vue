@@ -55,26 +55,26 @@ export default {
 						label: "别名",
 						tag: "a-input",
 						type: "input",
-						vModel: "code",
+						vModel: "alias",
 						maxLength: 20,
 						rule: [
 							{required: true, message: '该输入项不能为空', trigger: 'change'},
 						],
 					},
-                    {
-						span:24, labelCol:4,
-                        label: "分类",
-						tag: "a-select",
-                        type: "select",
-                        vModel: "alias",
-                        maxLength: 20,
-						options: [
-							{label:'系统分类', value:'system'},
-						],
-                        rule: [
-                            {required: true, message: '该输入项不能为空', trigger: 'change'},
-                        ],
-                    },
+                    // {
+					// 	span:24, labelCol:4,
+                    //     label: "分类",
+					// 	tag: "a-select",
+                    //     type: "select",
+                    //     vModel: "code",
+                    //     maxLength: 20,
+					// 	options: [
+					// 		{label:'系统分类', value:'system'},
+					// 	],
+                    //     rule: [
+                    //         {required: true, message: '该输入项不能为空', trigger: 'change'},
+                    //     ],
+                    // },
 					{
 						span:24, labelCol:4,
 						label: "序号",
