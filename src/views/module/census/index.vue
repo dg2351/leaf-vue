@@ -21,8 +21,8 @@
 </template>
 
 <script>
-import queryParam from "@/component/query/queryParam";
-import EchartModel from "@/component/echart/echartModel";
+import queryParam from "@/component/query/queryParam.vue";
+import EchartModel from "@/component/echart/echartModel.vue";
 import rxAjax from "@/assets/js/ajax";
 import moment from 'moment'
 

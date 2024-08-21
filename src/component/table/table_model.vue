@@ -59,7 +59,7 @@
 <script>
 import FuncList from "@/component/table/js/FuncList";
 import FormMethods from "@/plugins/js-comps/FormMethods";
-import queryParam from "@/component/query/queryParam";
+import queryParam from "@/component/query/queryParam.vue";
 import rxAjax from '@/assets/js/ajax.js';
 
 export default {
