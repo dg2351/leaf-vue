@@ -139,26 +139,27 @@ export default {
 				}
 				if(!alias) alias = that.alias
 				FormMethods.invokeCustomQueryPromise(alias, that.params).then(res=>{
-					let sourceData = {};
+					// let sourceData = {};
+					let {sourceData} = that;
 					if(res.success && res.data && res.data.length > 0){
 						Object.keys(res.data[0]).forEach(key=>{
 							// 过滤标准字段
 							if(['ID_','UPDATE_VERSION_'].includes(key)){
-								sourceData[key] = res.data[0][key]
+								that.$set(sourceData, key, res.data[0][key])
 							}else{
-								sourceData[key.toLowerCase()] = res.data[0][key]
+								that.$set(sourceData, key.toLowerCase(), res.data[0][key])
 							}
 						});
 					}
 					that.formConfig.data.filter(p=>['file','fileImg','richtext'].includes(p.type)).forEach(m=>{
 						if(!sourceData[m.vModel]){
-							sourceData[m.vModel] = "";
+							that.$set(sourceData, m.vModel, "")
 						}
 					})
 					if(that.loadFunc){// 获取存在回调时进行回调处理
 						that.loadFunc(sourceData)
 					}else{
-						that.formConfig.form = sourceData;
+						// that.sourceData = sourceData;
 						that.formConfig.loading = false;
 					}
 				})
