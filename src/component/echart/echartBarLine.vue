@@ -1,6 +1,6 @@
 // 主要使用
 <template>
-	<div class="tubiao" style="padding-top: 0rpx" :style="{width: '100%',  height: height }">123
+	<div class="tubiao" style="padding-top: 0px" :style="{width: '100%',  height: height }">123
 		<div  :style="{ width:width, height: '100%' }"></div>
 	</div>
 </template>
@@ -351,8 +351,8 @@ export default {
 						type: "category",
 						gridIndex: 1,
 						axisPointer: {
-								    	type: "none",  // 取消当前轴的坐标轴指示器
-								  	},
+							type: "none",  // 取消当前轴的坐标轴指示器
+						},
 						axisLine: {
 							show: false,
 							lineStyle: {

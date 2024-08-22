@@ -4,18 +4,29 @@
 			<h1 class="plTit imageClass">监控报表 </h1>
 
 			<queryParam ref="queryParam" :queryConfig="queryConfig" @queryBack="queryBack"/>
-
-			<EchartModel v-if="timer" :key="timer" ref="EchartModel" title="请求日志"
-						 :BLalias="`skrgScgmtbSczt`" :BLparams="queryParam"
-						 :loadDataFunction="loadDataFunction"
-						 :BLxAxisList="BLxAxisList"
-						 BLxAxisKey="label" unit-l="次"
-						 :dataZoom="8" :dataZoomShow="true"
-						 :BLconfig="[
-									{name:'总调用量',key:'value',color:['#6B9BFD'],type:'bar'},
-									{name:'失败数',key:'no',color:['#e56464'],type:'line'},
-									{name:'成功数',key:'yes',color:['#08a51c'],type:'line'},
+			<a-tabs class="nav_big1">
+				<a-tab-pane key="1" tab="接口请求趋势">
+					<EchartModel v-if="timer" :key="timer" ref="EchartModel" title="请求日志"
+								 :BLalias="`skrgScgmtbSczt`" :BLparams="queryParam"
+								 :loadDataFunction="loadDataFunction"
+								 :BLxAxisList="BLxAxisList"
+								 BLxAxisKey="label" unit-l="次" unit-r="次"
+								 :dataZoom="8" :dataZoomShow="true"
+								 :BLconfig="[
+									{name:'总调用量',key:'value',color:['#6B9BFD'],type:'bar',stack:1},
+									{name:'失败数',key:'no',color:['#e56464'],type:'bar',stack:2},
+									{name:'成功数',key:'yes',color:['#08a51c'],type:'bar',stack:2},
+									{name:'失败趋势',key:'no',color:['#e38b5b'],type:'line'},
+									{name:'成功趋势',key:'yes',color:['#51d9a3'],type:'line'},
 							 ]"/>
+				</a-tab-pane>
+				<a-tab-pane key="2" tab="接口请求占比">
+					<EchartModel v-if="timer" :key="timer+'pie'" ref="EchartModel" title="请求日志" type="pie"
+								 :BLalias="`skrgScgmtbSczt`" :BLparams="queryParam"
+								 :loadDataFunction="loadDataFunction"
+								 BLxAxisLabel="label" BLxAxisKey="value" :showBox="true"/>
+				</a-tab-pane>
+			</a-tabs>
 		</div>
     </div>
 </template>
@@ -64,9 +75,11 @@ export default {
         }
     },
 	mounted() {
-		let $queryParam = this.$refs['queryParam']
-		$queryParam.initQueryParamConfig().then(res=>{
-			$queryParam.getParams();
+		this.$nextTick(() => {
+			let $queryParam = this.$refs['queryParam']
+			$queryParam.initQueryParamConfig().then(res=>{
+				$queryParam.getParams();
+			})
 		})
 	},
 	methods:{
@@ -81,7 +94,6 @@ export default {
 			this.timer = new Date().getTime();
 		},
 		loadDataFunction(api, params){
-			console.log(params)
 			return new Promise(resolve => {
 				rxAjax.postJson("/system/log/selectSysLogStat", params).then(res => {
 					let {data} = res;

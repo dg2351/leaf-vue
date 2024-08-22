@@ -7,33 +7,15 @@
 		</div>
 		<template v-if="hasData">
 			<div v-if="type == 'pie'">
-				<EchartPie v-if="echartData.timer" :key="echartData.timer" height="500px"
+				<EchartPie v-if="echartData.timer" :key="echartData.timer" height="250px"
 						   :data="echartData" :full="echartFull" />
-				<view class="zsfbBox" v-if="showBox">
-					<p v-for="(item,index) in echartData.series">
-						<i :style="{background:colors[index]}"></i>{{item.name}}<span >{{item.data}}{{boxUnit ? boxUnit : (item.unit?item.unit:'项')}}</span>
-					</p>
-				</view>
+				<ul class="echartBox" v-if="showBox">
+					<li v-for="(item,index) in echartData.series">
+						<i :style="{background:colors[index]}"></i>
+						{{item.name}}<span>{{item.data}}{{boxUnit ? boxUnit : (item.unit?item.unit:'项')}}</span>
+					</li>
+				</ul>
 			</div>
-			<!--<div v-else-if="type == 'bar'">
-				<template v-if="echartData.timer">
-					<div class="echartLine">
-						<p>{{leftUnit}}</p>
-					</div>
-					<EchartBar :key="echartData.timer" height="500rpx" :unitL="unitL" :dataZoom="dataZoom"
-							   :dataA="echartData" :xAxis="false" />
-					<ul class="echartLegend" style="margin:0 24rpx">
-						<li v-for="(item,index) in echartData.dataBar[0].data" :key="index">
-							<i :style="{ background: item.color }"></i>
-							<span>{{ item.name }}</span>
-						</li>
-					</ul>
-				</template>
-			</div>
-			<div v-else-if="type == 'Tbar'">
-				<EchartTBar v-if="echartData.timer" height="500rpx" :dataZoom="5" legendHeight="20" barWidth="50%"
-							:unit="leftUnit" :key="echartData.timer" :dataA="echartData" :dataZoomShow="false" />
-			</div>-->
 			<div v-else>
 				<EchartLineBar height="400px" v-if="echartData.timer" :key="echartData.timer"
 							   :dataZoom="dataZoom" :barWidth="barWidth"
@@ -181,24 +163,6 @@ export default {
 				}
 				this.loadPieData()
 			}
-			else if(type == 'bar'){
-				this.echartData = {
-					timer: null,
-					barGap: '100%',
-					barWidth: '40%',
-					xAxis:[],
-					dataBar:[]
-				}
-				this.loadBarData()
-			}
-			else if(type == 'Tbar'){
-				this.echartData = {
-					timer: null,
-					xAxis:[],
-					data:[]
-				}
-				this.loadTBarData()
-			}
 			else{
 				this.echartData = {
 					timer: null,
@@ -327,93 +291,69 @@ export default {
 			}
         },
         // 饼状图
-        loadPieData(){
+		async loadPieData(){
             let {BLxAxisKey, BLxAxisLabel, BLproportionKey} = this;
-            FormMethods.invokeCustomQueryPromise(this.BLalias, this.BLparams).then(({success,data})=>{
-                let series = [];
-                if(this.buildDataFunction != null){
-                	series = this.buildDataFunction(data);
-				} else{
-                	let total = 0;
-                	data.forEach(item=>{
-                		total += (item[BLxAxisKey] ?? 0);
+            let res = null;
+			if(this.loadDataFunction){
+				res = await this.loadDataFunction(this.BLalias, this.BLparams);
+			}else{
+				res = await FormMethods.invokeCustomQueryPromise(this.BLalias, this.BLparams);
+			}
+			let {success,data} = res;
+			console.log(BLxAxisKey, BLxAxisLabel)
+			let series = [];
+			if(this.buildDataFunction != null){
+				series = this.buildDataFunction(data);
+			} else{
+				let total = 0;
+				data.forEach(item=>{
+					total += (item[BLxAxisKey] ?? 0);
+				})
+				data.forEach(item=>{
+					series.push({
+						name: item[BLxAxisLabel],
+						data: item[BLxAxisKey],
+						value: total > 0 ? ((item[BLxAxisKey]/total ?? 0)*100).toFixedNum(2) : 0,
+						unit: item.unit ?? ''
 					})
-					data.forEach(item=>{
-						series.push({
-							name: item[BLxAxisLabel],
-							data: item[BLxAxisKey],
-							value: total > 0 ? ((item[BLxAxisKey]/total ?? 0)*100).toFixedNum(2) : 0,
-							unit: item.unit
-						})
-					})
-				}
-                Object.assign(this.echartData, {
-                    timer: new Date().getTime(),
-                    full: {
-                        center: ['50%', '40%'],
-                        radius: ['38%', '56%']
-                    },
-                    series: series,
-                })
-				this.hasData = series.length > 0;
-            })
+				})
+				console.log(series)
+			}
+			Object.assign(this.echartData, {
+				timer: new Date().getTime(),
+				full: {
+					center: ['50%', '40%'],
+					radius: ['38%', '56%']
+				},
+				series: series,
+			})
+			this.hasData = series.length > 0;
         },
-		// 柱状图
-		loadBarData(){
-			let {BLxAxisKey, BLxAxisLabel, BLproportionKey, colors} = this;
-			FormMethods.invokeCustomQueryPromise(this.BLalias, this.BLparams).then(({success,data})=>{
-				let xAxis = [];
-				let dataBar = [];
-				let proportion = [];
-				data.forEach((item,i)=>{
-					let label = item[BLxAxisLabel]
-					let value = item[BLxAxisKey];
-					xAxis.push(label)
-					proportion.push(value)
-					dataBar.push({
-						name: label,
-						value: value,
-						color: colors?.[i] ?? '#FFA257',
-					})
-				})
-				Object.assign(this.echartData, {
-					timer: new Date().getTime(),
-					xAxis: xAxis,
-					dataBar: [{
-						// dataname: 'test',
-						proportion: proportion,
-						label: 'top',
-						data: dataBar
-					}],
-				})
-				this.hasData = dataBar.length > 0;
-			})
-		},
-		// 横向柱状图
-		loadTBarData(){
-			let {BLxAxisKey, BLconfig} = this;
-			FormMethods.invokeCustomQueryPromise(this.BLalias, this.BLparams).then(({success,data})=>{
-				let xAxis = data.map((item,i)=>{return item[BLxAxisKey];})
-				let dataList = [];
-				BLconfig.forEach(item=>{
-					let values = [];
-					xAxis.forEach(val=>{
-						let $d = data.filter(p=>p[BLxAxisKey] == val);
-						let value = ($d?.[0]?.[item.key]) ?? 0;
-						values.push(value);
-					})
-					dataList.push(Object.assign(item, {
-						value: values
-					}));
-				})
-				Object.assign(this.echartData, {
-					timer: new Date().getTime(),
-					xAxis: xAxis,
-					data: dataList,
-				})
-				this.hasData = dataList.length > 0;
-			})
-		},
     }
 }
 </script>
+
+<style lang="less">
+.echartBox{
+	margin-top: 30px;
+	i{
+		display: inline-block;
+		height: 10px;
+		width: 40px;
+		margin-right: 10px;
+	}
+	li{
+		font-size: 14px;
+		color: #999;
+		width:calc(50% - 40px);
+		padding: 10px 20px;
+		display: inline-block;
+		span{
+			float: right;
+			color: #333;
+			font-size: 14px;
+		}
+		border-bottom: 1px dashed #eee;
+	}
+}
+</style>

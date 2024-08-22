@@ -98,7 +98,7 @@ export default {
 			let other = {name:"其它", value:0};
 			data.forEach((map,i)=>{
 				if(i<max)
-					result.push({name:map.label, value:map.value})
+					result.push({name:map.name, value:map.value})
 				else
 					other.value += map.value;
 			});
@@ -196,18 +196,6 @@ export default {
 				]
 			}
 			this.chart.setOption(option)
-			var index = 0 // 播放所在下标
-			// setInterval(() => {
-			//   this.chart.dispatchAction({
-			//     type: 'showTip',
-			//     seriesIndex: 0, // 第几条series
-			//     dataIndex: index // 第几个tooltip
-			//   })
-			//   index++
-			//   if (index > 3) {
-			//     index = 0
-			//   }
-			// }, 2000)
 			window.addEventListener('resize', () => {
 				this.chart.resize();
 			});
