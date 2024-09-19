@@ -52,6 +52,9 @@ String.prototype.toCamelCase = function(){
 	return str.replace('_','')
 }
 
+/**
+ * 排序
+ */
 Array.prototype.quickSort = function () {
 	const rec = (arr) => {
 		console.log(arr)
@@ -70,6 +73,38 @@ Array.prototype.quickSort = function () {
 	};
 	const res = rec(this);
 	res.forEach((n,i) => { this[i] = n; })
+}
+
+/**
+ * 构建树
+ * @param idKey
+ * @param pidKey
+ * @returns {[]|*[]}
+ */
+Array.prototype.$buildTree = function (idKey = 'id', pidKey = 'pid'){
+	let list = [];
+	let pkList = [];
+	if(!this) return [];
+	this.forEach(map=>{
+		let pid = map[pidKey];
+		let list = this.filter(p=>p[idKey] == pid);
+		if(list.length == 0 && !pkList.includes(pid))
+			pkList.push(pid);
+	})
+	pkList.forEach(pid=>{
+		treeFunction(list, this, pid);
+	})
+	return list;
+	function treeFunction(arr, list, parentId){
+		list.filter(p=>p[pidKey] == parentId).forEach(item => {
+			let child = JSON.parse(JSON.stringify(item));
+			let children = [];
+			treeFunction(children, list, item[idKey])
+			if(children.length > 0)
+				child.children = children;
+			arr.push(child)
+		})
+	}
 }
 
 Number.prototype.formatUnit = function(unit, fixed=2){

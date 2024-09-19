@@ -13,6 +13,7 @@
 						<subCascader v-else-if="item.type=='cascader'" :item="item" :query-param="queryParam"/>
 						<subLabel v-else-if="item.type=='label'" :item="item" :query-param="queryParam"/>
 						<subDatetime v-else-if="item.type=='datetimes'" :item="item" :query-param="queryParam"/>
+						<subMonth v-else-if="item.type=='month'" :item="item" :query-param="queryParam"/>
 						<subNumber v-else-if="item.type=='numbers'" :item="item" :query-param="queryParam"/>
 						<template v-else-if="item.type=='other'">
 							<template v-for="chrld in item.children" v-if="checkShow(chrld)">
@@ -52,6 +53,7 @@ import subCheckbox from "@/component/query/sub/subCheckbox";
 import subCascader from "@/component/query/sub/subCascader";
 import subLabel from "@/component/query/sub/subLabel";
 import subDatetime from "@/component/query/sub/subDatetime";
+import subMonth from "@/component/query/sub/subMonth";
 import subNumber from "@/component/query/sub/subNumber";
 import moment from "moment";
 import FormMethods from "@/plugins/js-comps/FormMethods";
@@ -110,7 +112,10 @@ export default {
 			}
 		},
 	},
-	components: {subInput, subSelect, subSelectTree, subRadio, subCheckbox, subCascader, subLabel, subDatetime, subNumber},
+	components: {
+		subInput, subSelect, subSelectTree, subRadio, subCheckbox, subCascader, subLabel,
+		subDatetime, subMonth, subNumber
+	},
 	computed: {},
 	data() {
 		return {
@@ -198,11 +203,16 @@ export default {
 					if(value && value.length > 0){
 						queryParam[key] = format ? value.join('/') : value[value.length-1];
 					}
+				}else if(['month'].includes(type)) {
+					let value = this.queryParam[key];
+					if(value){
+						this.$set(queryParam, key, moment(value).format('YYYY-MM'))
+					}
 				}else if(['datetimes'].includes(type)) {
 					['S','E'].forEach(k=>{
 						let value = this.queryParam[key+k];
 						if(value){
-							this.queryParam[key+k] = moment(value).format('YYYY-MM-DD')
+							queryParam[key+k] = moment(value).format('YYYY-MM-DD')
 						}
 					})
 				} else{
