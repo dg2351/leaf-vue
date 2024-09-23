@@ -1,8 +1,7 @@
 import Vue from "vue";
 import jQuery from "jquery";
-import {BASE_URL} from "@/plugins/mutation-types";
+import {ACCESS_TOKEN, BASE_URL} from "@/plugins/mutation-types";
 
-let ACCESS_TOKEN = "execute_token"
 let baseURL = BASE_URL;
 
 const MethodApi = {}
@@ -17,18 +16,17 @@ MethodApi.postForm = function (url, param) {
 }
 export default MethodApi
 
-function setToken() {
-	let token = "";
+function setToken(token) {
 	let expires_in = 1800;
 	Vue.ls.set(ACCESS_TOKEN, token, expires_in);
 	return token;
 }
 function getToken() {
-	let token = JSON.parse(localStorage.getItem("pro__"+ACCESS_TOKEN));
-	if(!token){
-		return setToken();
+	let token = Vue.ls.get(ACCESS_TOKEN);
+	if(token){
+		return token;
 	} else{
-		return token.value;
+		return "";//setToken(token);
 	}
 }
 
@@ -60,7 +58,7 @@ function jqAjax(conf) {
 			success: value=>{result=value.data},
 			error: value=>{
 				if(err(value)){
-					result = this.postForm(url, params, Object.assign(config, {token: getToken()}))
+					result = this.postForm(url, params, config)
 				}
 			}
 		}));
@@ -76,7 +74,7 @@ function jqAjax(conf) {
 			success: value=>{result=value.data},
 			error: value=>{
 				if(err(value)){
-					result = this.postJson(url, params, Object.assign(config, {token: getToken()}))
+					result = this.postJson(url, params, config)
 				}
 			}
 		}));
@@ -101,8 +99,9 @@ function jqAjax(conf) {
 			'X-Requested-With': 'XMLHttpRequest',
 			'needToken_': true
 		};
-		if (config && config.token) {
-			headers.Authorization = 'Bearer ' + config.token;
+		var token = getToken();
+		if (token) {
+			headers.Authorization = 'Bearer ' + token;
 		}
 		return headers;
 	}
@@ -122,7 +121,7 @@ function jqAjax(conf) {
 		}
 		const result = error.responseJSON;
 		if (result && needLogin(result)) {//token失效时返回true,重新请求
-			Vue.ls.remove(ACCESS_TOKEN);
+			// Vue.ls.remove(ACCESS_TOKEN);
 			console.log("error.response...>>>>", result)
 			return true;
 		}

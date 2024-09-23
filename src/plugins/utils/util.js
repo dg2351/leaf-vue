@@ -107,6 +107,32 @@ Array.prototype.$buildTree = function (idKey = 'id', pidKey = 'pid'){
 	}
 }
 
+/**
+ * 根据值获取节点
+ * @param value
+ * @param key
+ * @returns {[]}
+ */
+Array.prototype.$getTreeNode = function(value, key='value'){
+	let current = [];
+	getTreeNode(this, value, key)
+	return current;
+	function getTreeNode(node, value, key) {
+		for(let i=0;i<node.length;i++){
+			let item = node[i];
+			if(item[key] == value){
+				current.push(item)
+				return true;
+			} else if(item.children && item.children.length > 0){
+				let temp = getTreeNode(item.children, value, key);
+				if(temp){
+					return true;
+				}
+			}
+		}
+	}
+}
+
 Number.prototype.formatUnit = function(unit, fixed=2){
 	let v = parseFloat(this ?? 0);
 	let key = [

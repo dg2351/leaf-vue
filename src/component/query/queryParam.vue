@@ -35,6 +35,7 @@
 		<a-form-item label="" style="width: 100%">
 			<div class="mB10" style="text-align: right">
 				<slot name="queryParamBefore"/>
+				<a-button style="cursor:pointer;" v-if="isExport" class="yellow mR15" @click="exportExcel()">导出</a-button>
 				<a-button type="primary" class="mL10" @click="getParams()">{{button.query}}</a-button>
 				<a-button type="" class="mL10" @click="resetParams()">{{button.reset}}</a-button>
 				<a-button type="" v-if="show" class="mL10" @click="sxShow = !sxShow">{{sxShow?'收起':'展开'}}</a-button>
@@ -110,6 +111,11 @@ export default {
 			default:()=>{
 				return { query:'搜索',reset:'重置' }
 			}
+		},
+		//
+		isExport:{
+			type: Boolean,
+			default: false,
 		},
 	},
 	components: {
@@ -248,6 +254,9 @@ export default {
 					alias:defaultParams, params:JSON.stringify(params)
 				})
 			}
+		},
+		exportExcel(){
+			this.$emit("exportExcel")
 		},
 	},
 }

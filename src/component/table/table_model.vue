@@ -4,8 +4,8 @@
 			<div class="">
 				<slot name="queryParam"/>
 				<queryParam ref="queryParam" :show="showGd"
-							:defaultParams="defaultParams" :queryConfig="queryConfig"
-							@queryBack="queryBack">
+							:defaultParams="defaultParams" :queryConfig="queryConfig" :isExport="isExport"
+							@queryBack="queryBack" @exportExcel="exportExcel">
 					<template slot="queryParamBefore"><slot name="queryParamBefore"/></template>
 					<template slot="queryParamAfter"><slot name="queryParamAfter"/></template>
 				</queryParam>
@@ -60,7 +60,9 @@
 import FuncList from "@/component/table/js/FuncList";
 import FormMethods from "@/plugins/js-comps/FormMethods";
 import queryParam from "@/component/query/queryParam.vue";
+import moment from "moment";
 import rxAjax from '@/assets/js/ajax.js';
+import excelApi from "@/plugins/utils/ExportExcel";
 
 export default {
 	name: "table_model",
@@ -114,6 +116,11 @@ export default {
 		},
 		// 是否可编辑
 		isEdit:{
+			type: Boolean,
+			default: false,
+		},
+		// 是否可导出
+		isExport:{
 			type: Boolean,
 			default: false,
 		},
@@ -277,6 +284,46 @@ export default {
 			this.selectedRowKeys = k;
 			if(this.rowSelectChange){
 				this.rowSelectChange(k, v)
+			}
+		},
+		// 导出
+		async exportExcel(){
+			let keyMap = [];
+			this.columns.forEach(m=>{if(m.dataIndex=='action')return;keyMap.push({label:m.title,key:m.dataIndex})});
+			let filename = moment(new Date()).format('YYYY年MM月DD日-')+'导出结果';
+			let {success,data} = await FormFunctions.invokeCustomQueryPromise(this.alias, {
+				...this.queryParam,...this.params,pageIndex:1,pageSize:50
+			})
+			let sourceData = success ? data.map((m,i)=>{
+				return Object.assign(m, {
+					xh:i+1, rank:i+1, zczb: (m.zczb ? m.zczb.formatUnit('元', 2) : '-')
+				})
+			}) : [];
+			mainMethod(filename, sourceData);
+			// 主入口
+			function mainMethod(filename, dataList) {
+				let nameList = [];
+				let keyList = [];
+				let widthList = [8,30]
+				keyMap.forEach((item,i)=>{
+					nameList.push(item.label);
+					keyList.push(item.key);
+					if(i < keyMap.length-2)
+						widthList.push(21);
+				})
+				let style = {column:{width:widthList}}
+				//
+				let tableData = [{v:nameList,s:{}}];
+				dataList.forEach(item=>{
+					tableData.push({
+						v:keyList.map(key=>{
+							return item[key]?item[key]:'';
+						}),
+						s:{}
+					})
+				})
+				let datas = [{name: '导出结果', value: tableData, style: style}]
+				excelApi.initSheet(filename, datas);
 			}
 		},
 	},
