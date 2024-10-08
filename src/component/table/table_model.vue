@@ -22,11 +22,13 @@
 			</a-row>
 		</div>
 		<a-table class="table_a mT10 mB20" :loading="loading" :rowKey="rowKey?rowKey:'xh'"
+				 :scroll="{ x: x }"
 				 :columns="columns" :data-source="sourceData" :expandIconColumnIndex="expandIconColumnIndex??0"
 				 :rowSelection="rowSelectChange ? {
 				 	selectedRowKeys:selectedRowKeys, onChange: onSelectChange, type: rowSelectType
 				 } : null"
-				 :pagination="isPage ? pagination : false" :locale="{emptyText: '暂无数据'}">
+				 :pagination="isPage ? pagination : false" :locale="{emptyText: '暂无数据'}"
+				 @change="eventChange">
 			<!--列头自定义插槽-->
 			<template :slot="val.slots.title" v-for="val in columns.filter(p=>p.slots && p.slots.title)">
 				<slot :name="val.slots.title"/>
@@ -151,7 +153,12 @@ export default {
 		rowSelectChange:{
 			type:Function,
 			default: null,
-		}
+		},
+		// 横向滚动
+		x:{
+			type:String,
+			default: '100%',
+		},
 	},
 	mixins:[FuncList],
 	components:{queryParam},
@@ -325,6 +332,19 @@ export default {
 				let datas = [{name: '导出结果', value: tableData, style: style}]
 				excelApi.initSheet(filename, datas);
 			}
+		},
+		// 点击事件
+		eventChange(p,f,s){
+			let {queryParam} = this;
+			if(s.order){// 排序
+				this.$set(queryParam, "sortKey", s.columnKey)
+				this.$set(queryParam, "sortValue", s.order=='ascend'?'asc':(s.order=='descend'?'desc':''))
+			}else{
+				delete queryParam["sortKey"];
+				delete queryParam["sortValue"];
+			}
+			this.refreshData();
+
 		},
 	},
 }

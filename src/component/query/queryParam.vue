@@ -218,11 +218,14 @@ export default {
 					['S','E'].forEach(k=>{
 						let value = this.queryParam[key+k];
 						if(value){
-							queryParam[key+k] = moment(value).format('YYYY-MM-DD')
+							let $key = key+k
+							let $value = moment(value).format('YYYY-MM-DD')
+							this.$set(this.queryParam, $key, $value)
+							this.$set(queryParam, $key, $value)
 						}
 					})
 				} else{
-					queryParam[key] = this.queryParam[key]
+					this.$set(queryParam, key, this.queryParam[key])
 				}
 			})
 			this.saveDefaultParam(queryParam)
