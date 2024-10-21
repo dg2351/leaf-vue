@@ -143,12 +143,14 @@ export default {
 					let {sourceData} = that;
 					if(res.success && res.data && res.data.length > 0){
 						Object.keys(res.data[0]).forEach(key=>{
+							that.$set(sourceData, key, res.data[0][key])
 							// 过滤标准字段
-							if(['ID_','UPDATE_VERSION_'].includes(key)){
+							/*if(['ID_','UPDATE_VERSION_'].includes(key)){
 								that.$set(sourceData, key, res.data[0][key])
 							}else{
+								console.log("大小写转换（待删除逻辑）")
 								that.$set(sourceData, key.toLowerCase(), res.data[0][key])
-							}
+							}*/
 						});
 					}
 					that.formConfig.data.filter(p=>['file','fileImg','richtext'].includes(p.type)).forEach(m=>{

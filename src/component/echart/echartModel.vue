@@ -82,7 +82,10 @@ export default {
 		colors:{
 			type:Array,
 			default:()=>{
-				return ['#6B9BFD', '#4ED9A0', '#FFCB32', '#F17665', '#67CDF7', '#FFA257']
+				return [
+					'#6B9BFD', '#4ED9A0', '#FFCB32', '#F17665',
+					'#67CDF7', '#FFA257', '#b6b47f'
+				]
 			}
 		},
 		buildDataFunction:{
